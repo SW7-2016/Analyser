@@ -9,9 +9,9 @@ namespace analyzer.Products.ProductComponents
 {
     public class CPU : ComputerComponents
     {
-        public CPU(string category, int id, string model, string clock, string maxTurbo, string integratedGpu,
+        public CPU(string category, int id, string name, string model, string clock, string maxTurbo, string integratedGpu,
                     bool stockCooler, string manufacturer, string cpuSeries, int logicalCores, int physicalCores, string socket)
-            : base(id, category)
+            : base(id, category, name)
         {
             Model = model;
             Clock = clock;

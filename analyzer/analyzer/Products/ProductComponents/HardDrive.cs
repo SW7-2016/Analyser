@@ -9,9 +9,9 @@ namespace analyzer.Products.ProductComponents
 {
     public class HardDrive : ComputerComponents
     {
-        public HardDrive(string category, int id, bool isInternal, string type, string formFactor, string capacity, string cacheSize, 
+        public HardDrive(string category, int id, string name, bool isInternal, string type, string formFactor, string capacity, string cacheSize, 
                         string transferRate, string brand, string sata, string height, string depth, string width) 
-            : base(id, category)
+            : base(id, category, name)
         {
             IsInternal = isInternal;
             Type = type;

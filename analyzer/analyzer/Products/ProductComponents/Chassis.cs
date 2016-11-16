@@ -10,9 +10,9 @@ namespace analyzer.Products.ProductComponents
 {
     public class Chassis : ComputerComponents
     {
-        public Chassis(string category, int id, string type, bool atx, bool miniAtx, bool miniItx,
+        public Chassis(string category, int id, string name, string type, bool atx, bool miniAtx, bool miniItx,
                     string fans, string brand, string height, string width, string depth, string weight)
-            : base(id, category)
+            : base(id, category, name)
         {
             Type = type;
             Atx = atx;

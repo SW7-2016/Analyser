@@ -51,10 +51,10 @@ namespace analyzer.GetRawData
                 object[] tempResult = new object[reader.FieldCount];
                 reader.GetValues(tempResult);
 
-                Motherboard row = new Motherboard("Motherboard", (int)tempResult[0], (string)tempResult[1], (string)tempResult[2], 
-                                                (int)tempResult[3], (string)tempResult[4], reader.GetBoolean(5), reader.GetBoolean(6),
-                                                reader.GetBoolean(7), reader.GetBoolean(8), reader.GetBoolean(9), (int)tempResult[10], 
-                                                (int)tempResult[11], (string)tempResult[12], reader.GetBoolean(13), (string)tempResult[14]);
+                Motherboard row = new Motherboard("Motherboard", (int)tempResult[0], (string)tempResult[1], (string)tempResult[2], (string)tempResult[3], 
+                                                (int)tempResult[4], (string)tempResult[5], reader.GetBoolean(6), reader.GetBoolean(7),
+                                                reader.GetBoolean(8), reader.GetBoolean(9), reader.GetBoolean(10), (int)tempResult[11], 
+                                                (int)tempResult[12], (string)tempResult[13], reader.GetBoolean(14), (string)tempResult[15]);
                                                 
                 result.Add(row);
             }
@@ -76,9 +76,10 @@ namespace analyzer.GetRawData
                 object[] tempResult = new object[reader.FieldCount];
                 reader.GetValues(tempResult);
 
-                HardDrive row = new HardDrive("HardDrive", (int)tempResult[0], reader.GetBoolean(1), (string)tempResult[2], (string)tempResult[3], 
+                HardDrive row = new HardDrive("HardDrive", (int)tempResult[0], (string) tempResult[1], reader.GetBoolean(2), (string)tempResult[3], 
                                                 (string)tempResult[4], (string)tempResult[5], (string)tempResult[6], (string)tempResult[7], 
-                                                (string)tempResult[8], (string)tempResult[9], (string)tempResult[10], (string)tempResult[11]);
+                                                (string)tempResult[8], (string)tempResult[9], (string)tempResult[10], (string)tempResult[11], 
+                                                (string)tempResult[12]);
 
                 result.Add(row);
             }
@@ -91,16 +92,19 @@ namespace analyzer.GetRawData
 
         public List<GPU> GetGpuData()
         {
-            //MySqlCommand command = new MySqlCommand("SELECT * FROM GPU", connection);
-            MySqlCommand command = new MySqlCommand("SELECT DISTINCT * FROM GPU " +
-                                                    "NATURAL JOIN(" +
-                                                        "SELECT processorManufacturer, chipset, model, architecture, memSize, pciSlots, manufacturer" +
-                                                        "FROM GPU " +
-                                                        "GROUP BY processorManufacturer, chipset, model, architecture, memSize, pciSlots, manufacturer" +
-                                                        "HAVING   COUNT(*) > 1)" +
-                                                        " AS t)");
+            MySqlCommand command = new MySqlCommand("SELECT Product.ProductID, Product.name, GPU.processorManufacturer, GPU.chipset, GPU.model, " +
+                                                        "GPU.architecture, GPU.cooling, GPU.memSize, GPU.pciSlots, GPU.manufacturer " +
+                                                    "FROM Product, GPU " +
+                                                    "WHERE Product.ProductID = GPU.ProductID", connection);
+            /*MySqlCommand command = new MySqlCommand(
+            SELECT processorManufacturer, chipset, model, architecture, cooling, memSize, pciSlots, manufacturer, count(*) 
+            FROM GPU
+            GROUP BY processorManufacturer, chipset, model, architecture, cooling, memSize, pciSlots, manufacturer);
+            */
+
             List<GPU> result = new List<GPU>();
             MySqlDataReader reader = command.ExecuteReader();
+            int i;
 
             while (reader.Read())
             {
@@ -108,8 +112,8 @@ namespace analyzer.GetRawData
                 object[] tempResult = new object[reader.FieldCount];
                 reader.GetValues(tempResult);
 
-                GPU row = new GPU("GPU", (int)tempResult[0], (string)tempResult[1], (string)tempResult[2], (string)tempResult[3], 
-                                    (string)tempResult[4], (string)tempResult[5], (string)tempResult[6], (int)tempResult[7], (string)tempResult[8]);
+                GPU row = new GPU("GPU", (int)tempResult[0], (string)tempResult[1], (string)tempResult[2], (string)tempResult[3], (string)tempResult[4], 
+                                    (string)tempResult[5], (string)tempResult[6], (string)tempResult[7], (int)tempResult[8], (string)tempResult[9]);
 
                 result.Add(row);
             }
@@ -131,9 +135,9 @@ namespace analyzer.GetRawData
                 object[] tempResult = new object[reader.FieldCount];
                 reader.GetValues(tempResult);
 
-                CPU row = new CPU("CPU", (int)tempResult[0], (string)tempResult[1], (string)tempResult[2], (string)tempResult[3],
-                                    (string)tempResult[4], reader.GetBoolean(5), (string)tempResult[6], (string)tempResult[7], 
-                                    (int)tempResult[8], (int)tempResult[9], (string)tempResult[10]);
+                CPU row = new CPU("CPU", (int)tempResult[0], (string)tempResult[1], (string)tempResult[2], (string)tempResult[3], 
+                                    (string)tempResult[4], (string)tempResult[5], reader.GetBoolean(6), (string)tempResult[7], 
+                                    (string)tempResult[8], (int)tempResult[9], (int)tempResult[10], (string)tempResult[11]);
 
                 result.Add(row);
             }
@@ -155,9 +159,9 @@ namespace analyzer.GetRawData
                 object[] tempResult = new object[reader.FieldCount];
                 reader.GetValues(tempResult);
 
-                Chassis row = new Chassis("Chassis", (int)tempResult[0], (string)tempResult[1], reader.GetBoolean(2), reader.GetBoolean(3),
-                                            reader.GetBoolean(4), (string)tempResult[5], (string)tempResult[6], (string)tempResult[7],
-                                            (string)tempResult[8], (string)tempResult[9], (string)tempResult[10]);
+                Chassis row = new Chassis("Chassis", (int)tempResult[0], (string)tempResult[1], (string)tempResult[2], reader.GetBoolean(3), 
+                                            reader.GetBoolean(4), reader.GetBoolean(5), (string)tempResult[6], (string)tempResult[7], 
+                                            (string)tempResult[8], (string)tempResult[9], (string)tempResult[10], (string)tempResult[11]);
 
                 result.Add(row);
             }
@@ -179,8 +183,8 @@ namespace analyzer.GetRawData
                 object[] tempResult = new object[reader.FieldCount];
                 reader.GetValues(tempResult);
 
-                PSU row = new PSU("PSU", (int)tempResult[0], (string)tempResult[1], (string)tempResult[2], reader.GetBoolean(3), (string)tempResult[4], 
-                                    (string)tempResult[5], (string)tempResult[6], (string)tempResult[7], (string)tempResult[8]);
+                PSU row = new PSU("PSU", (int)tempResult[0], (string)tempResult[1], (string)tempResult[2], (string)tempResult[3], reader.GetBoolean(4), 
+                                    (string)tempResult[5], (string)tempResult[6], (string)tempResult[7], (string)tempResult[8], (string)tempResult[9]);
 
                 result.Add(row);
             }
@@ -202,8 +206,8 @@ namespace analyzer.GetRawData
                 object[] tempResult = new object[reader.FieldCount];
                 reader.GetValues(tempResult);
 
-                RAM row = new RAM("RAM", (int)tempResult[0], (string)tempResult[1], (string)tempResult[2], (string)tempResult[3], (string)tempResult[4],
-                                    (string)tempResult[5], (string)tempResult[6]);
+                RAM row = new RAM("RAM", (int)tempResult[0], (string)tempResult[1], (string)tempResult[2], (string)tempResult[3], 
+                                    (string)tempResult[4], (string)tempResult[5], (string)tempResult[6], (string)tempResult[7]);
 
                 result.Add(row);
             }

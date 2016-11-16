@@ -50,9 +50,9 @@ namespace analyzer
 
             #region Add data from crawlerDB
 
+            gpuList = DBConnection.GetGpuData();
             chassisList = DBConnection.GetChassisData();
             cpuList = DBConnection.GetCpuData();
-            gpuList = DBConnection.GetGpuData();
             hardDriveList = DBConnection.GetHardDriveData();
             motherboardList = DBConnection.GetMotherboardData();
             psuList = DBConnection.GetPsuData();

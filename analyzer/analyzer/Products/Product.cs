@@ -10,17 +10,18 @@ namespace analyzer.Products
         public double superScore = 0;
         public double criticScore = 0;
         public double userScore = 0;
-        public string name = "";
         public string description = "";
         public List<Retailer> retailers = new List<Retailer>();
 
-        protected Product(int id, string category)
+        protected Product(int id, string category, string name)
         {
             Id = id;
             Category = category;
+            Name = name;
         }
 
         public string Category { get; }
+        public string Name { get; }
         public int Id { get; }
     }
 }

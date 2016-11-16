@@ -8,9 +8,9 @@ namespace analyzer.Products.ProductComponents
 {
     public class GPU : ComputerComponents
     {
-        public GPU(string category, int id, string processorManufacturer, string chipset, string model, string architecture,
-                                    string cooling, string memSize, int pciSlots, string manufacturer) 
-            : base(id, category)
+        public GPU(string category, int id, string name, string processorManufacturer, string chipset, string model, 
+                    string architecture, string cooling, string memSize, int pciSlots, string manufacturer) 
+            : base(id, category, name)
         {
             ProcessorManufacturer = processorManufacturer;
             Chipset = chipset;

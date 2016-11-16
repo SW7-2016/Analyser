@@ -9,10 +9,10 @@ namespace analyzer.Products.ProductComponents
 {
     public class Motherboard : ComputerComponents
     {
-        public Motherboard(string category, int id, string formFactor, string cpuType, int cpuCount, string socket, 
+        public Motherboard(string category, int id, string name, string formFactor, string cpuType, int cpuCount, string socket, 
                             bool netCard, bool soundCard, bool multiGpu, bool crossfire, bool sli, int maxMem, 
                             int memSlots, string memType, bool supportIntegratedGraphicsCard, string chipset) 
-            : base(id, category)
+            : base(id, category, name)
         {
             FormFactor = formFactor;
             CpuType = cpuType;
