@@ -91,12 +91,20 @@ namespace analyzer.GetRawData
 
         public List<GPU> GetGpuData()
         {
-            MySqlCommand command = new MySqlCommand("SELECT * FROM GPU", connection);
+            //MySqlCommand command = new MySqlCommand("SELECT * FROM GPU", connection);
+            MySqlCommand command = new MySqlCommand("SELECT DISTINCT * FROM GPU " +
+                                                    "NATURAL JOIN(" +
+                                                        "SELECT processorManufacturer, chipset, model, architecture, memSize, pciSlots, manufacturer" +
+                                                        "FROM GPU " +
+                                                        "GROUP BY processorManufacturer, chipset, model, architecture, memSize, pciSlots, manufacturer" +
+                                                        "HAVING   COUNT(*) > 1)" +
+                                                        " AS t)");
             List<GPU> result = new List<GPU>();
             MySqlDataReader reader = command.ExecuteReader();
 
             while (reader.Read())
             {
+
                 object[] tempResult = new object[reader.FieldCount];
                 reader.GetValues(tempResult);
 
