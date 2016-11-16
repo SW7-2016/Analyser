@@ -1,0 +1,15 @@
+C:\Repos\P7Crawler\Analyzer\analyzer\analyzer\bin\Debug\analyzer.exe.config
+C:\Repos\P7Crawler\Analyzer\analyzer\analyzer\obj\Debug\analyzer.csprojResolveAssemblyReference.cache
+C:\Repos\P7Crawler\Analyzer\analyzer\analyzer\obj\Debug\MainWindow.g.cs
+C:\Repos\P7Crawler\Analyzer\analyzer\analyzer\obj\Debug\App.g.cs
+C:\Repos\P7Crawler\Analyzer\analyzer\analyzer\obj\Debug\analyzer_MarkupCompile.cache
+C:\Repos\P7Crawler\Analyzer\analyzer\analyzer\obj\Debug\analyzer_MarkupCompile.lref
+C:\Repos\P7Crawler\Analyzer\analyzer\analyzer\bin\Debug\analyzer.exe
+C:\Repos\P7Crawler\Analyzer\analyzer\analyzer\bin\Debug\analyzer.pdb
+C:\Repos\P7Crawler\Analyzer\analyzer\analyzer\bin\Debug\MySql.Data.dll
+C:\Repos\P7Crawler\Analyzer\analyzer\analyzer\obj\Debug\MainWindow.baml
+C:\Repos\P7Crawler\Analyzer\analyzer\analyzer\obj\Debug\analyzer.g.resources
+C:\Repos\P7Crawler\Analyzer\analyzer\analyzer\obj\Debug\analyzer.Properties.Resources.resources
+C:\Repos\P7Crawler\Analyzer\analyzer\analyzer\obj\Debug\analyzer.csproj.GenerateResource.Cache
+C:\Repos\P7Crawler\Analyzer\analyzer\analyzer\obj\Debug\analyzer.exe
+C:\Repos\P7Crawler\Analyzer\analyzer\analyzer\obj\Debug\analyzer.pdb
