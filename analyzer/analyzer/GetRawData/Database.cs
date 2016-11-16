@@ -67,42 +67,199 @@ namespace analyzer.GetRawData
 
         public List<HardDrive> GetHardDriveData()
         {
-            throw new NotImplementedException();
+            MySqlCommand command = new MySqlCommand("SELECT * FROM HardDrive", connection);
+            List<HardDrive> result = new List<HardDrive>();
+            MySqlDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                object[] tempResult = new object[reader.FieldCount];
+                reader.GetValues(tempResult);
+
+                HardDrive row = new HardDrive("HardDrive", (int)tempResult[0], reader.GetBoolean(1), (string)tempResult[2], (string)tempResult[3], 
+                                                (string)tempResult[4], (string)tempResult[5], (string)tempResult[6], (string)tempResult[7], 
+                                                (string)tempResult[8], (string)tempResult[9], (string)tempResult[10], (string)tempResult[11]);
+
+                result.Add(row);
+            }
+
+
+            reader.Close();
+
+            return result;
         }
 
         public List<GPU> GetGpuData()
         {
-            throw new NotImplementedException();
+            MySqlCommand command = new MySqlCommand("SELECT * FROM GPU", connection);
+            List<GPU> result = new List<GPU>();
+            MySqlDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                object[] tempResult = new object[reader.FieldCount];
+                reader.GetValues(tempResult);
+
+                GPU row = new GPU("GPU", (int)tempResult[0], (string)tempResult[1], (string)tempResult[2], (string)tempResult[3], 
+                                    (string)tempResult[4], (string)tempResult[5], (string)tempResult[6], (int)tempResult[7], (string)tempResult[8]);
+
+                result.Add(row);
+            }
+
+
+            reader.Close();
+
+            return result;
         }
 
         public List<CPU> GetCpuData()
         {
-            throw new NotImplementedException();
+            MySqlCommand command = new MySqlCommand("SELECT * FROM CPU", connection);
+            List<CPU> result = new List<CPU>();
+            MySqlDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                object[] tempResult = new object[reader.FieldCount];
+                reader.GetValues(tempResult);
+
+                CPU row = new CPU("CPU", (int)tempResult[0], (string)tempResult[1], (string)tempResult[2], (string)tempResult[3],
+                                    (string)tempResult[4], reader.GetBoolean(5), (string)tempResult[6], (string)tempResult[7], 
+                                    (int)tempResult[8], (int)tempResult[9], (string)tempResult[10]);
+
+                result.Add(row);
+            }
+
+
+            reader.Close();
+
+            return result;
         }
 
         public List<Chassis> GetChassisData()
         {
-            throw new NotImplementedException();
+            MySqlCommand command = new MySqlCommand("SELECT * FROM Chassis", connection);
+            List<Chassis> result = new List<Chassis>();
+            MySqlDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                object[] tempResult = new object[reader.FieldCount];
+                reader.GetValues(tempResult);
+
+                Chassis row = new Chassis("Chassis", (int)tempResult[0], (string)tempResult[1], reader.GetBoolean(2), reader.GetBoolean(3),
+                                            reader.GetBoolean(4), (string)tempResult[5], (string)tempResult[6], (string)tempResult[7],
+                                            (string)tempResult[8], (string)tempResult[9], (string)tempResult[10]);
+
+                result.Add(row);
+            }
+
+
+            reader.Close();
+
+            return result;
         }
 
         public List<PSU> GetPsuData()
         {
-            throw new NotImplementedException();
+            MySqlCommand command = new MySqlCommand("SELECT * FROM PSU", connection);
+            List<PSU> result = new List<PSU>();
+            MySqlDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                object[] tempResult = new object[reader.FieldCount];
+                reader.GetValues(tempResult);
+
+                PSU row = new PSU("PSU", (int)tempResult[0], (string)tempResult[1], (string)tempResult[2], reader.GetBoolean(3), (string)tempResult[4], 
+                                    (string)tempResult[5], (string)tempResult[6], (string)tempResult[7], (string)tempResult[8]);
+
+                result.Add(row);
+            }
+
+
+            reader.Close();
+
+            return result;
         }
 
         public List<RAM> GetRamData()
         {
-            throw new NotImplementedException();
+            MySqlCommand command = new MySqlCommand("SELECT * FROM RAM", connection);
+            List<RAM> result = new List<RAM>();
+            MySqlDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                object[] tempResult = new object[reader.FieldCount];
+                reader.GetValues(tempResult);
+
+                RAM row = new RAM("RAM", (int)tempResult[0], (string)tempResult[1], (string)tempResult[2], (string)tempResult[3], (string)tempResult[4],
+                                    (string)tempResult[5], (string)tempResult[6]);
+
+                result.Add(row);
+            }
+
+
+            reader.Close();
+
+            return result;
         }
 
         public List<CriticReview> GetCriticReviewData()
         {
-            throw new NotImplementedException();
+            MySqlCommand command = new MySqlCommand("SELECT * FROM Review WHERE isCriticReview", connection);
+            List<CriticReview> result = new List<CriticReview>();
+            MySqlDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                object[] tempResult = new object[reader.FieldCount];
+                reader.GetValues(tempResult);
+
+                CriticReview row = new CriticReview((int)tempResult[0], (float)tempResult[4], (float)tempResult[14], reader.GetDateTime(1),
+                                    (string)tempResult[13], (string)tempResult[12], (string)tempResult[11]);
+                if (!reader.IsDBNull(7) && !reader.IsDBNull(8))
+                {
+                    row.positiveReception = (int)tempResult[7];
+                    row.negativeReception = (int)tempResult[8];
+                }
+                    
+                result.Add(row);
+            }
+
+            reader.Close();
+
+            return result;
         }
 
         public List<UserReview> GetUserReviewData()
         {
-            throw new NotImplementedException();
+            MySqlCommand command = new MySqlCommand("SELECT * FROM Review WHERE isCriticReview<>1", connection);
+            List<UserReview> result = new List<UserReview>();
+            MySqlDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                object[] tempResult = new object[reader.FieldCount];
+                reader.GetValues(tempResult);
+
+                UserReview row = new UserReview((int)tempResult[0], (double)tempResult[4], (double)tempResult[14], reader.GetDateTime(2),
+                                    (string)tempResult[13], (string)tempResult[12], (string)tempResult[11], reader.GetBoolean(9));
+                if (!reader.IsDBNull(7) && !reader.IsDBNull(8))
+                {
+                    row.positiveReception = (int)tempResult[7];
+                    row.negativeReception = (int)tempResult[8];
+                }
+
+
+                result.Add(row);
+            }
+
+
+            reader.Close();
+
+            return result;
         }
     }
 }

@@ -4,16 +4,16 @@
 winexe
 C#
 .cs
-C:\Repos\P7Crawler\Analyzer\analyzer\analyzer\obj\Debug\
+C:\Repos\Analyser\analyzer\analyzer\obj\Debug\
 analyzer
 none
 false
 DEBUG;TRACE
-C:\Repos\P7Crawler\Analyzer\analyzer\analyzer\App.xaml
+C:\Repos\Analyser\analyzer\analyzer\App.xaml
 11151548125
 
 20438365911
-141423141308
+141639282644
 MainWindow.xaml;
 
 False

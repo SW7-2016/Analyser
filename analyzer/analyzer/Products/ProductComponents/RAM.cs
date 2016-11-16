@@ -8,7 +8,7 @@ namespace analyzer.Products.ProductComponents
 {
     public class RAM : ComputerComponents
     {
-        public RAM(int id, string category, string type, string capacity, string speed, 
+        public RAM(string category, int id, string type, string capacity, string speed, 
                     string technology, string formFactor, string casLatency) 
             : base(id, category)
         {

@@ -9,7 +9,7 @@ namespace analyzer.Products.ProductComponents
 {
     public class PSU : ComputerComponents
     {
-        public PSU(int id, string category, string power, string formFactor, bool modular, string width, 
+        public PSU(string category, int id, string power, string formFactor, bool modular, string width, 
                     string depth, string height, string weight, string brand) 
             : base(id, category)
         {
