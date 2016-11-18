@@ -48,25 +48,6 @@ namespace analyzer.GetRawData
                                                         "Motherboard.memSlots, Motherboard.memType, Motherboard.graphicsCard, Motherboard.chipset " +
                                                     "FROM Product, Motherboard " +
                                                     "WHERE Product.ProductID = Motherboard.ProductID", connection);
-            /*
-            SELECT name, formFactor, cpuType, cpuCount, socket, netCard, soundCard, multiGPU, crossfire, sli, maxMem, memSlots, memType, graphicsCard, chipset, count(*) 
-            FROM Product, Motherboard
-            where Product.ProductID = Motherboard.ProductID
-            GROUP BY name, CPUformFactor, cpuType, cpuCount, socket, netCard, soundCard, multiGPU, crossfire, sli, maxMem, memSlots, memType, graphicsCard, chipset
-            */
-            /*
-            drop table MergedProduct2;
-            CREATE TABLE MergedProduct2 AS SELECT* FROM Product;
-
-            update MergedProduct2 SET name = REPLACE(name, ', tray;', '') WHERE MergedProduct2.name is not null;
-            update MergedProduct2 SET name = REPLACE(name, ', box;', '') WHERE MergedProduct2.name is not null;
-            update MergedProduct2 SET name = REPLACE(name, ' tray', '') WHERE MergedProduct2.name is not null;
-            update MergedProduct2 SET name = REPLACE(name, ' box', '') WHERE MergedProduct2.name is not null;
-
-            SELECT*
-            FROM MergedProduct2, CPU
-            where MergedProduct2.ProductID = CPU.ProductID
-            */
 
 
             List<Motherboard> result = new List<Motherboard>();
@@ -98,13 +79,7 @@ namespace analyzer.GetRawData
                                                         "HardDrive.height, HardDrive.depth, HardDrive.width " +
                                                     "FROM Product, HardDrive " +
                                                     "WHERE Product.ProductID = HardDrive.ProductID", connection);
-            /*
-             
-             
-             
-             
-             
-             */
+
             List<HardDrive> result = new List<HardDrive>();
             MySqlDataReader reader = command.ExecuteReader();
 
@@ -167,17 +142,22 @@ namespace analyzer.GetRawData
                                                     "FROM Product, CPU " +
                                                     "WHERE Product.ProductID = CPU.ProductID", connection);
             /*
-            CREATE TABLE MergedProduct2 LIKE Product; 
-            INSERT MergedProduct2 SELECT * FROM Product;
+            CREATE TABLE MergedProduct2 AS SELECT * FROM Product;
 
-            update Product2 SET name = REPLACE(name, ', tray;', '');
-            update Product2 SET name = REPLACE(name, ', box;', '');
-            update Product2 SET name = REPLACE(name, ' tray', '');
-            update Product2 SET name = REPLACE(name, ' box', '');
+            update MergedProduct2, CPU SET name = REPLACE(name, ', Tray', '') WHERE MergedProduct2.ProductID = CPU.ProductID;
+            update MergedProduct2, CPU SET name = REPLACE(name, ', Box', '') WHERE MergedProduct2.ProductID = CPU.ProductID;
+            update MergedProduct2, CPU SET name = REPLACE(name, ' Tray', '') WHERE MergedProduct2.ProductID = CPU.ProductID;
+            update MergedProduct2, CPU SET name = REPLACE(name, ' Box', '') WHERE MergedProduct2.ProductID = CPU.ProductID;
+            update MergedProduct2, CPU SET name = REPLACE(name, ' (Inteled)', '') WHERE MergedProduct2.ProductID = CPU.ProductID;
+            update MergedProduct2, CPU SET name = REPLACE(name, ' (OEM/bakke)', '') WHERE MergedProduct2.ProductID = CPU.ProductID;
+            update MergedProduct2, CPU SET name = REPLACE(name, ' (AMD Processor in a (PIB))', '') WHERE MergedProduct2.ProductID = CPU.ProductID;
+
 
             SELECT *
             FROM MergedProduct2, CPU
-            where MergedProduct2.ProductID = CPU.ProductID
+            where MergedProduct2.ProductID = CPU.ProductID;
+
+            drop table MergedProduct2;
  
               
               
@@ -211,10 +191,7 @@ namespace analyzer.GetRawData
                                                     "FROM Product, Chassis " +
                                                     "WHERE Product.ProductID = Chassis.ProductID", connection);
             List<Chassis> result = new List<Chassis>();
-            /*MySqlCommand command = new MySqlCommand("SELECT Product.ProductID, Product.name, GPU.processorManufacturer, GPU.chipset, GPU.model, " +
-                                                        "GPU.architecture, GPU.cooling, GPU.memSize, GPU.pciSlots, GPU.manufacturer " +
-                                                    "FROM Product, GPU " +
-                                                    "WHERE Product.ProductID = GPU.ProductID", connection);*/
+
             MySqlDataReader reader = command.ExecuteReader();
 
             while (reader.Read())
