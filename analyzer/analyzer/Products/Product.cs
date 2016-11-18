@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using analyzer.Products.Reviews;
 using analyzer.Products.Retailers;
-using System.Text.RegularExpressions;
 
 namespace analyzer.Products
 {

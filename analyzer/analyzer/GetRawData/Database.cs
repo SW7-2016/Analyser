@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MySql.Data;
+﻿using System.Collections.Generic;
 using MySql.Data.MySqlClient;
-using System.Threading;
-using System.Diagnostics;
 using analyzer.Products.ProductComponents;
-using analyzer.Products.Retailers;
 using analyzer.Products.Reviews;
 
 namespace analyzer.GetRawData
@@ -27,8 +18,12 @@ namespace analyzer.GetRawData
             int result = (int)reader.GetValue(0);
 
         reader.Close();*/
-        private readonly string connectionString = "server=172.25.23.57;database=crawlerdb;user=analyser;port=3306;password=Analyser23!;";
-        private readonly string connectionString2 = "server=172.25.23.57;database=analyserdb;user=analyser;port=3306;password=Analyser23!;";
+
+        private readonly string connectionString =
+            "server=172.25.23.57;database=crawlerdb;user=analyser;port=3306;password=Analyser23!;";
+
+        private readonly string connectionString2 =
+            "server=172.25.23.57;database=analyserdb;user=analyser;port=3306;password=Analyser23!;";
 
         public MySqlConnection connection;
 
@@ -42,12 +37,14 @@ namespace analyzer.GetRawData
 
         public List<Motherboard> GetMotherboardData()
         {
-            MySqlCommand command = new MySqlCommand("SELECT Product.ProductID, Product.name, Motherboard.formFactor, Motherboard.cpuType, " +
-                                                        "Motherboard.cpuCount, Motherboard.socket, Motherboard.netcard, Motherboard.soundCard, " +
-                                                        "Motherboard.multiGpu, Motherboard.crossfire, Motherboard.sli, Motherboard.maxMem, " +
-                                                        "Motherboard.memSlots, Motherboard.memType, Motherboard.graphicsCard, Motherboard.chipset " +
-                                                    "FROM Product, Motherboard " +
-                                                    "WHERE Product.ProductID = Motherboard.ProductID", connection);
+            MySqlCommand command =
+                new MySqlCommand(
+                    "SELECT Product.ProductID, Product.name, Motherboard.formFactor, Motherboard.cpuType, " +
+                    "Motherboard.cpuCount, Motherboard.socket, Motherboard.netcard, Motherboard.soundCard, " +
+                    "Motherboard.multiGpu, Motherboard.crossfire, Motherboard.sli, Motherboard.maxMem, " +
+                    "Motherboard.memSlots, Motherboard.memType, Motherboard.graphicsCard, Motherboard.chipset " +
+                    "FROM Product, Motherboard " +
+                    "WHERE Product.ProductID = Motherboard.ProductID", connection);
 
 
             List<Motherboard> result = new List<Motherboard>();
@@ -58,11 +55,12 @@ namespace analyzer.GetRawData
                 object[] tempResult = new object[reader.FieldCount];
                 reader.GetValues(tempResult);
 
-                Motherboard row = new Motherboard("Motherboard", (int)tempResult[0], (string)tempResult[1], (string)tempResult[2], (string)tempResult[3], 
-                                                (int)tempResult[4], (string)tempResult[5], reader.GetBoolean(6), reader.GetBoolean(7),
-                                                reader.GetBoolean(8), reader.GetBoolean(9), reader.GetBoolean(10), (int)tempResult[11], 
-                                                (int)tempResult[12], (string)tempResult[13], reader.GetBoolean(14), (string)tempResult[15]);
-                                                
+                Motherboard row = new Motherboard("Motherboard", (int) tempResult[0], (string) tempResult[1],
+                    (string) tempResult[2], (string) tempResult[3],
+                    (int) tempResult[4], (string) tempResult[5], reader.GetBoolean(6), reader.GetBoolean(7),
+                    reader.GetBoolean(8), reader.GetBoolean(9), reader.GetBoolean(10), (int) tempResult[11],
+                    (int) tempResult[12], (string) tempResult[13], reader.GetBoolean(14), (string) tempResult[15]);
+
                 result.Add(row);
             }
 
@@ -74,11 +72,13 @@ namespace analyzer.GetRawData
 
         public List<HardDrive> GetHardDriveData()
         {
-            MySqlCommand command = new MySqlCommand("SELECT Product.ProductID, Product.name, HardDrive.isInternal, HardDrive.type, HardDrive.formFactor, " +
-                                                        "HardDrive.capacity, HardDrive.cacheSize, HardDrive.transferRate, HardDrive.brand, HardDrive.sata, " +
-                                                        "HardDrive.height, HardDrive.depth, HardDrive.width " +
-                                                    "FROM Product, HardDrive " +
-                                                    "WHERE Product.ProductID = HardDrive.ProductID", connection);
+            MySqlCommand command =
+                new MySqlCommand(
+                    "SELECT Product.ProductID, Product.name, HardDrive.isInternal, HardDrive.type, HardDrive.formFactor, " +
+                    "HardDrive.capacity, HardDrive.cacheSize, HardDrive.transferRate, HardDrive.brand, HardDrive.sata, " +
+                    "HardDrive.height, HardDrive.depth, HardDrive.width " +
+                    "FROM Product, HardDrive " +
+                    "WHERE Product.ProductID = HardDrive.ProductID", connection);
 
             List<HardDrive> result = new List<HardDrive>();
             MySqlDataReader reader = command.ExecuteReader();
@@ -88,10 +88,11 @@ namespace analyzer.GetRawData
                 object[] tempResult = new object[reader.FieldCount];
                 reader.GetValues(tempResult);
 
-                HardDrive row = new HardDrive("HardDrive", (int)tempResult[0], (string) tempResult[1], reader.GetBoolean(2), (string)tempResult[3], 
-                                                (string)tempResult[4], (string)tempResult[5], (string)tempResult[6], (string)tempResult[7], 
-                                                (string)tempResult[8], (string)tempResult[9], (string)tempResult[10], (string)tempResult[11], 
-                                                (string)tempResult[12]);
+                HardDrive row = new HardDrive("HardDrive", (int) tempResult[0], (string) tempResult[1],
+                    reader.GetBoolean(2), (string) tempResult[3],
+                    (string) tempResult[4], (string) tempResult[5], (string) tempResult[6], (string) tempResult[7],
+                    (string) tempResult[8], (string) tempResult[9], (string) tempResult[10], (string) tempResult[11],
+                    (string) tempResult[12]);
 
                 result.Add(row);
             }
@@ -104,10 +105,12 @@ namespace analyzer.GetRawData
 
         public List<GPU> GetGpuData()
         {
-            MySqlCommand command = new MySqlCommand("SELECT Product.ProductID, Product.name, GPU.processorManufacturer, GPU.chipset, GPU.model, " +
-                                                        "GPU.architecture, GPU.cooling, GPU.memSize, GPU.pciSlots, GPU.manufacturer " +
-                                                    "FROM Product, GPU " +
-                                                    "WHERE Product.ProductID = GPU.ProductID", connection);
+            MySqlCommand command =
+                new MySqlCommand(
+                    "SELECT Product.ProductID, Product.name, GPU.processorManufacturer, GPU.chipset, GPU.model, " +
+                    "GPU.architecture, GPU.cooling, GPU.memSize, GPU.pciSlots, GPU.manufacturer " +
+                    "FROM Product, GPU " +
+                    "WHERE Product.ProductID = GPU.ProductID", connection);
             /*MySqlCommand command = new MySqlCommand(
             SELECT processorManufacturer, chipset, model, architecture, cooling, memSize, pciSlots, manufacturer, count(*) 
             FROM GPU
@@ -119,12 +122,13 @@ namespace analyzer.GetRawData
 
             while (reader.Read())
             {
-
                 object[] tempResult = new object[reader.FieldCount];
                 reader.GetValues(tempResult);
 
-                GPU row = new GPU("GPU", (int)tempResult[0], (string)tempResult[1], (string)tempResult[2], (string)tempResult[3], (string)tempResult[4], 
-                                    (string)tempResult[5], (string)tempResult[6], (string)tempResult[7], (int)tempResult[8], (string)tempResult[9]);
+                GPU row = new GPU("GPU", (int) tempResult[0], (string) tempResult[1], (string) tempResult[2],
+                    (string) tempResult[3], (string) tempResult[4],
+                    (string) tempResult[5], (string) tempResult[6], (string) tempResult[7], (int) tempResult[8],
+                    (string) tempResult[9]);
 
                 result.Add(row);
             }
@@ -137,10 +141,12 @@ namespace analyzer.GetRawData
 
         public List<CPU> GetCpuData()
         {
-            MySqlCommand command = new MySqlCommand("SELECT Product.ProductID, Product.name, CPU.model, CPU.clock, CPU.maxTurbo, CPU.integratedGpu, " +
-                                                        "CPU.stockCooler, CPU.manufacturer, CPU.cpuSeries, CPU.logicalCores, CPU.physicalCores, CPU.socket " +
-                                                    "FROM Product, CPU " +
-                                                    "WHERE Product.ProductID = CPU.ProductID", connection);
+            MySqlCommand command =
+                new MySqlCommand(
+                    "SELECT Product.ProductID, Product.name, CPU.model, CPU.clock, CPU.maxTurbo, CPU.integratedGpu, " +
+                    "CPU.stockCooler, CPU.manufacturer, CPU.cpuSeries, CPU.logicalCores, CPU.physicalCores, CPU.socket " +
+                    "FROM Product, CPU " +
+                    "WHERE Product.ProductID = CPU.ProductID", connection);
             /*
             CREATE TABLE MergedProduct2 AS SELECT * FROM Product;
 
@@ -158,10 +164,6 @@ namespace analyzer.GetRawData
             where MergedProduct2.ProductID = CPU.ProductID;
 
             drop table MergedProduct2;
- 
-              
-              
-             
              */
             List<CPU> result = new List<CPU>();
             MySqlDataReader reader = command.ExecuteReader();
@@ -171,9 +173,10 @@ namespace analyzer.GetRawData
                 object[] tempResult = new object[reader.FieldCount];
                 reader.GetValues(tempResult);
 
-                CPU row = new CPU("CPU", (int)tempResult[0], (string)tempResult[1], (string)tempResult[2], (string)tempResult[3], 
-                                    (string)tempResult[4], (string)tempResult[5], reader.GetBoolean(6), (string)tempResult[7], 
-                                    (string)tempResult[8], (int)tempResult[9], (int)tempResult[10], (string)tempResult[11]);
+                CPU row = new CPU("CPU", (int) tempResult[0], (string) tempResult[1], (string) tempResult[2],
+                    (string) tempResult[3],
+                    (string) tempResult[4], (string) tempResult[5], reader.GetBoolean(6), (string) tempResult[7],
+                    (string) tempResult[8], (int) tempResult[9], (int) tempResult[10], (string) tempResult[11]);
 
                 result.Add(row);
             }
@@ -186,10 +189,12 @@ namespace analyzer.GetRawData
 
         public List<Chassis> GetChassisData()
         {
-            MySqlCommand command = new MySqlCommand("SELECT Product.ProductID, Product.name, Chassis.type, Chassis.atx, Chassis.miniAtx, Chassis.miniItx, " +
-                                                        "Chassis.fans, Chassis.brand, Chassis.height, Chassis.width, Chassis.depth, Chassis.weight " +
-                                                    "FROM Product, Chassis " +
-                                                    "WHERE Product.ProductID = Chassis.ProductID", connection);
+            MySqlCommand command =
+                new MySqlCommand(
+                    "SELECT Product.ProductID, Product.name, Chassis.type, Chassis.atx, Chassis.miniAtx, Chassis.miniItx, " +
+                    "Chassis.fans, Chassis.brand, Chassis.height, Chassis.width, Chassis.depth, Chassis.weight " +
+                    "FROM Product, Chassis " +
+                    "WHERE Product.ProductID = Chassis.ProductID", connection);
             List<Chassis> result = new List<Chassis>();
 
             MySqlDataReader reader = command.ExecuteReader();
@@ -199,9 +204,10 @@ namespace analyzer.GetRawData
                 object[] tempResult = new object[reader.FieldCount];
                 reader.GetValues(tempResult);
 
-                Chassis row = new Chassis("Chassis", (int)tempResult[0], (string)tempResult[1], (string)tempResult[2], reader.GetBoolean(3), 
-                                            reader.GetBoolean(4), reader.GetBoolean(5), (string)tempResult[6], (string)tempResult[7], 
-                                            (string)tempResult[8], (string)tempResult[9], (string)tempResult[10], (string)tempResult[11]);
+                Chassis row = new Chassis("Chassis", (int) tempResult[0], (string) tempResult[1], (string) tempResult[2],
+                    reader.GetBoolean(3),
+                    reader.GetBoolean(4), reader.GetBoolean(5), (string) tempResult[6], (string) tempResult[7],
+                    (string) tempResult[8], (string) tempResult[9], (string) tempResult[10], (string) tempResult[11]);
 
                 result.Add(row);
             }
@@ -214,10 +220,11 @@ namespace analyzer.GetRawData
 
         public List<PSU> GetPsuData()
         {
-            MySqlCommand command = new MySqlCommand("SELECT Product.ProductID, Product.name, PSU.power, PSU.formFactor, PSU.modular, " +
-                                                        "PSU.width, PSU.depth, PSU.height, PSU.weight, PSU.brand " +
-                                                    "FROM Product, PSU " +
-                                                    "WHERE Product.ProductID = PSU.ProductID", connection);
+            MySqlCommand command =
+                new MySqlCommand("SELECT Product.ProductID, Product.name, PSU.power, PSU.formFactor, PSU.modular, " +
+                                 "PSU.width, PSU.depth, PSU.height, PSU.weight, PSU.brand " +
+                                 "FROM Product, PSU " +
+                                 "WHERE Product.ProductID = PSU.ProductID", connection);
             List<PSU> result = new List<PSU>();
             MySqlDataReader reader = command.ExecuteReader();
 
@@ -226,8 +233,10 @@ namespace analyzer.GetRawData
                 object[] tempResult = new object[reader.FieldCount];
                 reader.GetValues(tempResult);
 
-                PSU row = new PSU("PSU", (int)tempResult[0], (string)tempResult[1], (string)tempResult[2], (string)tempResult[3], reader.GetBoolean(4), 
-                                    (string)tempResult[5], (string)tempResult[6], (string)tempResult[7], (string)tempResult[8], (string)tempResult[9]);
+                PSU row = new PSU("PSU", (int) tempResult[0], (string) tempResult[1], (string) tempResult[2],
+                    (string) tempResult[3], reader.GetBoolean(4),
+                    (string) tempResult[5], (string) tempResult[6], (string) tempResult[7], (string) tempResult[8],
+                    (string) tempResult[9]);
 
                 result.Add(row);
             }
@@ -240,10 +249,11 @@ namespace analyzer.GetRawData
 
         public List<RAM> GetRamData()
         {
-            MySqlCommand command = new MySqlCommand("SELECT Product.ProductID, Product.name, RAM.type, RAM.capacity, RAM.speed, " +
-                                                        "RAM.technology, RAM.formFactor, RAM.casLatens " +
-                                                    "FROM Product, RAM " +
-                                                    "WHERE Product.ProductID = RAM.ProductID", connection);
+            MySqlCommand command =
+                new MySqlCommand("SELECT Product.ProductID, Product.name, RAM.type, RAM.capacity, RAM.speed, " +
+                                 "RAM.technology, RAM.formFactor, RAM.casLatens " +
+                                 "FROM Product, RAM " +
+                                 "WHERE Product.ProductID = RAM.ProductID", connection);
             List<RAM> result = new List<RAM>();
             MySqlDataReader reader = command.ExecuteReader();
 
@@ -252,8 +262,9 @@ namespace analyzer.GetRawData
                 object[] tempResult = new object[reader.FieldCount];
                 reader.GetValues(tempResult);
 
-                RAM row = new RAM("RAM", (int)tempResult[0], (string)tempResult[1], (string)tempResult[2], (string)tempResult[3], 
-                                    (string)tempResult[4], (string)tempResult[5], (string)tempResult[6], (string)tempResult[7]);
+                RAM row = new RAM("RAM", (int) tempResult[0], (string) tempResult[1], (string) tempResult[2],
+                    (string) tempResult[3],
+                    (string) tempResult[4], (string) tempResult[5], (string) tempResult[6], (string) tempResult[7]);
 
                 result.Add(row);
             }
@@ -275,14 +286,15 @@ namespace analyzer.GetRawData
                 object[] tempResult = new object[reader.FieldCount];
                 reader.GetValues(tempResult);
 
-                CriticReview row = new CriticReview((int)tempResult[0], (float)tempResult[4], (float)tempResult[14], reader.GetDateTime(1),
-                                    (string)tempResult[13], (string)tempResult[12], (string)tempResult[11]);
+                CriticReview row = new CriticReview((int) tempResult[0], (float) tempResult[4], (float) tempResult[14],
+                    reader.GetDateTime(1),
+                    (string) tempResult[13], (string) tempResult[12], (string) tempResult[11]);
                 if (!reader.IsDBNull(7) && !reader.IsDBNull(8))
                 {
-                    row.positiveReception = (int)tempResult[7];
-                    row.negativeReception = (int)tempResult[8];
+                    row.positiveReception = (int) tempResult[7];
+                    row.negativeReception = (int) tempResult[8];
                 }
-                    
+
                 result.Add(row);
             }
 
@@ -302,16 +314,17 @@ namespace analyzer.GetRawData
                 object[] tempResult = new object[reader.FieldCount];
                 reader.GetValues(tempResult);
 
-                UserReview row = new UserReview((int)tempResult[0], (double)tempResult[4], (double)tempResult[14], reader.GetDateTime(2),
-                                    (string)tempResult[13], (string)tempResult[12], (string)tempResult[11], reader.GetBoolean(9));
+                UserReview row = new UserReview((int) tempResult[0], (float) tempResult[4], (float) tempResult[14],
+                    reader.GetDateTime(2),
+                    (string) tempResult[13], (string) tempResult[12], (string) tempResult[11], reader.GetBoolean(9));
                 if (!reader.IsDBNull(7) && !reader.IsDBNull(8))
                 {
-                    row.positiveReception = (int)tempResult[7];
-                    row.negativeReception = (int)tempResult[8];
+                    row.positiveReception = (int) tempResult[7];
+                    row.negativeReception = (int) tempResult[8];
                 }
 
 
-                result.Add(row);
+                //result.Add(row);
             }
 
 
