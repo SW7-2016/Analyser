@@ -42,34 +42,30 @@ namespace analyzer
         private void GetDataTest_bt_Click(object sender, RoutedEventArgs e)
         {
 
-            DBConnect DBConnection = new DBConnect();
+            DBConnect dbConnection = new DBConnect();
 
-            DBConnection.DbInitialize(true);
+            dbConnection.DbInitialize(true);
 
-            DBConnection.connection.Open();
+            dbConnection.connection.Open();
 
             #region Add data from crawlerDB
 
-            gpuList = DBConnection.GetGpuData();
-            chassisList = DBConnection.GetChassisData();
-            cpuList = DBConnection.GetCpuData();
-            hardDriveList = DBConnection.GetHardDriveData();
-            motherboardList = DBConnection.GetMotherboardData();
-            psuList = DBConnection.GetPsuData();
-            ramList = DBConnection.GetRamData();
-            criticReviewList = DBConnection.GetCriticReviewData();
-            userReviewList = DBConnection.GetUserReviewData();
+            gpuList = dbConnection.GetGpuData();
+            chassisList = dbConnection.GetChassisData();
+            cpuList = dbConnection.GetCpuData();
+            hardDriveList = dbConnection.GetHardDriveData();
+            motherboardList = dbConnection.GetMotherboardData();
+            psuList = dbConnection.GetPsuData();
+            ramList = dbConnection.GetRamData();
+            criticReviewList = dbConnection.GetCriticReviewData();
+            userReviewList = dbConnection.GetUserReviewData();
 
 
             #endregion
 
 
 
-
-
-
-
-            DBConnection.connection.Close();
+            dbConnection.connection.Close();
         }
     }
 }

@@ -42,7 +42,33 @@ namespace analyzer.GetRawData
 
         public List<Motherboard> GetMotherboardData()
         {
-            MySqlCommand command = new MySqlCommand("SELECT * FROM Motherboard", connection);
+            MySqlCommand command = new MySqlCommand("SELECT Product.ProductID, Product.name, Motherboard.formFactor, Motherboard.cpuType, " +
+                                                        "Motherboard.cpuCount, Motherboard.socket, Motherboard.netcard, Motherboard.soundCard, " +
+                                                        "Motherboard.multiGpu, Motherboard.crossfire, Motherboard.sli, Motherboard.maxMem, " +
+                                                        "Motherboard.memSlots, Motherboard.memType, Motherboard.graphicsCard, Motherboard.chipset " +
+                                                    "FROM Product, Motherboard " +
+                                                    "WHERE Product.ProductID = Motherboard.ProductID", connection);
+            /*
+            SELECT name, formFactor, cpuType, cpuCount, socket, netCard, soundCard, multiGPU, crossfire, sli, maxMem, memSlots, memType, graphicsCard, chipset, count(*) 
+            FROM Product, Motherboard
+            where Product.ProductID = Motherboard.ProductID
+            GROUP BY name, CPUformFactor, cpuType, cpuCount, socket, netCard, soundCard, multiGPU, crossfire, sli, maxMem, memSlots, memType, graphicsCard, chipset
+            */
+            /*
+            drop table MergedProduct2;
+            CREATE TABLE MergedProduct2 AS SELECT* FROM Product;
+
+            update MergedProduct2 SET name = REPLACE(name, ', tray;', '') WHERE MergedProduct2.name is not null;
+            update MergedProduct2 SET name = REPLACE(name, ', box;', '') WHERE MergedProduct2.name is not null;
+            update MergedProduct2 SET name = REPLACE(name, ' tray', '') WHERE MergedProduct2.name is not null;
+            update MergedProduct2 SET name = REPLACE(name, ' box', '') WHERE MergedProduct2.name is not null;
+
+            SELECT*
+            FROM MergedProduct2, CPU
+            where MergedProduct2.ProductID = CPU.ProductID
+            */
+
+
             List<Motherboard> result = new List<Motherboard>();
             MySqlDataReader reader = command.ExecuteReader();
 
@@ -67,7 +93,18 @@ namespace analyzer.GetRawData
 
         public List<HardDrive> GetHardDriveData()
         {
-            MySqlCommand command = new MySqlCommand("SELECT * FROM HardDrive", connection);
+            MySqlCommand command = new MySqlCommand("SELECT Product.ProductID, Product.name, HardDrive.isInternal, HardDrive.type, HardDrive.formFactor, " +
+                                                        "HardDrive.capacity, HardDrive.cacheSize, HardDrive.transferRate, HardDrive.brand, HardDrive.sata, " +
+                                                        "HardDrive.height, HardDrive.depth, HardDrive.width " +
+                                                    "FROM Product, HardDrive " +
+                                                    "WHERE Product.ProductID = HardDrive.ProductID", connection);
+            /*
+             
+             
+             
+             
+             
+             */
             List<HardDrive> result = new List<HardDrive>();
             MySqlDataReader reader = command.ExecuteReader();
 
@@ -101,7 +138,6 @@ namespace analyzer.GetRawData
             FROM GPU
             GROUP BY processorManufacturer, chipset, model, architecture, cooling, memSize, pciSlots, manufacturer);
             */
-
             List<GPU> result = new List<GPU>();
             MySqlDataReader reader = command.ExecuteReader();
             int i;
@@ -126,7 +162,27 @@ namespace analyzer.GetRawData
 
         public List<CPU> GetCpuData()
         {
-            MySqlCommand command = new MySqlCommand("SELECT * FROM CPU", connection);
+            MySqlCommand command = new MySqlCommand("SELECT Product.ProductID, Product.name, CPU.model, CPU.clock, CPU.maxTurbo, CPU.integratedGpu, " +
+                                                        "CPU.stockCooler, CPU.manufacturer, CPU.cpuSeries, CPU.logicalCores, CPU.physicalCores, CPU.socket " +
+                                                    "FROM Product, CPU " +
+                                                    "WHERE Product.ProductID = CPU.ProductID", connection);
+            /*
+            CREATE TABLE MergedProduct2 LIKE Product; 
+            INSERT MergedProduct2 SELECT * FROM Product;
+
+            update Product2 SET name = REPLACE(name, ', tray;', '');
+            update Product2 SET name = REPLACE(name, ', box;', '');
+            update Product2 SET name = REPLACE(name, ' tray', '');
+            update Product2 SET name = REPLACE(name, ' box', '');
+
+            SELECT *
+            FROM MergedProduct2, CPU
+            where MergedProduct2.ProductID = CPU.ProductID
+ 
+              
+              
+             
+             */
             List<CPU> result = new List<CPU>();
             MySqlDataReader reader = command.ExecuteReader();
 
@@ -150,8 +206,15 @@ namespace analyzer.GetRawData
 
         public List<Chassis> GetChassisData()
         {
-            MySqlCommand command = new MySqlCommand("SELECT * FROM Chassis", connection);
+            MySqlCommand command = new MySqlCommand("SELECT Product.ProductID, Product.name, Chassis.type, Chassis.atx, Chassis.miniAtx, Chassis.miniItx, " +
+                                                        "Chassis.fans, Chassis.brand, Chassis.height, Chassis.width, Chassis.depth, Chassis.weight " +
+                                                    "FROM Product, Chassis " +
+                                                    "WHERE Product.ProductID = Chassis.ProductID", connection);
             List<Chassis> result = new List<Chassis>();
+            /*MySqlCommand command = new MySqlCommand("SELECT Product.ProductID, Product.name, GPU.processorManufacturer, GPU.chipset, GPU.model, " +
+                                                        "GPU.architecture, GPU.cooling, GPU.memSize, GPU.pciSlots, GPU.manufacturer " +
+                                                    "FROM Product, GPU " +
+                                                    "WHERE Product.ProductID = GPU.ProductID", connection);*/
             MySqlDataReader reader = command.ExecuteReader();
 
             while (reader.Read())
@@ -174,7 +237,10 @@ namespace analyzer.GetRawData
 
         public List<PSU> GetPsuData()
         {
-            MySqlCommand command = new MySqlCommand("SELECT * FROM PSU", connection);
+            MySqlCommand command = new MySqlCommand("SELECT Product.ProductID, Product.name, PSU.power, PSU.formFactor, PSU.modular, " +
+                                                        "PSU.width, PSU.depth, PSU.height, PSU.weight, PSU.brand " +
+                                                    "FROM Product, PSU " +
+                                                    "WHERE Product.ProductID = PSU.ProductID", connection);
             List<PSU> result = new List<PSU>();
             MySqlDataReader reader = command.ExecuteReader();
 
@@ -197,7 +263,10 @@ namespace analyzer.GetRawData
 
         public List<RAM> GetRamData()
         {
-            MySqlCommand command = new MySqlCommand("SELECT * FROM RAM", connection);
+            MySqlCommand command = new MySqlCommand("SELECT Product.ProductID, Product.name, RAM.type, RAM.capacity, RAM.speed, " +
+                                                        "RAM.technology, RAM.formFactor, RAM.casLatens " +
+                                                    "FROM Product, RAM " +
+                                                    "WHERE Product.ProductID = RAM.ProductID", connection);
             List<RAM> result = new List<RAM>();
             MySqlDataReader reader = command.ExecuteReader();
 
