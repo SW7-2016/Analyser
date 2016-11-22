@@ -1,0 +1,3 @@
+http://sergey-tihon.github.io/Stanford.NLP.NET/StanfordCoreNLP.html
+
+download zip, find stanford-corenlp-3.6.0.jar & extract it. 
