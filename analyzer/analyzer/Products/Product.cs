@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using analyzer.Products.Retailers;
 
 namespace analyzer.Products
@@ -21,5 +24,22 @@ namespace analyzer.Products
         public string Category { get; }
         public string Name { get; }
         public int Id { get; }
+        public List<String> TokenList
+        {
+            get { return SplitName(Name); }
+        }
+
+        private List<string> SplitName(string name)
+        {
+            List<string> tokenNameList = new List<string>();
+
+            Regex rgx = new Regex(@"(\s)|([\-])|(\,)|(\.)|(\()|(\))|(\/)");
+            string result = rgx.Replace(name, " ");
+
+            tokenNameList = result.Split(' ').ToList();
+            tokenNameList.RemoveAll(item => item == "");
+
+            return tokenNameList;
+        }
     }
 }

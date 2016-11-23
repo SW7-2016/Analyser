@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace analyzer.Products.Reviews
 {
@@ -32,5 +34,23 @@ namespace analyzer.Products.Reviews
         public string Url { get; }
         public string Title { get; }
         public string Category { get; }
+
+        public List<string> TokenList
+        {
+            get { return SplitTitle(Title); }
+        }
+
+        private List<string> SplitTitle(string name)
+        {
+            List<string> tokenNameList = new List<string>();
+
+            Regex rgx = new Regex(@"(\s)|([\-])|(\,)|(\.)|(\()|(\))|(\/)");
+            string result = rgx.Replace(name, " ");
+
+            tokenNameList = result.Split(' ').ToList();
+            tokenNameList.RemoveAll(item => item == "");
+
+            return tokenNameList;
+        }
     }
 }

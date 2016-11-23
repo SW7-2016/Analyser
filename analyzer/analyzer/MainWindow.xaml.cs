@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
+using analyzer.CompareAndMerge;
 using analyzer.Products.Reviews;
 using analyzer.Products.ProductComponents;
 using analyzer.GetRawData;
@@ -49,7 +51,16 @@ namespace analyzer
 
             #endregion
 
+            /*
+            Compare compare = new Compare();
+            List<ProductReviewId> productReviewIdList = new List<ProductReviewId>();
 
+            compare.MatchReviewAndProduct(cpuList, criticReviewList, productReviewIdList);
+            compare.MatchReviewAndProduct(cpuList, userReviewList, productReviewIdList);
+
+            compare.MatchReviewAndProduct(cpuList, criticReviewList, productReviewIdList);
+            compare.MatchReviewAndProduct(cpuList, userReviewList, productReviewIdList);
+            */
 
             dbConnection.connection.Close();
         }

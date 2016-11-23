@@ -28,5 +28,14 @@
         public string IntegratedGpu { get; }
         public string Manufacturer { get; }
         public string CpuSeries { get; }
+
+
+        public override string ToString()
+        {
+            return $"{nameof(PhysicalCores)}: {PhysicalCores}, {nameof(LogicalCores)}: {LogicalCores}, {nameof(StockCooler)}: {StockCooler}, {nameof(Model)}: {Model}, {nameof(Clock)}: {Clock}, {nameof(Socket)}: {Socket}, {nameof(MaxTurbo)}: {MaxTurbo}, {nameof(IntegratedGpu)}: {IntegratedGpu}, {nameof(Manufacturer)}: {Manufacturer}, {nameof(CpuSeries)}: {CpuSeries}";
+        }
+
+
     }
+
 }
