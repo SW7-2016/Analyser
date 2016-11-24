@@ -43,6 +43,3 @@ C:\Users\James\.babun\cygwin\home\James\Analyser\analyzer\analyzer\obj\Debug\Mai
 C:\Users\James\.babun\cygwin\home\James\Analyser\analyzer\analyzer\obj\Debug\analyzer.g.resources
 C:\Users\James\.babun\cygwin\home\James\Analyser\analyzer\analyzer\obj\Debug\analyzer.Properties.Resources.resources
 C:\Users\James\.babun\cygwin\home\James\Analyser\analyzer\analyzer\obj\Debug\analyzer.csproj.GenerateResource.Cache
-D:\Repos\Analyser\analyzer\analyzer\bin\Debug\analyzer.exe.config
-D:\Repos\Analyser\analyzer\analyzer\obj\Debug\analyzer.exe
-D:\Repos\Analyser\analyzer\analyzer\obj\Debug\analyzer.pdb

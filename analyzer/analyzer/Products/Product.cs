@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using analyzer.Products.Retailers;
-using analyzer.GetRawData;
 
 namespace analyzer.Products
 {
-    public abstract class Product : DBConnect
+    public abstract class Product
     {
         public double superScore = 0;
         public double criticScore = 0;

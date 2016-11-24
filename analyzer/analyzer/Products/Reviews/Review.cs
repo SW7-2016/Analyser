@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using analyzer.GetRawData;
 
 namespace analyzer.Products.Reviews
 {
-    public abstract class Review : DBConnect
+    public abstract class Review
     {
         public List<string> pros;
         public List<string> cons;

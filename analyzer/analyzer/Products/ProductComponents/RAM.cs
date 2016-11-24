@@ -1,7 +1,4 @@
-﻿using MySql.Data.MySqlClient;
-using System.Collections.Generic;
-
-namespace analyzer.Products.ProductComponents
+﻿namespace analyzer.Products.ProductComponents
 {
     public class RAM : ComputerComponents
     {
@@ -23,36 +20,5 @@ namespace analyzer.Products.ProductComponents
         public string Technology { get; }
         public string FormFactor { get; }
         public string CasLatency { get; }
-
-        public List<RAM> GetRamData()
-        {
-            crawlerConnection.Open();
-
-            MySqlCommand command =
-                new MySqlCommand("SELECT Product.ProductID, Product.name, RAM.type, RAM.capacity, RAM.speed, " +
-                                 "RAM.technology, RAM.formFactor, RAM.casLatens " +
-                                 "FROM Product, RAM " +
-                                 "WHERE Product.ProductID = RAM.ProductID", crawlerConnection);
-            List<RAM> result = new List<RAM>();
-            MySqlDataReader reader = command.ExecuteReader();
-
-            while (reader.Read())
-            {
-                object[] tempResult = new object[reader.FieldCount];
-                reader.GetValues(tempResult);
-
-                RAM row = new RAM("RAM", (int)tempResult[0], (string)tempResult[1], (string)tempResult[2],
-                    (string)tempResult[3],
-                    (string)tempResult[4], (string)tempResult[5], (string)tempResult[6], (string)tempResult[7]);
-
-                result.Add(row);
-            }
-
-
-            reader.Close();
-            crawlerConnection.Close();
-
-            return result;
-        }
     }
 }
