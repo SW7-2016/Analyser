@@ -2,6 +2,7 @@
 using MySql.Data.MySqlClient;
 using analyzer.Products.ProductComponents;
 using analyzer.Products.Reviews;
+using analyzer.Products.DistinctProductList.types;
 
 namespace analyzer.GetRawData
 {
@@ -20,7 +21,7 @@ namespace analyzer.GetRawData
         reader.Close();*/
 
         private readonly string connectionString =
-            "server=172.25.23.57;database=crawlerdb;user=analyser;port=3306;password=Analyser23!;";
+            "server=172.25.23.57;database=crawlerdbbackup;user=analyser;port=3306;password=Analyser23!;";
 
         private readonly string connectionString2 =
             "server=172.25.23.57;database=analyserdb;user=analyser;port=3306;password=Analyser23!;";
@@ -139,7 +140,7 @@ namespace analyzer.GetRawData
             return result;
         }
 
-        public List<CPU> GetCpuData()
+        public DistinctProductList<CPU> GetCpuData()
         {
             MySqlCommand command =
                 new MySqlCommand(
@@ -165,7 +166,7 @@ namespace analyzer.GetRawData
 
             drop table MergedProduct2;
              */
-            List<CPU> result = new List<CPU>();
+            DistinctProductList<CPU> result = new DistinctProductList<CPU>();
             MySqlDataReader reader = command.ExecuteReader();
 
             while (reader.Read())
