@@ -75,7 +75,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GetRawData\Database.cs" />
-    <Compile Include="CompareAndMerge\Compare.cs" />
     <Compile Include="Products\ComputerComponents.cs" />
     <Compile Include="Products\Product.cs" />
     <Compile Include="Products\ProductComponents\Chassis.cs" />

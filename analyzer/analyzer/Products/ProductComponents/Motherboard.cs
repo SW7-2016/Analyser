@@ -1,4 +1,7 @@
-﻿namespace analyzer.Products.ProductComponents
+﻿using System.Collections.Generic;
+using analyzer.Products.Reviews;
+
+namespace analyzer.Products.ProductComponents
 {
     public class Motherboard : ComputerComponents
     {
@@ -37,5 +40,9 @@
         public int MemSlots { get; }
         public int MaxMem { get; }
         public int CpuCount { get; }
+        public override void MatchReviewAndProduct<T>(List<Review> reviewList, List<T> productList)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

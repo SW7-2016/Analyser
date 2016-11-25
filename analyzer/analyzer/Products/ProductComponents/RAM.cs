@@ -1,4 +1,7 @@
-﻿namespace analyzer.Products.ProductComponents
+﻿using System.Collections.Generic;
+using analyzer.Products.Reviews;
+
+namespace analyzer.Products.ProductComponents
 {
     public class RAM : ComputerComponents
     {
@@ -20,5 +23,9 @@
         public string Technology { get; }
         public string FormFactor { get; }
         public string CasLatency { get; }
+        public override void MatchReviewAndProduct<T>(List<Review> reviewList, List<T> productList)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

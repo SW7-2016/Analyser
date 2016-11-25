@@ -1,4 +1,7 @@
-﻿namespace analyzer.Products.ProductComponents
+﻿using System.Collections.Generic;
+using analyzer.Products.Reviews;
+
+namespace analyzer.Products.ProductComponents
 {
     public class HardDrive : ComputerComponents
     {
@@ -30,5 +33,9 @@
         public string Height { get; }
         public string Depth { get; }
         public string Width { get; }
+        public override void MatchReviewAndProduct<T>(List<Review> reviewList, List<T> productList)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

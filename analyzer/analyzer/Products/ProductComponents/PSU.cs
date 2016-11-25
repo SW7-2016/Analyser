@@ -1,4 +1,7 @@
-﻿namespace analyzer.Products.ProductComponents
+﻿using System.Collections.Generic;
+using analyzer.Products.Reviews;
+
+namespace analyzer.Products.ProductComponents
 {
     public class PSU : ComputerComponents
     {
@@ -24,5 +27,9 @@
         public string Width { get; }
         public string Weight { get; }
         public bool Modular { get; }
+        public override void MatchReviewAndProduct<T>(List<Review> reviewList, List<T> productList)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

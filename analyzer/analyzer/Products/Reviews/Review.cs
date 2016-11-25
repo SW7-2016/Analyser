@@ -40,17 +40,24 @@ namespace analyzer.Products.Reviews
             get { return SplitTitle(Title); }
         }
 
-        private List<string> SplitTitle(string name)
+        internal List<string> SplitTitle(string name)
         {
             List<string> tokenNameList = new List<string>();
 
             Regex rgx = new Regex(@"(\s)|([\-])|(\,)|(\.)|(\()|(\))|(\/)");
-            string result = rgx.Replace(name, " ");
+            string result = rgx.Replace(name, " ").ToLower();
 
             tokenNameList = result.Split(' ').ToList();
             tokenNameList.RemoveAll(item => item == "");
 
             return tokenNameList;
         }
+
+        internal MatchCollection ExtractNumbersFromString(string str)
+        {
+            MatchCollection result = Regex.Matches(str, @"\d+");
+            return result;
+        }
+
     }
 }

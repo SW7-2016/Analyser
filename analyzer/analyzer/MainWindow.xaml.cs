@@ -22,6 +22,8 @@ namespace analyzer
         public List<RAM> ramList = new List<RAM>();
         public List<CriticReview> criticReviewList = new List<CriticReview>();
         public List<UserReview> userReviewList = new List<UserReview>();
+        public List<Review> reviewList = new List<Review>();
+
 
         public MainWindow()
         {
@@ -48,19 +50,15 @@ namespace analyzer
             criticReviewList = dbConnection.GetCriticReviewData();
             userReviewList = dbConnection.GetUserReviewData();
 
-
             #endregion
 
-            /*
-            Compare compare = new Compare();
-            List<ProductReviewId> productReviewIdList = new List<ProductReviewId>();
+            reviewList.AddRange(criticReviewList);
+            reviewList.AddRange(userReviewList);
 
-            compare.MatchReviewAndProduct(cpuList, criticReviewList, productReviewIdList);
-            compare.MatchReviewAndProduct(cpuList, userReviewList, productReviewIdList);
-
-            compare.MatchReviewAndProduct(cpuList, criticReviewList, productReviewIdList);
-            compare.MatchReviewAndProduct(cpuList, userReviewList, productReviewIdList);
-            */
+            foreach (var gpu in gpuList)
+            {
+                gpu.MatchReviewAndProduct(reviewList, gpuList);
+            }
 
             dbConnection.connection.Close();
         }
