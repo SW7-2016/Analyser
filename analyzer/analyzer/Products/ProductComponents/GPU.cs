@@ -41,6 +41,7 @@ namespace analyzer.Products.ProductComponents
 
             List<int> matchingReviewsList = new List<int>();
 
+
             foreach (var review in reviewList)
             {
                 foreach (string token in review.TokenList)

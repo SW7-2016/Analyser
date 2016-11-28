@@ -55,9 +55,9 @@ namespace analyzer
             reviewList.AddRange(criticReviewList);
             reviewList.AddRange(userReviewList);
 
-            foreach (var gpu in gpuList)
+            foreach (var cpu in cpuList)
             {
-                gpu.MatchReviewAndProduct(reviewList, gpuList);
+                cpu.MatchReviewAndProduct(reviewList, gpuList);
             }
 
             dbConnection.connection.Close();

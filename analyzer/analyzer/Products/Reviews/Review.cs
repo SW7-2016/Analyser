@@ -16,6 +16,8 @@ namespace analyzer.Products.Reviews
         public double credibility;
         public double timeDecayWeight;
 
+   
+
         protected Review(int id, double rating, double maxRating, DateTime date, string title, string url, string category)
         {
             Id = id;
@@ -59,5 +61,10 @@ namespace analyzer.Products.Reviews
             return result;
         }
 
+
+        public override string ToString()
+        {
+            return $"{nameof(Id)}: {Id}, {nameof(Rating)}: {Rating}, {nameof(ReviewDate)}: {ReviewDate}, {nameof(Url)}: {Url}, {nameof(Title)}: {Title}, {nameof(Category)}: {Category}";
+        }
     }
 }
