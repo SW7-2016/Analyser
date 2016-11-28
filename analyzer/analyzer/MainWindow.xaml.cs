@@ -59,6 +59,7 @@ namespace analyzer
             foreach (var gpu in gpuList)
             {
                 gpu.MatchReviewAndProduct(reviewList, gpuList);
+                gpu.MatchReviewAndProduct2(reviewList, gpuList);
             }
 
             dbConnection.connection.Close();
