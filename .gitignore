@@ -221,3 +221,16 @@ pip-log.txt
 *.cache
 *.pdb
 analyzer/analyzer/obj/Debug/analyzer.csproj.FileListAbsolute.txt
+
+*.suo
+analyzer/analyzer/bin/Debug/analyzer.exe
+analyzer/analyzer/obj/Debug/analyzer.csproj.FileListAbsolute.txt
+*.Cache
+analyzer/analyzer/obj/Debug/analyzer.pdb
+*.exe
+*.lref
+analyzer/analyzer/obj/Debug/App.g.cs
+
+
+analyzer/analyzer/obj/
+analyzer/analyzer/bin/
