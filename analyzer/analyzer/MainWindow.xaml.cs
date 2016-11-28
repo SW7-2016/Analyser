@@ -5,6 +5,7 @@ using analyzer.CompareAndMerge;
 using analyzer.Products.Reviews;
 using analyzer.Products.ProductComponents;
 using analyzer.GetRawData;
+using analyzer.Products.DistinctProductList.types;
 
 namespace analyzer
 {
@@ -14,7 +15,7 @@ namespace analyzer
     public partial class MainWindow : Window
     {
         public List<Chassis> chassisList = new List<Chassis>();
-        public List<CPU> cpuList = new List<CPU>();
+        public DistinctProductList<CPU> cpuList = new DistinctProductList<CPU>();
         public List<GPU> gpuList = new List<GPU>();
         public List<HardDrive> hardDriveList = new List<HardDrive>();
         public List<Motherboard> motherboardList = new List<Motherboard>();

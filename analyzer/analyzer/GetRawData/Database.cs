@@ -2,6 +2,7 @@
 using MySql.Data.MySqlClient;
 using analyzer.Products.ProductComponents;
 using analyzer.Products.Reviews;
+using analyzer.Products.DistinctProductList.types;
 
 namespace analyzer.GetRawData
 {
@@ -20,7 +21,7 @@ namespace analyzer.GetRawData
         reader.Close();*/
 
         private readonly string connectionString =
-            "server=172.25.23.57;database=crawlerdb;user=analyser;port=3306;password=Analyser23!;";
+            "server=172.25.23.57;database=crawlerdbbackup;user=analyser;port=3306;password=Analyser23!;";
 
         private readonly string connectionString2 =
             "server=172.25.23.57;database=analyserdb;user=analyser;port=3306;password=Analyser23!;";
@@ -108,7 +109,7 @@ namespace analyzer.GetRawData
             MySqlCommand command =
                 new MySqlCommand(
                     "SELECT Product.ProductID, Product.name, GPU.processorManufacturer, GPU.chipset, GPU.model, " +
-                    "GPU.architecture, GPU.cooling, GPU.memSize, GPU.pciSlots, GPU.manufacturer " +
+                    "GPU.architecture, GPU.cooling, GPU.memSize, GPU.pciSlots, GPU.manufacturer, GPU.model " +
                     "FROM Product, GPU " +
                     "WHERE Product.ProductID = GPU.ProductID", connection);
             /*MySqlCommand command = new MySqlCommand(
@@ -128,7 +129,7 @@ namespace analyzer.GetRawData
                 GPU row = new GPU("GPU", (int) tempResult[0], (string) tempResult[1], (string) tempResult[2],
                     (string) tempResult[3], (string) tempResult[4],
                     (string) tempResult[5], (string) tempResult[6], (string) tempResult[7], (int) tempResult[8],
-                    (string) tempResult[9]);
+                    (string) tempResult[9], (string)tempResult[10]);
 
                 result.Add(row);
             }
@@ -139,7 +140,7 @@ namespace analyzer.GetRawData
             return result;
         }
 
-        public List<CPU> GetCpuData()
+        public DistinctProductList<CPU> GetCpuData()
         {
             MySqlCommand command =
                 new MySqlCommand(
@@ -165,7 +166,7 @@ namespace analyzer.GetRawData
 
             drop table MergedProduct2;
              */
-            List<CPU> result = new List<CPU>();
+            DistinctProductList<CPU> result = new DistinctProductList<CPU>();
             MySqlDataReader reader = command.ExecuteReader();
 
             while (reader.Read())
