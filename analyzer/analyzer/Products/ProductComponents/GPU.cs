@@ -76,9 +76,14 @@ namespace analyzer.Products.ProductComponents
                 {
                     continue;
                 }
-
+                Debug.WriteLine(this.ToString());
                 reviewMatches.Add(review.Id);
             }
+        }
+
+        public override string ToString()
+        {
+            return $"{nameof(ProcessorManufacturer)}: {ProcessorManufacturer}, {nameof(GraphicsProcessor)}: {GraphicsProcessor}, {nameof(Model)}: {Model}, {nameof(Manufacturer)}: {Manufacturer}";
         }
 
         private bool CompareGraphicsProcessor(string reviewTitle, string graphicsProcessor)
@@ -115,9 +120,9 @@ namespace analyzer.Products.ProductComponents
                     {
                         actualModelStrings.Remove(graphicsProcessorString);
                     }
-                }   
+                }
             }
-            foreach (string modelString in modelStrings)
+            foreach (string modelString in actualModelStrings)
             {
                 foreach (string reviewString in reviewTitleStrings)
                 {
@@ -125,7 +130,41 @@ namespace analyzer.Products.ProductComponents
                     {
                         count++;
                     }
-                    if (count > 2)
+                    if (count == actualModelStrings.Count - 1)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        private bool CompareModelStrings(string reviewTitle, string model, string graphicsProcessor)
+        {
+            List<string> graphicsProcessorStrings = SplitStringToTokens(graphicsProcessor);
+            List<string> modelStrings = SplitStringToTokens(model);
+            List<string> actualModelStrings = SplitStringToTokens(model);
+            List<string> reviewTitleStrings = SplitStringToTokens(reviewTitle);
+            int count = 0;
+
+            foreach (string modelString in modelStrings)
+            {
+                foreach (string graphicsProcessorString in graphicsProcessorStrings)
+                {
+                    if (graphicsProcessorString == modelString)
+                    {
+                        actualModelStrings.Remove(graphicsProcessorString);
+                    }
+                }
+            }
+            foreach (string modelString in actualModelStrings)
+            {
+                foreach (string reviewString in reviewTitleStrings)
+                {
+                    if (modelString == reviewString)
+                    {
+                        count++;
+                    }
+                    if (count == actualModelStrings.Count - 1)
                     {
                         return true;
                     }

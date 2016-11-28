@@ -21,7 +21,7 @@ namespace analyzer.GetRawData
         reader.Close();*/
 
         private readonly string connectionString =
-            "server=172.25.23.57;database=crawlerdbbackup;user=analyser;port=3306;password=Analyser23!;";
+            "server=172.25.23.57;database=crawlerdb;user=analyser;port=3306;password=Analyser23!;";
 
         private readonly string connectionString2 =
             "server=172.25.23.57;database=analyserdb;user=analyser;port=3306;password=Analyser23!;";
@@ -108,7 +108,7 @@ namespace analyzer.GetRawData
         {
             MySqlCommand command =
                 new MySqlCommand(
-                    "SELECT Product.ProductID, Product.name, GPU.processorManufacturer, GPU.chipset, GPU.model, " +
+                    "SELECT Product.ProductID, Product.name, GPU.processorManufacturer, GPU.chipset, GPU.graphicsProcessor, " +
                     "GPU.architecture, GPU.cooling, GPU.memSize, GPU.pciSlots, GPU.manufacturer, GPU.model " +
                     "FROM Product, GPU " +
                     "WHERE Product.ProductID = GPU.ProductID", connection);
@@ -119,7 +119,6 @@ namespace analyzer.GetRawData
             */
             List<GPU> result = new List<GPU>();
             MySqlDataReader reader = command.ExecuteReader();
-            int i;
 
             while (reader.Read())
             {
@@ -127,9 +126,8 @@ namespace analyzer.GetRawData
                 reader.GetValues(tempResult);
 
                 GPU row = new GPU("GPU", (int) tempResult[0], (string) tempResult[1], (string) tempResult[2],
-                    (string) tempResult[3], (string) tempResult[4],
-                    (string) tempResult[5], (string) tempResult[6], (string) tempResult[7], (int) tempResult[8],
-                    (string) tempResult[9], (string)tempResult[10]);
+                    (string) tempResult[3], (string) tempResult[4], (string) tempResult[5], (string) tempResult[6], 
+                    (string) tempResult[7], (int) tempResult[8], (string) tempResult[9], (string)tempResult[10]);
 
                 result.Add(row);
             }
