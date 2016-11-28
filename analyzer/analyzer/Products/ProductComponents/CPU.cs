@@ -75,9 +75,9 @@ namespace analyzer.Products.ProductComponents
                 if (modelMatch && CPUSeriesMatch)
                 {
                     reviewMatches.Add(review.Id);
-                    Debug.WriteLine(review.ToString());
+                   /* Debug.WriteLine(review.ToString());
                     Debug.WriteLine(this.ToString());
-                    Debug.WriteLine("");
+                    Debug.WriteLine(""); */
                 }
 
                 modelMatch = false;
