@@ -8,7 +8,7 @@ namespace analyzer.Products.ProductComponents
     public class GPU : ComputerComponents
     {
         public GPU(string category, int id, string name, string processorManufacturer, string chipset, string graphicsProcessor, 
-                    string architecture, string cooling, string memSize, int pciSlots, string manufacturer) 
+                    string architecture, string cooling, string memSize, int pciSlots, string manufacturer, string model) 
             : base(id, category, name)
         {
             ProcessorManufacturer = processorManufacturer;
@@ -19,12 +19,14 @@ namespace analyzer.Products.ProductComponents
             MemSize = memSize;
             Manufacturer = manufacturer;
             PciSlots = pciSlots;
+            Model = model;
         }
 
         public int PciSlots { get; }
         public string ProcessorManufacturer { get; }
         public string Chipset { get; }
         public string GraphicsProcessor { get; }
+        public string Model { get; }
         public string Architecture { get; }
         public string Cooling { get; }
         public string MemSize { get; }
@@ -35,70 +37,106 @@ namespace analyzer.Products.ProductComponents
         public override void MatchReviewAndProduct<T>(List<Review> reviewList, List<T> productList)
         { 
             bool manufactureMatch = false; //Must match
-            bool graphicsProcessorMatch = false; //Number must match
-            bool processorManufacturerMatch = false; //Must match
-            bool modelMatch = false; //Must match
+            //bool graphicsProcessorMatch = false; //Number must match
+            //bool processorManufacturerMatch = false; //Must match
+            //bool modelMatch = false; //Must match
 
             List<int> matchingReviewsList = new List<int>();
 
             foreach (var review in reviewList)
             {
+                manufactureMatch = false;
+
                 foreach (string token in review.TokenList)
                 {
                     if (token == Manufacturer.ToLower())
                     {
                         manufactureMatch = true;
+                        break;
                     }
                 }
 
-                if (CompareGraphicsProcessor(review.Title, GraphicsProcessor))
+                if (!manufactureMatch)
                 {
-                    graphicsProcessorMatch = true;
+                    continue;
                 }
 
-                if (CompareGraphicsProcessorStrings(review.Title.ToLower(), GraphicsProcessor.ToLower()))
+                if (!CompareGraphicsProcessor(review.Title, GraphicsProcessor))
                 {
-                    processorManufacturerMatch = true;
+                    continue;
                 }
 
-
-                if (manufactureMatch && graphicsProcessorMatch && processorManufacturerMatch && modelMatch)
+                if (!CompareGraphicsProcessorStrings(review.Title.ToLower(), GraphicsProcessor.ToLower()))
                 {
-                    reviewMatches.Add(review.Id);
+                    continue;
                 }
+
+                if (!CompareModelStrings(review.Title.ToLower(), Model.ToLower(), GraphicsProcessor.ToLower()))
+                {
+                    continue;
+                }
+
+                reviewMatches.Add(review.Id);
             }
         }
 
         private bool CompareGraphicsProcessor(string reviewTitle, string graphicsProcessor)
         {
-            MatchCollection GPUprocessorNumbers =  ExtractNumbersFromString(graphicsProcessor);
+            MatchCollection gpuProcessorNumbers = ExtractNumbersFromString(graphicsProcessor);
             MatchCollection reviewTitleNumbers = ExtractNumbersFromString(reviewTitle);
-            int GPUCount = 0;
-            int reviewCount = 0;
 
-            foreach (Match GPUnumber in GPUprocessorNumbers)
+            foreach (Match gpuNumber in gpuProcessorNumbers)
             {
                 foreach (Match reviewNumber in reviewTitleNumbers)
                 {
-                    if (int.Parse(GPUnumber.Value) == int.Parse(reviewNumber.Value))
+                    if (int.Parse(gpuNumber.Value) == int.Parse(reviewNumber.Value))
                     {
                         return true;
                     }
-                    reviewCount++;
                 }
-                GPUCount++;
             }
-
             return false;
+        }
 
+        private bool CompareModelStrings(string reviewTitle, string model, string graphicsProcessor)
+        {
+            List<string> graphicsProcessorStrings = SplitStringToTokens(graphicsProcessor);
+            List<string> modelStrings = SplitStringToTokens(model);
+            List<string> actualModelStrings = SplitStringToTokens(model);
+            List<string> reviewTitleStrings = SplitStringToTokens(reviewTitle);
+            int count = 0;
+
+            foreach (string modelString in modelStrings)
+            {
+                foreach (string graphicsProcessorString in graphicsProcessorStrings)
+                {
+                    if (graphicsProcessorString == modelString)
+                    {
+                        actualModelStrings.Remove(graphicsProcessorString);
+                    }
+                }   
+            }
+            foreach (string modelString in modelStrings)
+            {
+                foreach (string reviewString in reviewTitleStrings)
+                {
+                    if (modelString == reviewString)
+                    {
+                        count++;
+                    }
+                    if (count > 2)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         private bool CompareGraphicsProcessorStrings(string reviewTitle, string graphicsProcessor)
         {
             List<string> graphicsProcessorStrings = SplitStringToTokens(graphicsProcessor);
             List<string> reviewTitleStrings = SplitStringToTokens(reviewTitle);
-            int GPUCount = 0;
-            int reviewCount = 0;
 
             foreach (string gpuString in graphicsProcessorStrings)
             {
@@ -108,13 +146,9 @@ namespace analyzer.Products.ProductComponents
                     {
                         return true;
                     }
-                    reviewCount++;
                 }
-                GPUCount++;
             }
-
             return false;
-
         }
     }
 }

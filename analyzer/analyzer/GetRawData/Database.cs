@@ -109,7 +109,7 @@ namespace analyzer.GetRawData
             MySqlCommand command =
                 new MySqlCommand(
                     "SELECT Product.ProductID, Product.name, GPU.processorManufacturer, GPU.chipset, GPU.model, " +
-                    "GPU.architecture, GPU.cooling, GPU.memSize, GPU.pciSlots, GPU.manufacturer " +
+                    "GPU.architecture, GPU.cooling, GPU.memSize, GPU.pciSlots, GPU.manufacturer, GPU.model " +
                     "FROM Product, GPU " +
                     "WHERE Product.ProductID = GPU.ProductID", connection);
             /*MySqlCommand command = new MySqlCommand(
@@ -129,7 +129,7 @@ namespace analyzer.GetRawData
                 GPU row = new GPU("GPU", (int) tempResult[0], (string) tempResult[1], (string) tempResult[2],
                     (string) tempResult[3], (string) tempResult[4],
                     (string) tempResult[5], (string) tempResult[6], (string) tempResult[7], (int) tempResult[8],
-                    (string) tempResult[9]);
+                    (string) tempResult[9], (string)tempResult[10]);
 
                 result.Add(row);
             }
