@@ -138,7 +138,7 @@ namespace analyzer.Products.ProductComponents
             }
             return false;
         }
-        private bool CompareModelStrings(string reviewTitle, string model, string graphicsProcessor)
+        private bool CompareModelStrings2(string reviewTitle, string model, string graphicsProcessor)
         {
             List<string> graphicsProcessorStrings = SplitStringToTokens(graphicsProcessor);
             List<string> modelStrings = SplitStringToTokens(model);
