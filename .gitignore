@@ -218,3 +218,6 @@ pip-log.txt
 
 
 #Project
+*.cache
+*.pdb
+analyzer/analyzer/obj/Debug/analyzer.csproj.FileListAbsolute.txt
