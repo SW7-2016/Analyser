@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
+
 using System.Windows;
-using analyzer.CompareAndMerge;
+using analyzer.Debugging;
 using analyzer.Products.Reviews;
 using analyzer.Products.ProductComponents;
 using analyzer.GetRawData;
@@ -56,12 +56,15 @@ namespace analyzer
             reviewList.AddRange(criticReviewList);
             reviewList.AddRange(userReviewList);
 
-            foreach (var gpu in gpuList)
+            foreach (var cpu in cpuList)
             {
-                gpu.MatchReviewAndProduct(reviewList, gpuList);
+                cpu.MatchReviewAndProduct(reviewList, cpuList);
             }
 
             dbConnection.connection.Close();
+
+            Debugging.Debugging.DebugReviewDuplicates(chassisList, cpuList, gpuList, hardDriveList, motherboardList, psuList, ramList);
+            
         }
     }
 }

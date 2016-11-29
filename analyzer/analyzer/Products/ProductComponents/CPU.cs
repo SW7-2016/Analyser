@@ -47,11 +47,11 @@ namespace analyzer.Products.ProductComponents
             {
                 if (review.Category != "CPU")
                     continue;
-                int tempCount = 0;
-
-                //Only match if every word in model is pressent in review title
+                int tempCount = 0; //used in modle match
+                
                 foreach (string token in review.TokenList)
                 {
+                    //Only match if every word in model is pressent in review title
                     foreach (string model in modelToken)
                     {
                         if (token.ToLower() == model.ToLower())
@@ -64,18 +64,20 @@ namespace analyzer.Products.ProductComponents
                                 modelMatch = true;
                         }
                     }
-
+                    //match cpu series with review
                     foreach (string series in cpuSeriesToken)
                     {
                         if (token == series)
                             CPUSeriesMatch = true;
+                        //TODO Fix så den ikke kun får true på den første
                     }
                 }
 
+                //if both cpuseries and model is true = link.
                 if (modelMatch && CPUSeriesMatch)
                 {
                     reviewMatches.Add(review.Id);
-                   /* Debug.WriteLine(review.ToString());
+                   /*Debug.WriteLine(review.ToString());
                     Debug.WriteLine(this.ToString());
                     Debug.WriteLine(""); */
                 }
