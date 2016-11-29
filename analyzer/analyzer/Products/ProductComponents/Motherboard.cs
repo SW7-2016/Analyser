@@ -44,10 +44,5 @@ namespace analyzer.Products.ProductComponents
         {
             throw new System.NotImplementedException();
         }
-
-        internal override bool CompareReviewTitleWithProductStrings(string reviewTitle, string concatenatedProductStrings)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

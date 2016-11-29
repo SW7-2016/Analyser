@@ -36,6 +36,42 @@ namespace analyzer.Products.ProductComponents
 
         public override void MatchReviewAndProduct<T>(List<Review> reviewList, List<T> productList)
         {
+            List<string> restrictedTokens = new List<string>();
+            string productStrings = string.IsNullOrEmpty(Model) ? Model.ToLower() + " " + CpuSeries.ToLower() : CpuSeries.ToLower();
+
+
+            //restrictedTokens.Add("intel");
+            //restrictedTokens.Add("core");
+            //restrictedTokens.Add("amd");
+
+            productStrings = RemoveRestrictedTokens(productStrings, restrictedTokens);
+
+
+            foreach (var review in reviewList)
+            {
+                if (review.Category.ToLower() != "cpu")
+                    continue;
+
+                string concatenatedReviewTitle = RemoveRestrictedTokens(ConcatenateString(review.Title.ToLower()), restrictedTokens);
+                int nrOfReviewLinksToProduct = 0;
+
+                if (!CompareReviewTitleWithProductStrings(concatenatedReviewTitle, productStrings))
+                {
+                    continue;
+                }
+                //check if added review is correct in debug console
+                nrOfReviewLinksToProduct++;
+                Debug.WriteLine(this.ToString());
+                Debug.WriteLine(review.Title);
+                Debug.WriteLine(nrOfReviewLinksToProduct);
+                //add review id to product
+                reviewMatches.Add(review.Id);
+            }
+        }
+
+        /*
+        public override void MatchReviewAndProduct<T>(List<Review> reviewList, List<T> productList)
+        {
             bool modelMatch = false; //Number must match
             bool CPUSeriesMatch = false; //Must match
 
@@ -78,20 +114,15 @@ namespace analyzer.Products.ProductComponents
                 if (modelMatch && CPUSeriesMatch)
                 {
                     reviewMatches.Add(review.Id);
-                   /*Debug.WriteLine(review.ToString());
-                    Debug.WriteLine(this.ToString());
-                    Debug.WriteLine(""); */
+                    //Debug.WriteLine(review.ToString());
+                    //Debug.WriteLine(this.ToString());
+                    //Debug.WriteLine(""); 
                 }
 
                 modelMatch = false;
                 CPUSeriesMatch = false;
             }
-        }
-
-        internal override bool CompareReviewTitleWithProductStrings(string reviewTitle, string concatenatedProductStrings)
-        {
-            throw new System.NotImplementedException();
-        }
+        }*/
 
         public override string ToString()
         {
