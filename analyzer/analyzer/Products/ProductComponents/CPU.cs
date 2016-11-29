@@ -37,12 +37,12 @@ namespace analyzer.Products.ProductComponents
         public override void MatchReviewAndProduct<T>(List<Review> reviewList, List<T> productList)
         {
             List<string> restrictedTokens = new List<string>();
-            string productStrings = string.IsNullOrEmpty(Model) ? Model.ToLower() + " " + CpuSeries.ToLower() : CpuSeries.ToLower();
+            string productStrings = Model.ToLower() + " " + CpuSeries.ToLower();
 
 
-            //restrictedTokens.Add("intel");
-            //restrictedTokens.Add("core");
-            //restrictedTokens.Add("amd");
+            restrictedTokens.Add("intel");
+            restrictedTokens.Add("core");
+            restrictedTokens.Add("amd");
 
             productStrings = RemoveRestrictedTokens(productStrings, restrictedTokens);
 
@@ -63,7 +63,7 @@ namespace analyzer.Products.ProductComponents
                 nrOfReviewLinksToProduct++;
                 Debug.WriteLine(this.ToString());
                 Debug.WriteLine(review.Title);
-                Debug.WriteLine(nrOfReviewLinksToProduct);
+                //Debug.WriteLine(nrOfReviewLinksToProduct);
                 //add review id to product
                 reviewMatches.Add(review.Id);
             }

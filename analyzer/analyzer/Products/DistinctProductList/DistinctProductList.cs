@@ -52,17 +52,17 @@ namespace analyzer.Products.DistinctProductList.types
                     {
                         foreach (var newstr in newItemTokens)
                         {
-                            Debug.Write(newstr + " ");
+                            //Debug.Write(newstr + " ");
                         }
 
-                        Debug.WriteLine("");
+                        //Debug.WriteLine("");
 
                         foreach (var oldstr in oldTokens)
                         {
-                            Debug.Write(oldstr + " ");
+                           // Debug.Write(oldstr + " ");
                         }
-                        Debug.WriteLine("");
-                        Debug.WriteLine("");
+                        //Debug.WriteLine("");
+                        //Debug.WriteLine("");
 
                         deletedDoublicates++;
                         isDup = true;
