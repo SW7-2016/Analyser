@@ -67,6 +67,7 @@ namespace analyzer.Products.ProductComponents
                     //match cpu series with review
                     foreach (string series in cpuSeriesToken)
                     {
+                        
                         if (token == series)
                             CPUSeriesMatch = true;
                         //TODO Fix så den ikke kun får true på den første
@@ -85,6 +86,11 @@ namespace analyzer.Products.ProductComponents
                 modelMatch = false;
                 CPUSeriesMatch = false;
             }
+        }
+
+        internal override bool CompareReviewTitleWithProductStrings(string reviewTitle, string concatenatedProductStrings)
+        {
+            throw new System.NotImplementedException();
         }
 
         public override string ToString()

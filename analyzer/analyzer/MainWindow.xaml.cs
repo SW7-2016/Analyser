@@ -56,14 +56,14 @@ namespace analyzer
             reviewList.AddRange(criticReviewList);
             reviewList.AddRange(userReviewList);
 
-            foreach (var cpu in cpuList)
+            foreach (var gpu in gpuList)
             {
-                cpu.MatchReviewAndProduct(reviewList, cpuList);
+                gpu.MatchReviewAndProduct(reviewList, gpuList);
             }
 
             dbConnection.connection.Close();
 
-            Debugging.Debugging.DebugReviewDuplicates(chassisList, cpuList, gpuList, hardDriveList, motherboardList, psuList, ramList);
+            //Debugging.Debugging.DebugReviewDuplicates(chassisList, cpuList, gpuList, hardDriveList, motherboardList, psuList, ramList);
             
         }
     }
