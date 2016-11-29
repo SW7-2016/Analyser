@@ -11,76 +11,191 @@ namespace analyzer.Products.DistinctProductList.types
 {
     public class DistinctProductList<T> : List<T>
     {
+        List<string[]> oldTokensList = new List<string[]>();
+        public int deletedDoublicates = 0;
+
         public new void Add(T item)
         {
-            if(item.GetType() == typeof(CPU))
+            string[] newItemTokens = generateCompareString(item);
+
+            if (oldTokensList == null && newItemTokens != null)
             {
-                parseCPU((CPU)(object)item);
+                base.Add(item);
+            }
+            else if (newItemTokens != null)
+            {
+                bool isDup = false;
+
+                foreach (var oldTokens in oldTokensList)
+                {
+                    bool isEqual = true;
+
+                    foreach (string oldToken in oldTokens)
+                    {
+                        if (!newItemTokens.Contains(oldToken) && oldToken != "")
+                        {
+                            isEqual = false;
+                            break;
+                        }
+                    }
+
+                    foreach (string newToken in newItemTokens)
+                    {
+                        if (!oldTokens.Contains(newToken) && newToken != "")
+                        {
+                            isEqual = false;
+                            break;
+                        }
+                    }
+
+                    if (isEqual)
+                    {
+                        foreach (var newstr in newItemTokens)
+                        {
+                            Debug.Write(newstr + " ");
+                        }
+
+                        Debug.WriteLine("");
+
+                        foreach (var oldstr in oldTokens)
+                        {
+                            Debug.Write(oldstr + " ");
+                        }
+                        Debug.WriteLine("");
+                        Debug.WriteLine("");
+
+                        deletedDoublicates++;
+                        isDup = true;
+                        break;
+                    }
+                }
+
+                if (!isDup)
+                {
+                    oldTokensList.Add(newItemTokens);
+                    base.Add((T)(object)item);
+                }
             }
         }
 
-        private void parseCPU(CPU newItem)
+        private string[] generateCPUString(CPU newItem)
         {
-            bool isDuplicate = false;
-            bool isDup = false;
+            string newString = newItem.CpuSeries + " " + newItem.Model + " " + newItem.Manufacturer;
 
-            foreach (var oldItem in this)
+            string[] newStringArray = newString.ToLower().Replace("-", " ").Replace("/", " ").Split(' ');
+
+            return newStringArray;
+        }
+
+
+        private string[] generateGPUString(GPU newItem)
+        {
+            string newString = newItem.GraphicsProcessor + " " + newItem.Manufacturer + " " + newItem.Model;
+
+            string[] newStringArray = newString.ToLower().Replace("-", " ").Replace("/", " ").Split(' ');
+
+            return newStringArray;
+        }
+
+        //Not implementing, does normalize HDD Type, and then add like a normal list.
+        private string[] generateHardDriveString(HardDrive newItem)
+        {
+            if (newItem.Type == "SSD" || newItem.Type == "Solid state drive")
             {
-                CPU oldItemP = (CPU)(object)oldItem;
-                string oldString = oldItemP.CpuSeries + " " + oldItemP.Model + " " + oldItemP.Manufacturer;
-                string newString = newItem.CpuSeries + " " + newItem.Model + " " + newItem.Manufacturer;
-                oldString = oldString.ToLower();
-                newString = newString.ToLower();
-
-                string[] oldStringA = oldString.Replace("-", " ").Split(' ');
-                string[] newStringA = newString.Replace("-", " ").Split(' ');
-
-                bool isEqual = true;
-
-                foreach (string oldS in oldStringA)
-                {
-                    if (!newString.Contains(oldS))
-                    {
-                        isEqual = false;
-                    }
-                }
-                foreach (string newS in newStringA)
-                {
-                    if (!oldString.Contains(newS))
-                    {
-                        isEqual = false;
-                    }
-                }
-
-                if (oldString != newString)
-                {
-                    isDuplicate = true;
-                } 
-
-                if (isEqual)
-                {
-                    isDup = true;
-                    break;
-                }
-            }
-
-            if (!isDuplicate && !isDup)
-            {
+                newItem.Type = "SSD";
                 base.Add((T)(object)newItem);
             }
-            else if (!isDup)
+            else if (newItem.Type == "HDD" || newItem.Type == "Harddisk")
             {
+                newItem.Type = "HDD";
                 base.Add((T)(object)newItem);
             }
-            else if (!isDuplicate)
+            else if (newItem.Type == "Hybrid harddisk" || newItem.Type == "Solid state / harddisk")
             {
+                newItem.Type = "Hybrid";
                 base.Add((T)(object)newItem);
             }
-
-            if (isDup && isDuplicate)
+            else
             {
-
+                return null;
             }
+
+            return null;
+        }
+
+        //Not implementing, just adding item like a normal list.
+        private string[] generateChassisString(Chassis newItem)
+        {
+            base.Add((T)(object)newItem);
+
+            return null;
+        }
+
+        //Not implementingcompletely, just checks if the name is the same
+        private string[] generateMotherboardString(Motherboard newItem)
+        {
+
+            string newString = newItem.Name;
+
+            string[] newStringArray = newString.ToLower().Replace("-", " ").Replace(".", " ").Replace("/", " ").Replace(",", " ").Split(' ');
+
+            return newStringArray;
+        }
+
+        //Not implementing, just adding item like a normal list.
+        private string[] generatePSUString(PSU newItem)
+        {
+            base.Add((T)(object)newItem);
+
+            return null;
+        }
+
+        //Not implementing, just adding item like a normal list.
+        private string[] generateRAMString(RAM newItem)
+        {
+            base.Add((T)(object)newItem);
+
+            return null;
+        }
+
+        private string[] generateCompareString(T item)
+        {
+            string[] result;
+
+            if (item.GetType() == typeof(CPU))
+            {
+                result = generateCPUString((CPU)(object)item);
+            }
+            else if (item.GetType() == typeof(GPU))
+            {
+                result = generateGPUString((GPU)(object)item);
+            }
+            else if (item.GetType() == typeof(Motherboard))
+            {
+                result = generateMotherboardString((Motherboard)(object)item);
+            }
+            else if (item.GetType() == typeof(Chassis))
+            {
+                result = generateChassisString((Chassis)(object)item);
+            }
+            else if (item.GetType() == typeof(HardDrive))
+            {
+                result = generateHardDriveString((HardDrive)(object)item);
+            }
+            else if (item.GetType() == typeof(PSU))
+            {
+                result = generatePSUString((PSU)(object)item);
+            }
+            else if (item.GetType() == typeof(RAM))
+            {
+                result = generateRAMString((RAM)(object)item);
+            }
+            else
+            {
+                result = null;
+            }
+
+            return result;
         }
     }
 }

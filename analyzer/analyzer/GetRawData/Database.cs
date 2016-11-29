@@ -36,7 +36,7 @@ namespace analyzer.GetRawData
                 connection = new MySqlConnection(connectionString2);
         }
 
-        public List<Motherboard> GetMotherboardData()
+        public DistinctProductList<Motherboard> GetMotherboardData()
         {
             MySqlCommand command =
                 new MySqlCommand(
@@ -48,7 +48,7 @@ namespace analyzer.GetRawData
                     "WHERE Product.ProductID = Motherboard.ProductID", connection);
 
 
-            List<Motherboard> result = new List<Motherboard>();
+            DistinctProductList<Motherboard> result = new DistinctProductList<Motherboard>();
             MySqlDataReader reader = command.ExecuteReader();
 
             while (reader.Read())
@@ -71,7 +71,7 @@ namespace analyzer.GetRawData
             return result;
         }
 
-        public List<HardDrive> GetHardDriveData()
+        public DistinctProductList<HardDrive> GetHardDriveData()
         {
             MySqlCommand command =
                 new MySqlCommand(
@@ -81,7 +81,7 @@ namespace analyzer.GetRawData
                     "FROM Product, HardDrive " +
                     "WHERE Product.ProductID = HardDrive.ProductID", connection);
 
-            List<HardDrive> result = new List<HardDrive>();
+            DistinctProductList<HardDrive> result = new DistinctProductList<HardDrive>();
             MySqlDataReader reader = command.ExecuteReader();
 
             while (reader.Read())
@@ -104,20 +104,20 @@ namespace analyzer.GetRawData
             return result;
         }
 
-        public List<GPU> GetGpuData()
+        public DistinctProductList<GPU> GetGpuData()
         {
             MySqlCommand command =
                 new MySqlCommand(
                     "SELECT Product.ProductID, Product.name, GPU.processorManufacturer, GPU.chipset, GPU.graphicsProcessor, " +
                     "GPU.architecture, GPU.cooling, GPU.memSize, GPU.pciSlots, GPU.manufacturer, GPU.model " +
                     "FROM Product, GPU " +
-                    "WHERE Product.ProductID = GPU.ProductID", connection);
+                    "WHERE Product.ProductID = GPU.ProductID AND GPU.manufacturer != \"\" AND GPU.graphicsProcessor != \"\" AND GPU.model != \"\"", connection);
             /*MySqlCommand command = new MySqlCommand(
             SELECT processorManufacturer, chipset, model, architecture, cooling, memSize, pciSlots, manufacturer, count(*) 
             FROM GPU
             GROUP BY processorManufacturer, chipset, model, architecture, cooling, memSize, pciSlots, manufacturer);
             */
-            List<GPU> result = new List<GPU>();
+            DistinctProductList<GPU> result = new DistinctProductList<GPU>();
             MySqlDataReader reader = command.ExecuteReader();
 
             while (reader.Read())
@@ -145,7 +145,7 @@ namespace analyzer.GetRawData
                     "SELECT Product.ProductID, Product.name, CPU.model, CPU.clock, CPU.maxTurbo, CPU.integratedGpu, " +
                     "CPU.stockCooler, CPU.manufacturer, CPU.cpuSeries, CPU.logicalCores, CPU.physicalCores, CPU.socket " +
                     "FROM Product, CPU " +
-                    "WHERE Product.ProductID = CPU.ProductID", connection);
+                    "WHERE Product.ProductID = CPU.ProductID AND CPU.Model != \"\" AND CPU.cpuSeries != \"\"", connection);
             /*
             CREATE TABLE MergedProduct2 AS SELECT * FROM Product;
 
@@ -186,7 +186,7 @@ namespace analyzer.GetRawData
             return result;
         }
 
-        public List<Chassis> GetChassisData()
+        public DistinctProductList<Chassis> GetChassisData()
         {
             MySqlCommand command =
                 new MySqlCommand(
@@ -194,7 +194,7 @@ namespace analyzer.GetRawData
                     "Chassis.fans, Chassis.brand, Chassis.height, Chassis.width, Chassis.depth, Chassis.weight " +
                     "FROM Product, Chassis " +
                     "WHERE Product.ProductID = Chassis.ProductID", connection);
-            List<Chassis> result = new List<Chassis>();
+            DistinctProductList<Chassis> result = new DistinctProductList<Chassis>();
 
             MySqlDataReader reader = command.ExecuteReader();
 
@@ -217,14 +217,14 @@ namespace analyzer.GetRawData
             return result;
         }
 
-        public List<PSU> GetPsuData()
+        public DistinctProductList<PSU> GetPsuData()
         {
             MySqlCommand command =
                 new MySqlCommand("SELECT Product.ProductID, Product.name, PSU.power, PSU.formFactor, PSU.modular, " +
                                  "PSU.width, PSU.depth, PSU.height, PSU.weight, PSU.brand " +
                                  "FROM Product, PSU " +
                                  "WHERE Product.ProductID = PSU.ProductID", connection);
-            List<PSU> result = new List<PSU>();
+            DistinctProductList<PSU> result = new DistinctProductList<PSU>();
             MySqlDataReader reader = command.ExecuteReader();
 
             while (reader.Read())
@@ -246,14 +246,14 @@ namespace analyzer.GetRawData
             return result;
         }
 
-        public List<RAM> GetRamData()
+        public DistinctProductList<RAM> GetRamData()
         {
             MySqlCommand command =
                 new MySqlCommand("SELECT Product.ProductID, Product.name, RAM.type, RAM.capacity, RAM.speed, " +
                                  "RAM.technology, RAM.formFactor, RAM.casLatens " +
                                  "FROM Product, RAM " +
                                  "WHERE Product.ProductID = RAM.ProductID", connection);
-            List<RAM> result = new List<RAM>();
+            DistinctProductList<RAM> result = new DistinctProductList<RAM>();
             MySqlDataReader reader = command.ExecuteReader();
 
             while (reader.Read())

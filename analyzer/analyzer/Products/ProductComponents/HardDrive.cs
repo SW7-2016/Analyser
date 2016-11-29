@@ -23,7 +23,7 @@ namespace analyzer.Products.ProductComponents
         }
 
         public bool IsInternal { get; }
-        public string Type { get; }
+        public string Type { get; set; }
         public string FormFactor { get; }
         public string Capacity { get; }
         public string CacheSize { get; }

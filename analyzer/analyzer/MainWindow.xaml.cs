@@ -14,13 +14,13 @@ namespace analyzer
     /// </summary>
     public partial class MainWindow : Window
     {
-        public List<Chassis> chassisList = new List<Chassis>();
+        public DistinctProductList<Chassis> chassisList = new DistinctProductList<Chassis>();
         public DistinctProductList<CPU> cpuList = new DistinctProductList<CPU>();
-        public List<GPU> gpuList = new List<GPU>();
-        public List<HardDrive> hardDriveList = new List<HardDrive>();
-        public List<Motherboard> motherboardList = new List<Motherboard>();
-        public List<PSU> psuList = new List<PSU>();
-        public List<RAM> ramList = new List<RAM>();
+        public DistinctProductList<GPU> gpuList = new DistinctProductList<GPU>();
+        public DistinctProductList<HardDrive> hardDriveList = new DistinctProductList<HardDrive>();
+        public DistinctProductList<Motherboard> motherboardList = new DistinctProductList<Motherboard>();
+        public DistinctProductList<PSU> psuList = new DistinctProductList<PSU>();
+        public DistinctProductList<RAM> ramList = new DistinctProductList<RAM>();
         public List<CriticReview> criticReviewList = new List<CriticReview>();
         public List<UserReview> userReviewList = new List<UserReview>();
         public List<Review> reviewList = new List<Review>();

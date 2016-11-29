@@ -78,13 +78,6 @@
     <Compile Include="GetRawData\Database.cs" />
     <Compile Include="Products\ComputerComponents.cs" />
     <Compile Include="Products\DistinctProductList\DistinctProductList.cs" />
-    <Compile Include="Products\DistinctProductList\types\DistinctChassisList.cs" />
-    <Compile Include="Products\DistinctProductList\types\DistinctCPUList.cs" />
-    <Compile Include="Products\DistinctProductList\types\DistinctGPUList.cs" />
-    <Compile Include="Products\DistinctProductList\types\DistinctHardDriveList.cs" />
-    <Compile Include="Products\DistinctProductList\types\DistinctMotherboardList.cs" />
-    <Compile Include="Products\DistinctProductList\types\DistinctPSUList.cs" />
-    <Compile Include="Products\DistinctProductList\types\DistinctRAMList.cs" />
     <Compile Include="Products\Product.cs" />
     <Compile Include="Products\ProductComponents\Chassis.cs" />
     <Compile Include="Products\ProductComponents\CPU.cs" />
