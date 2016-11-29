@@ -1,4 +1,5 @@
-﻿using System.CodeDom.Compiler;
+﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -6,11 +7,13 @@ using System.Text;
 using analyzer.CompareAndMerge;
 using analyzer.Products.ProductComponents;
 using analyzer.Products;
+using analyzer.Products.Reviews;
 
 namespace analyzer.Debugging
 {
     class Debugging
     {
+        #region Catch Reviews with more than one link 
         public static void DebugReviewDuplicates(List<Chassis> chassisList, List<CPU> cpuList, List<GPU> gpuList, List<HardDrive> hardDriveList, List<Motherboard> motherboardList, List<PSU> psuList, List<RAM> ramList)
         {
             List<ProductReviewId> reviewIdList = new List<ProductReviewId>();
@@ -112,5 +115,96 @@ namespace analyzer.Debugging
             }
             return reviewIdList;
         }
+        #endregion
+
+        #region Show all reviews whitout a link
+        public static void GetUnlinkedReviews(List<Review> allReviews, List<Chassis> chassisList, List<CPU> cpuList, List<GPU> gpuList,
+            List<HardDrive> hardDriveList, List<Motherboard> motherboardList, List<PSU> psuList, List<RAM> ramList)
+        {
+            List<int> reviewIdList = new List<int>();
+            List<int> allReviewsIds = new List<int>();
+
+            //Add all review ids ti list
+            foreach (var review in allReviews)
+            {
+                allReviewsIds.Add(review.Id);
+            }
+
+           
+
+            #region add to shared list
+            //add reviews with links to reviewIdList
+            foreach (var chassis in chassisList)
+            {
+                reviewIdList = helper2(reviewIdList, chassis);
+
+            }
+            foreach (var cpu in cpuList)
+            {
+                reviewIdList = helper2(reviewIdList, cpu);
+
+            }
+            foreach (var gpu in gpuList)
+            {
+                reviewIdList = helper2(reviewIdList, gpu);
+
+            }
+            foreach (var hardDrive in hardDriveList)
+            {
+                reviewIdList = helper2(reviewIdList, hardDrive);
+
+            }
+            foreach (var motherboard in motherboardList)
+            {
+                reviewIdList = helper2(reviewIdList, motherboard);
+            }
+            foreach (var psu in psuList)
+            {
+                reviewIdList = helper2(reviewIdList, psu);
+
+            }
+            foreach (var ram in ramList)
+            {
+                reviewIdList = helper2(reviewIdList, ram);
+
+            }
+            #endregion
+
+            reviewIdList = allReviewsIds.Except(reviewIdList).ToList();
+            reviewIdList.Sort();
+
+            bool first = true;
+            StringBuilder sb = new StringBuilder();
+            foreach (int id in reviewIdList)
+            {
+                if (first)
+                {
+                    sb.Append("select * from Review where ReviewID = ");
+                    sb.Append(id);
+                    first = false;
+                }
+                else
+                {
+                    sb.Append(" or ReviewID = ");
+                    sb.Append(id);
+                }
+            }
+            sb.Append(";");
+            Debug.WriteLine(sb);
+        }
+
+        private static List<int> helper2<T>(List<int> reviewIdList, T product) where T : Product
+        {
+            foreach (var reviewID in product.reviewMatches)
+            {
+                if (!reviewIdList.Contains(reviewID))
+                {
+                    reviewIdList.Add(reviewID);
+                }
+            }
+
+            return reviewIdList;
+        }
+#endregion
     }
 }
