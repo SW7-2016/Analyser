@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
-
+using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using analyzer.Debugging;
 using analyzer.Products.Reviews;
@@ -64,8 +65,40 @@ namespace analyzer
             dbConnection.connection.Close();
 
             //Debugging.Debugging.DebugReviewDuplicates(chassisList, cpuList, gpuList, hardDriveList, motherboardList, psuList, ramList);
-            //Debugging.Debugging.GetUnlinkedReviews(reviewList, chassisList, cpuList, gpuList, hardDriveList, motherboardList, psuList, ramList);
-            
+            Debugging.Debugging.GetUnlinkedReviews(reviewList, chassisList, cpuList, gpuList, hardDriveList, motherboardList, psuList, ramList);
+            //TempDebug(); //Remove before commit
+
+        }
+
+
+        //Remove before commit
+        private void TempDebug()
+        {
+            int largest = 0;
+            int id = 0;
+            int total = 0;
+            int withReviews = 0;
+
+            foreach (var cpu in cpuList)
+            {
+                if (cpu.reviewMatches.Count > largest)
+                {
+                    largest = cpu.reviewMatches.Count;
+                    id = cpu.Id;
+                }
+
+                if (cpu.reviewMatches.Count > 0)
+                {
+                    Debug.WriteLine("{0} reviews on ID: {1} Model:{2} CpuSeries: {3}", cpu.reviewMatches.Count, cpu.Id, cpu.Model, cpu.CpuSeries);
+                    withReviews++;
+                }
+
+                total++;
+            }
+
+            Debug.WriteLine("");
+            Debug.WriteLine("Largest set of reviews is {0} on product id {1}", largest, id);
+            Debug.WriteLine("{0} out of {1} have minimum one review linked", withReviews, total);
         }
     }
 }

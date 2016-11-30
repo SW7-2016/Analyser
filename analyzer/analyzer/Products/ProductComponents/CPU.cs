@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
+using System.Runtime.Serialization.Formatters;
 using analyzer.Products.Reviews;
 
 namespace analyzer.Products.ProductComponents
@@ -39,13 +39,10 @@ namespace analyzer.Products.ProductComponents
             List<string> restrictedTokens = new List<string>();
             string productStrings = Model.ToLower() + " " + CpuSeries.ToLower();
 
-
             restrictedTokens.Add("intel");
             restrictedTokens.Add("core");
             restrictedTokens.Add("amd");
-
             productStrings = RemoveRestrictedTokens(productStrings, restrictedTokens);
-
 
             foreach (var review in reviewList)
             {
@@ -53,17 +50,15 @@ namespace analyzer.Products.ProductComponents
                     continue;
 
                 string concatenatedReviewTitle = RemoveRestrictedTokens(ConcatenateString(review.Title.ToLower()), restrictedTokens);
-                int nrOfReviewLinksToProduct = 0;
 
                 if (!CompareReviewTitleWithProductStrings(concatenatedReviewTitle, productStrings))
                 {
                     continue;
                 }
-                //check if added review is correct in debug console
-                nrOfReviewLinksToProduct++;
-                Debug.WriteLine(this.ToString());
-                Debug.WriteLine(review.Title);
-                //Debug.WriteLine(nrOfReviewLinksToProduct);
+
+
+                
+
                 //add review id to product
                 reviewMatches.Add(review.Id);
             }
