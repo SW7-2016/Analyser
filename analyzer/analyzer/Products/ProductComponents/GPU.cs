@@ -34,9 +34,60 @@ namespace analyzer.Products.ProductComponents
         public string MemSize { get; }
         public string Manufacturer { get; }
 
-        
-
         public override void MatchReviewAndProduct<T>(List<Review> reviewList, List<T> productList)
+        {
+            List<string> restrictedTokens = new List<string>();
+
+            restrictedTokens.Add("gtx");
+            restrictedTokens.Add("geforce");
+            restrictedTokens.Add("nvidia");
+            restrictedTokens.Add("amd");
+            restrictedTokens.Add("radeon");
+
+            foreach (var review in reviewList)
+            {
+                bool manufactureMatch = false;
+
+                if (review.Category.ToLower() != "gpu")
+                    continue;
+
+                foreach (string token in review.TokenList)
+                {
+                    if (token == Manufacturer.ToLower())
+                    {
+                        manufactureMatch = true;
+                        break;
+                    }
+                }
+
+                if (!manufactureMatch)
+                {
+                    continue;
+                }
+
+                if (!MatchStringNumbers(GraphicsProcessor, review.Title))
+                {
+                    continue;
+                }
+
+                if (!CompareGraphicsProcessorStrings(review.Title.ToLower(), GraphicsProcessor.ToLower(), restrictedTokens))
+                {
+                    continue;
+                }
+
+                if (!CompareModelStrings(review.Title.ToLower(), Model.ToLower(), GraphicsProcessor.ToLower(), restrictedTokens))
+                {
+                    continue;
+                }
+                //check if added review is correct in debug console
+                Debug.WriteLine(this.Id + " " + this.ToString());
+                Debug.WriteLine(review.Title);
+                //add review id to product
+                reviewMatches.Add(review.Id);
+            }
+        }
+
+        /*public override void MatchReviewAndProduct<T>(List<Review> reviewList, List<T> productList)
         {
             List<string> restrictedTokens = new List<string>();
             string productStrings = Model.ToLower() + " " + GraphicsProcessor.ToLower() + " " + Manufacturer.ToLower();
@@ -57,25 +108,78 @@ namespace analyzer.Products.ProductComponents
                     continue;
 
                 string concatenatedReviewTitle = RemoveRestrictedTokens(ConcatenateString(review.Title.ToLower()), restrictedTokens);
-                int nrOfReviewLinksToProduct = 0;
 
                 if (!MatchStringToTokens(Manufacturer.ToLower(), review.TokenList) || !CompareReviewTitleWithProductStrings(concatenatedReviewTitle, productStrings))
                 {
                     continue;
                 }
+
                 //check if added review is correct in debug console
-                nrOfReviewLinksToProduct++;
-                Debug.WriteLine(this.ToString());
+                Debug.WriteLine(this.Id + " " + this.ToString());
                 Debug.WriteLine(review.Title);
-                Debug.WriteLine(nrOfReviewLinksToProduct);
                 //add review id to product
                 reviewMatches.Add(review.Id);
             }
-        }
+        }*/
 
         public override string ToString()
         {
             return $"{nameof(ProcessorManufacturer)}: {ProcessorManufacturer}, {nameof(GraphicsProcessor)}: {GraphicsProcessor}, {nameof(Model)}: {Model}, {nameof(Manufacturer)}: {Manufacturer}";
+        }
+
+        private bool CompareGraphicsProcessorStrings(string reviewTitle, string graphicsProcessor, List<string> restrictedTokens) 
+        {
+            List<string> graphicsProcessorStrings = SplitStringToTokens(RemoveRestrictedTokens(graphicsProcessor, restrictedTokens));
+            List<string> reviewTitleStrings = SplitStringToTokens(RemoveRestrictedTokens(reviewTitle, restrictedTokens));
+
+            foreach (string gpuString in graphicsProcessorStrings)
+            {
+                foreach (string reviewString in reviewTitleStrings)
+                {
+                    if (gpuString == reviewString)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private bool CompareModelStrings(string reviewTitle, string model, string graphicsProcessor, List<string> restrictedTokens)
+        {
+            List<string> graphicsProcessorStrings = SplitStringToTokens(RemoveRestrictedTokens(graphicsProcessor, restrictedTokens));
+            List<string> modelStrings = SplitStringToTokens(RemoveRestrictedTokens(model, restrictedTokens));
+            List<string> reviewTitleStrings = SplitStringToTokens(RemoveRestrictedTokens(reviewTitle, restrictedTokens)).Distinct().ToList();
+            List<string> actualModelStrings = new List<string>();
+            int count = 0;
+
+            foreach (string modelString in modelStrings)
+            {
+                foreach (string graphicsProcessorString in graphicsProcessorStrings)
+                {
+                    if (modelString != graphicsProcessorString  && !actualModelStrings.Contains(modelString))
+                    {
+                        actualModelStrings.Add(modelString);
+                    }
+                }
+            }
+
+            foreach (string modelString in actualModelStrings)
+            {
+                foreach (string reviewString in reviewTitleStrings)
+                {
+                    if (modelString == reviewString)
+                    {
+                        count++;
+                    }
+                    if (count == actualModelStrings.Count)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 }

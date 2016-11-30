@@ -61,34 +61,52 @@ namespace analyzer.Products
 
             return modifyString.ToLower();
         }
-        /*
+        
         internal MatchCollection ExtractNumbersFromString(string str)
         {
             MatchCollection result = Regex.Matches(str, @"\d+");
             return result;
         }
 
-        internal bool MatchStringNumbers(string string1, string string2)
+        internal bool MatchStringNumbers(string productString1, string reviewString2)
         {
-            MatchCollection firstStringNumbers = ExtractNumbersFromString(string1);
-            MatchCollection secondStringNumbers = ExtractNumbersFromString(string2);
+            MatchCollection firstStringNumbers = ExtractNumbersFromString(productString1);
+            MatchCollection secondStringNumbers = ExtractNumbersFromString(reviewString2);
+            List<bool> correctMatches = new List<bool>();
+            bool correctMatch;
 
             foreach (Match firstStringNumber in firstStringNumbers)
             {
+                correctMatch = false;
                 foreach (Match secondStringNumber in secondStringNumbers)
                 {
                     if (int.Parse(firstStringNumber.Value) == int.Parse(secondStringNumber.Value))
                     {
-                        continue;
+                        correctMatch = true;
                     }
+                }
 
+                if (correctMatch)
+                {
+                    correctMatches.Add(true);
+                }
+                else
+                {
+                    correctMatches.Add(false);
+                }
+            }
+
+            foreach (var numberMatch in correctMatches)
+            {
+                if (!numberMatch)
+                {
                     return false;
                 }
             }
 
             return true;
         }
-        */
+        
         internal bool MatchStringToTokens(string string1, List<string> string2)
         {
             foreach (var token in string2)
