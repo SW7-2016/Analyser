@@ -87,6 +87,7 @@
     <Compile Include="Products\ProductComponents\PSU.cs" />
     <Compile Include="Products\ProductComponents\RAM.cs" />
     <Compile Include="Products\Retailers\Retailer.cs" />
+    <Compile Include="Products\ReviewProductLinks.cs" />
     <Compile Include="Products\Reviews\CriticReview.cs" />
     <Compile Include="Products\Reviews\Review.cs" />
     <Compile Include="Products\Reviews\ReviewComment.cs" />

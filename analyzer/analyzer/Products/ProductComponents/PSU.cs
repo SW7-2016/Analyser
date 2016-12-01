@@ -27,7 +27,7 @@ namespace analyzer.Products.ProductComponents
         public string Width { get; }
         public string Weight { get; }
         public bool Modular { get; }
-        public override void MatchReviewAndProduct<T>(List<Review> reviewList, List<T> productList)
+        public override void MatchReviewAndProduct(List<Review> reviewList, ReviewProductLinks reviewProductLinks)
         {
             throw new System.NotImplementedException();
         }

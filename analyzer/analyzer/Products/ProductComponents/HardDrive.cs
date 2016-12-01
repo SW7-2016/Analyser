@@ -33,7 +33,7 @@ namespace analyzer.Products.ProductComponents
         public string Height { get; }
         public string Depth { get; }
         public string Width { get; }
-        public override void MatchReviewAndProduct<T>(List<Review> reviewList, List<T> productList)
+        public override void MatchReviewAndProduct(List<Review> reviewList, ReviewProductLinks reviewProductLinks)
         {
             throw new System.NotImplementedException();
         }

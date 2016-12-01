@@ -106,6 +106,20 @@ namespace analyzer.Products
 
             return true;
         }
+
+        internal bool ReviewLinksToMultipleProducts(Review review)
+        {
+            if (review.linkedProducts.Count > 1)
+            {
+                
+            }
+            return false;
+        }
+
+        internal void RemoveMultipleLinkReview(Review review)
+        {
+            
+        }
         
         internal bool MatchStringToTokens(string string1, List<string> string2)
         {
@@ -120,7 +134,7 @@ namespace analyzer.Products
             return false;
         }
 
-        public abstract void MatchReviewAndProduct<T>(List<Review> reviewList, List<T> productList) where T : Product;
+        public abstract void MatchReviewAndProduct(List<Review> reviewList, ReviewProductLinks reviewProductLinks);
 
         internal virtual bool CompareReviewTitleWithProductStrings(string concatenatedReviewTitle, string productStrings)
         {

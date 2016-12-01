@@ -34,7 +34,7 @@ namespace analyzer.Products.ProductComponents
         public string Manufacturer { get; }
         public string CpuSeries { get; }
 
-        public override void MatchReviewAndProduct<T>(List<Review> reviewList, List<T> productList)
+        public override void MatchReviewAndProduct(List<Review> reviewList, ReviewProductLinks reviewProductLinks)
         {
             List<string> restrictedTokens = new List<string>();
             string productStrings = Model.ToLower() + " " + CpuSeries.ToLower();
@@ -57,10 +57,22 @@ namespace analyzer.Products.ProductComponents
                 }
 
 
-                
 
+                Debug.WriteLine(this.Id + " " + this.ToString());
+                Debug.WriteLine(review.Id + " " + review.Title);
                 //add review id to product
                 reviewMatches.Add(review.Id);
+                review.linkedProducts.Add(this.Id);
+
+                if (!reviewProductLinks.productList.Contains(this))
+                {
+                    reviewProductLinks.productList.Add(this);
+                }
+
+                if (!reviewProductLinks.reviewList.Contains(review))
+                {
+                    reviewProductLinks.reviewList.Add(review);
+                }
             }
         }
 

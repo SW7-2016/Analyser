@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Automation.Peers;
+using analyzer.CompareAndMerge;
 using analyzer.Products.Reviews;
 
 namespace analyzer.Products.ProductComponents
@@ -34,7 +35,7 @@ namespace analyzer.Products.ProductComponents
         public string MemSize { get; }
         public string Manufacturer { get; }
 
-        public override void MatchReviewAndProduct<T>(List<Review> reviewList, List<T> productList)
+        public override void MatchReviewAndProduct(List<Review> reviewList, ReviewProductLinks reviewProductLinks)
         {
             List<string> restrictedTokens = new List<string>();
 
@@ -81,9 +82,20 @@ namespace analyzer.Products.ProductComponents
                 }
                 //check if added review is correct in debug console
                 Debug.WriteLine(this.Id + " " + this.ToString());
-                Debug.WriteLine(review.Title);
+                Debug.WriteLine(review.Id + " " + review.Title);
                 //add review id to product
                 reviewMatches.Add(review.Id);
+                review.linkedProducts.Add(this.Id);
+
+                if (!reviewProductLinks.productList.Contains(this))
+                {
+                    reviewProductLinks.productList.Add(this);
+                }
+
+                if (!reviewProductLinks.reviewList.Contains(review))
+                {
+                    reviewProductLinks.reviewList.Add(review);
+                }
             }
         }
 

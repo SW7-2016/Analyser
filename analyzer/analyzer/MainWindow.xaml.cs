@@ -6,6 +6,7 @@ using analyzer.Debugging;
 using analyzer.Products.Reviews;
 using analyzer.Products.ProductComponents;
 using analyzer.GetRawData;
+using analyzer.Products;
 using analyzer.Products.DistinctProductList.types;
 
 namespace analyzer
@@ -31,10 +32,44 @@ namespace analyzer
         {
             InitializeComponent();
         }
+
+        private void RemoveInvalidLinks(ReviewProductLinks reviewProductLinks, ReviewProductLinks actualReviewProductLinks)
+        {
+            foreach (var review in reviewProductLinks.reviewList)
+            {
+                if (!(review.linkedProducts.Count > 1))
+                {
+                    actualReviewProductLinks.reviewList.Add(review);
+                }
+                else
+                {
+                    foreach (var id in review.linkedProducts)
+                    {
+                        foreach (var product in reviewProductLinks.productList)
+                        {
+                            if (product.Id == id)
+                            {
+                                product.reviewMatches.Remove(review.Id);
+                            }
+                        }
+                    }
+                }
+            }
+
+            foreach (var product in reviewProductLinks.productList)
+            {
+                if (product.reviewMatches.Count > 0)
+                {
+                    actualReviewProductLinks.productList.Add(product);
+                }
+            }
+        }
         private void GetDataTest_bt_Click(object sender, RoutedEventArgs e)
         {
 
             DBConnect dbConnection = new DBConnect();
+            ReviewProductLinks reviewProductLinks = new ReviewProductLinks();
+            ReviewProductLinks actualReviewProductLinks = new ReviewProductLinks();
 
             dbConnection.DbInitialize(true);
 
@@ -57,13 +92,15 @@ namespace analyzer
             reviewList.AddRange(criticReviewList);
             reviewList.AddRange(userReviewList);
 
-            foreach (var gpu in gpuList)
+            foreach (var gpu in cpuList)
             {
-                gpu.MatchReviewAndProduct(reviewList, gpuList);
+                gpu.MatchReviewAndProduct(reviewList, reviewProductLinks);
             }
 
-            dbConnection.connection.Close();
+            
+            RemoveInvalidLinks(reviewProductLinks, actualReviewProductLinks);
 
+            dbConnection.connection.Close();
 
             /* ||===================================================||
              * ||!! Warning! you are now entering the debug area. !!||
