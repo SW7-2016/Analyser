@@ -64,6 +64,7 @@ namespace analyzer
                 }
             }
         }
+
         private void GetDataTest_bt_Click(object sender, RoutedEventArgs e)
         {
 
@@ -97,7 +98,6 @@ namespace analyzer
                 gpu.MatchReviewAndProduct(reviewList, reviewProductLinks);
             }
 
-            
             RemoveInvalidLinks(reviewProductLinks, actualReviewProductLinks);
 
             dbConnection.connection.Close();
