@@ -329,7 +329,7 @@ namespace analyzer.GetRawData
                 }
 
 
-                //result.Add(row);
+                result.Add(row);
             }
 
 

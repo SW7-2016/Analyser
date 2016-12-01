@@ -205,6 +205,35 @@ namespace analyzer.Debugging
 
             return reviewIdList;
         }
-#endregion
+        #endregion
+
+        #region Show number of review for each product of a single type.
+        public static void NumberOfReviewForEachProduct<T>(List<T> productList) where T : Product
+        {
+            int largest = 0;
+            int id = 0;
+            int total = 0;
+            int withReviews = 0;
+
+            foreach (var product in productList)
+            {
+                if (product.reviewMatches.Count > largest)
+                {
+                    largest = product.reviewMatches.Count;
+                    id = product.Id;
+                }
+
+                if (product.reviewMatches.Count > 0)
+                {
+                    Debug.WriteLine("{0} reviews on Product with ID: {1} ", product.reviewMatches.Count, product.Id);
+                    withReviews++;
+                }
+                total++;
+            }
+            Debug.WriteLine("");
+            Debug.WriteLine("Largest set of reviews is {0} on product id {1}", largest, id);
+            Debug.WriteLine("{0} out of {1} have minimum one review linked", withReviews, total);
+        }
+        #endregion
     }
 }
