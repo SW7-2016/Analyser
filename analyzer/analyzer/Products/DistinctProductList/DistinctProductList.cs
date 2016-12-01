@@ -32,37 +32,46 @@ namespace analyzer.Products.DistinctProductList.types
 
                     foreach (string oldToken in oldTokens)
                     {
-                        if (!newItemTokens.Contains(oldToken) && oldToken != "")
+                        if (!newItemTokens.Contains(oldToken) && oldToken != "" && oldToken != "amd" && oldToken != "intel") //&& !stopWord.ContainsKey(oldToken))
                         {
                             isEqual = false;
                             break;
+                        }
+                        else if (newItemTokens.Contains(oldToken))
+                        {
+
                         }
                     }
 
                     foreach (string newToken in newItemTokens)
                     {
-                        if (!oldTokens.Contains(newToken) && newToken != "")
+                        if (!oldTokens.Contains(newToken) && newToken != "" && newToken != "amd" && newToken != "intel")//&& !stopWord.ContainsKey(newToken))
                         {
                             isEqual = false;
                             break;
+                        }
+                        else if (oldTokens.Contains(newToken))
+                        {
+
                         }
                     }
 
                     if (isEqual)
                     {
-                        foreach (var newstr in newItemTokens)
+                        /*foreach (var newstr in newItemTokens)
                         {
-                            //Debug.Write(newstr + " ");
+                            Debug.Write(newstr + " ");
                         }
 
-                        //Debug.WriteLine("");
+                        Debug.WriteLine("");
 
                         foreach (var oldstr in oldTokens)
                         {
-                           // Debug.Write(oldstr + " ");
+                            Debug.Write(oldstr + " ");
                         }
-                        //Debug.WriteLine("");
-                        //Debug.WriteLine("");
+
+                        Debug.WriteLine("");
+                        Debug.WriteLine("");*/
 
                         deletedDoublicates++;
                         isDup = true;
@@ -80,7 +89,7 @@ namespace analyzer.Products.DistinctProductList.types
 
         private string[] generateCPUString(CPU newItem)
         {
-            string newString = newItem.CpuSeries + " " + newItem.Model + " " + newItem.Manufacturer;
+            string newString = newItem.CpuSeries + " " + newItem.Model;
 
             string[] newStringArray = newString.ToLower().Replace("-", " ").Replace("/", " ").Split(' ');
 
@@ -196,6 +205,94 @@ namespace analyzer.Products.DistinctProductList.types
             }
 
             return result;
+        }
+
+        private Dictionary<string, bool> stopWord = new Dictionary<string, bool>()
+            {
+                { "quad", true },
+                { "octa", true },
+                { "dual", true },
+                { "duo", true },
+                { "a", true },
+                { "second", true },
+                { "first", true },
+                { "third", true },
+                { "serie", true },
+                { "series", true },
+                { "radeon", true },
+                { "extreme", true },
+                { "edition", true },
+                { "generation", true },
+                { "pentium", true },
+                { "r", true },
+                { "r1", true },
+                { "r2", true },
+                { "r3", true },
+                { "r4", true },
+                { "r5", true },
+                { "r6", true },
+                { "r7", true },
+                { "r8", true },
+                { "r9", true },
+                { "amd", true },
+                { "intel", true }
+            };
+
+        public void NearDublicates()
+        {
+            Debug.WriteLine("");
+            Debug.WriteLine(""); Debug.WriteLine("");
+            Debug.WriteLine(""); Debug.WriteLine("");
+            Debug.WriteLine(""); Debug.WriteLine("");
+            Debug.WriteLine(""); Debug.WriteLine("");
+            Debug.WriteLine(""); Debug.WriteLine("");
+            Debug.WriteLine(""); Debug.WriteLine("");
+            Debug.WriteLine(""); Debug.WriteLine("");
+            Debug.WriteLine(""); Debug.WriteLine("");
+            Debug.WriteLine(""); Debug.WriteLine("");
+            Debug.WriteLine(""); Debug.WriteLine("");
+            Debug.WriteLine(""); Debug.WriteLine("");
+            Debug.WriteLine("");
+            int firstLoop = 0;
+
+            foreach (string[] str1 in oldTokensList)
+            {
+                int ndLoop = 0;
+
+                foreach (string[] str2 in oldTokensList)
+                {
+                    int i = 0;
+
+                    foreach (string token1 in str1)
+                    {
+                        
+                        if (token1.Any(char.IsDigit) && str2.Contains(token1) && token1.Count() > 2 && firstLoop > ndLoop)
+                        {
+                            i++;
+                        }
+                    }
+
+                    if (i >= 1)
+                    {
+                        foreach (var newstr in str1)
+                        {
+                            Debug.Write(newstr + " ");
+                        }
+
+                        Debug.WriteLine("");
+
+                        foreach (var oldstr in str2)
+                        {
+                            Debug.Write(oldstr + " ");
+                        }
+
+                        Debug.WriteLine("");
+                        Debug.WriteLine("");
+                    }
+                    ndLoop++;
+                }
+                firstLoop++;
+            }
         }
     }
 }
