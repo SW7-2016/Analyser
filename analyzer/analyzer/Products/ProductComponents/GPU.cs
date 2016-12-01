@@ -35,15 +35,8 @@ namespace analyzer.Products.ProductComponents
         public string MemSize { get; }
         public string Manufacturer { get; }
 
-        public override void MatchReviewAndProduct(List<Review> reviewList, ReviewProductLinks reviewProductLinks)
+        public override void MatchReviewAndProduct(List<Review> reviewList, ReviewProductLinks reviewProductLinks, Dictionary<string, bool> stopWords)
         {
-            List<string> restrictedTokens = new List<string>();
-
-            restrictedTokens.Add("gtx");
-            restrictedTokens.Add("geforce");
-            restrictedTokens.Add("nvidia");
-            restrictedTokens.Add("amd");
-            restrictedTokens.Add("radeon");
 
             foreach (var review in reviewList)
             {
@@ -71,12 +64,12 @@ namespace analyzer.Products.ProductComponents
                     continue;
                 }
 
-                if (!CompareGraphicsProcessorStrings(review.Title.ToLower(), GraphicsProcessor.ToLower(), restrictedTokens))
+                if (!CompareGraphicsProcessorStrings(review.Title.ToLower(), GraphicsProcessor.ToLower(), stopWords))
                 {
                     continue;
                 }
 
-                if (!CompareModelStrings(review.Title.ToLower(), Model.ToLower(), GraphicsProcessor.ToLower(), restrictedTokens))
+                if (!CompareModelStrings(review.Title.ToLower(), Model.ToLower(), GraphicsProcessor.ToLower(), stopWords))
                 {
                     continue;
                 }
@@ -139,10 +132,10 @@ namespace analyzer.Products.ProductComponents
             return $"{nameof(ProcessorManufacturer)}: {ProcessorManufacturer}, {nameof(GraphicsProcessor)}: {GraphicsProcessor}, {nameof(Model)}: {Model}, {nameof(Manufacturer)}: {Manufacturer}";
         }
 
-        private bool CompareGraphicsProcessorStrings(string reviewTitle, string graphicsProcessor, List<string> restrictedTokens) 
+        private bool CompareGraphicsProcessorStrings(string reviewTitle, string graphicsProcessor, Dictionary<string, bool> restrictedTokens) 
         {
-            List<string> graphicsProcessorStrings = SplitStringToTokens(RemoveRestrictedTokens(graphicsProcessor, restrictedTokens));
-            List<string> reviewTitleStrings = SplitStringToTokens(RemoveRestrictedTokens(reviewTitle, restrictedTokens));
+            List<string> graphicsProcessorStrings = RemoveRestrictedTokens(SplitStringToTokens(graphicsProcessor), restrictedTokens);
+            List<string> reviewTitleStrings = RemoveRestrictedTokens(SplitStringToTokens(reviewTitle), restrictedTokens);
 
             foreach (string gpuString in graphicsProcessorStrings)
             {
@@ -158,11 +151,11 @@ namespace analyzer.Products.ProductComponents
             return false;
         }
 
-        private bool CompareModelStrings(string reviewTitle, string model, string graphicsProcessor, List<string> restrictedTokens)
+        private bool CompareModelStrings(string reviewTitle, string model, string graphicsProcessor, Dictionary<string, bool> restrictedTokens)
         {
-            List<string> graphicsProcessorStrings = SplitStringToTokens(RemoveRestrictedTokens(graphicsProcessor, restrictedTokens));
-            List<string> modelStrings = SplitStringToTokens(RemoveRestrictedTokens(model, restrictedTokens));
-            List<string> reviewTitleStrings = SplitStringToTokens(RemoveRestrictedTokens(reviewTitle, restrictedTokens)).Distinct().ToList();
+            List<string> graphicsProcessorStrings = RemoveRestrictedTokens(SplitStringToTokens(graphicsProcessor), restrictedTokens);
+            List<string> modelStrings = RemoveRestrictedTokens(SplitStringToTokens(model), restrictedTokens);
+            List<string> reviewTitleStrings = RemoveRestrictedTokens(SplitStringToTokens(reviewTitle), restrictedTokens).Distinct().ToList();
             List<string> actualModelStrings = new List<string>();
             int count = 0;
 

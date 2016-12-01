@@ -27,7 +27,7 @@ namespace analyzer.Products.ProductComponents
         public string Width { get; }
         public string Weight { get; }
         public bool Modular { get; }
-        public override void MatchReviewAndProduct(List<Review> reviewList, ReviewProductLinks reviewProductLinks)
+        public override void MatchReviewAndProduct(List<Review> reviewList, ReviewProductLinks reviewProductLinks, Dictionary<string, bool> stopWords)
         {
             throw new System.NotImplementedException();
         }

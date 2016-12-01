@@ -12,7 +12,7 @@ namespace analyzer.Products.DistinctProductList.types
     public class DistinctProductList<T> : List<T>
     {
         List<string[]> oldTokensList = new List<string[]>();
-        private Dictionary<string, bool> stopWord = new Dictionary<string, bool>();
+        public Dictionary<string, bool> stopWord = new Dictionary<string, bool>();
 
         public int deletedDoublicates = 0;
 
@@ -195,6 +195,7 @@ namespace analyzer.Products.DistinctProductList.types
                     { "r8", true },
                     { "r9", true },
                     { "amd", true },
+                    { "core", true },
                     { "intel", true }
                 };
 

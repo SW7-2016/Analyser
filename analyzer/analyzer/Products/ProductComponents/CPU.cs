@@ -34,32 +34,27 @@ namespace analyzer.Products.ProductComponents
         public string Manufacturer { get; }
         public string CpuSeries { get; }
 
-        public override void MatchReviewAndProduct(List<Review> reviewList, ReviewProductLinks reviewProductLinks)
+        public override void MatchReviewAndProduct(List<Review> reviewList, ReviewProductLinks reviewProductLinks, Dictionary<string, bool> stopWords)
         {
             List<string> restrictedTokens = new List<string>();
             string productStrings = Model.ToLower() + " " + CpuSeries.ToLower();
 
-            restrictedTokens.Add("intel");
-            restrictedTokens.Add("core");
-            restrictedTokens.Add("amd");
-            productStrings = RemoveRestrictedTokens(productStrings, restrictedTokens);
+            List<string> productTokens = RemoveRestrictedTokens(SplitStringToTokens(productStrings), stopWords);
 
             foreach (var review in reviewList)
             {
                 if (review.Category.ToLower() != "cpu")
                     continue;
 
-                string concatenatedReviewTitle = RemoveRestrictedTokens(ConcatenateString(review.Title.ToLower()), restrictedTokens);
+                //string concatenatedReviewTitle = RemoveRestrictedTokens(ConcatenateString(review.Title.ToLower()), stopWords);
 
-                if (!CompareReviewTitleWithProductStrings(concatenatedReviewTitle, productStrings))
+                if (!CompareReviewTitleWithProductStrings(review.Title.ToLower(), productTokens, stopWords))
                 {
                     continue;
                 }
 
-
-
-                Debug.WriteLine(this.Id + " " + this.ToString());
-                Debug.WriteLine(review.Id + " " + review.Title);
+                //Debug.WriteLine(this.Id + " " + this.ToString());
+                //Debug.WriteLine(review.Id + " " + review.Title);
                 //add review id to product
                 reviewMatches.Add(review.Id);
                 review.linkedProducts.Add(this.Id);

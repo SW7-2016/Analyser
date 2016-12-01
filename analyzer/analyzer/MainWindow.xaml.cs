@@ -95,7 +95,7 @@ namespace analyzer
 
             foreach (var gpu in cpuList)
             {
-                gpu.MatchReviewAndProduct(reviewList, reviewProductLinks);
+                gpu.MatchReviewAndProduct(reviewList, reviewProductLinks, cpuList.stopWord);
             }
 
             RemoveInvalidLinks(reviewProductLinks, actualReviewProductLinks);

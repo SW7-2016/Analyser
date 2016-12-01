@@ -32,7 +32,7 @@ namespace analyzer.Products.ProductComponents
         public string Depth { get; }
         public string Fans { get; }
 
-        public override void MatchReviewAndProduct(List<Review> reviewList, ReviewProductLinks reviewProductLinks)
+        public override void MatchReviewAndProduct(List<Review> reviewList, ReviewProductLinks reviewProductLinks, Dictionary<string, bool> stopWords)
         {
             throw new System.NotImplementedException();
         }

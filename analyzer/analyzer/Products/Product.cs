@@ -49,17 +49,18 @@ namespace analyzer.Products
 
             return result;
         }
-        internal string RemoveRestrictedTokens(string modifyString, List<string> restrictedTokens)
+
+        internal List<string> RemoveRestrictedTokens(List<string> modifyString, Dictionary<string, bool> restrictedTokens)
         {
             foreach (var token in restrictedTokens)
             {
-                if (modifyString.Contains(token.ToLower()))
+                if (modifyString.Contains(token.Key))
                 {
-                    modifyString = modifyString.Replace(token.ToLower(), "");
+                    modifyString.Remove(token.Key);
                 }
             }
 
-            return modifyString.ToLower();
+            return modifyString;
         }
         
         internal MatchCollection ExtractNumbersFromString(string str)
@@ -115,11 +116,6 @@ namespace analyzer.Products
             }
             return false;
         }
-
-        internal void RemoveMultipleLinkReview(Review review)
-        {
-            
-        }
         
         internal bool MatchStringToTokens(string string1, List<string> string2)
         {
@@ -134,11 +130,10 @@ namespace analyzer.Products
             return false;
         }
 
-        public abstract void MatchReviewAndProduct(List<Review> reviewList, ReviewProductLinks reviewProductLinks);
+        public abstract void MatchReviewAndProduct(List<Review> reviewList, ReviewProductLinks reviewProductLinks, Dictionary<string, bool> stopWords);
 
-        internal virtual bool CompareReviewTitleWithProductStrings(string concatenatedReviewTitle, string productStrings)
+        internal virtual bool CompareReviewTitleWithProductStrings(string concatenatedReviewTitle, List<string> allTokens, Dictionary<string, bool> stopWords)
         {
-            List<string> allTokens = SplitStringToTokens(productStrings);
             List<string> nonDuplicateAllTokens = new List<string>();
             int count = 0;
 
@@ -152,16 +147,42 @@ namespace analyzer.Products
 
             nonDuplicateAllTokens = nonDuplicateAllTokens.OrderByDescending(item => item.Length).ToList();
 
-            foreach (var token in nonDuplicateAllTokens)
+            bool isDup = false;
+
+                bool isEqual = true;
+
+            foreach (string newToken in allTokens)
             {
-                if (concatenatedReviewTitle.Contains(token))
+                if (!SplitStringToTokens(concatenatedReviewTitle).Contains(newToken) && newToken != "" &&
+                    !stopWords.ContainsKey(newToken))
                 {
-                    concatenatedReviewTitle = concatenatedReviewTitle.Replace(token, "");
-                    count++;
+                    isEqual = false;
+                    break;
                 }
             }
 
-            if (count == nonDuplicateAllTokens.Count)
+            if (isEqual)
+            {
+                /*foreach (var newstr in newItemTokens)
+                {
+                    Debug.Write(newstr + " ");
+                }
+
+                Debug.WriteLine("");
+
+                foreach (var oldstr in oldTokens)
+                {
+                    Debug.Write(oldstr + " ");
+                }
+
+                Debug.WriteLine("");
+                Debug.WriteLine("");*/
+
+                isDup = true;
+            }
+
+
+            if (isDup)
             {
                 return true;
             }

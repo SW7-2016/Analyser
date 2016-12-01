@@ -40,7 +40,7 @@ namespace analyzer.Products.ProductComponents
         public int MemSlots { get; }
         public int MaxMem { get; }
         public int CpuCount { get; }
-        public override void MatchReviewAndProduct(List<Review> reviewList, ReviewProductLinks reviewProductLinks)
+        public override void MatchReviewAndProduct(List<Review> reviewList, ReviewProductLinks reviewProductLinks, Dictionary<string, bool> stopWords)
         {
             throw new System.NotImplementedException();
         }
