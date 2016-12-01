@@ -178,7 +178,7 @@ namespace analyzer.GetRawData
                     (string) tempResult[4], (string) tempResult[5], reader.GetBoolean(6), (string) tempResult[7],
                     (string) tempResult[8], (int) tempResult[9], (int) tempResult[10], (string) tempResult[11]);
 
-                Match model = Regex.Match(row.Model, "ddd" );
+                Match model = Regex.Match(row.Model, "\\d\\d\\d" );
 
                 if (model.Success)
                 {

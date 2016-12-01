@@ -12,6 +12,8 @@ namespace analyzer.Products.DistinctProductList.types
     public class DistinctProductList<T> : List<T>
     {
         List<string[]> oldTokensList = new List<string[]>();
+        private Dictionary<string, bool> stopWord = new Dictionary<string, bool>();
+
         public int deletedDoublicates = 0;
 
         public new void Add(T item)
@@ -32,27 +34,19 @@ namespace analyzer.Products.DistinctProductList.types
 
                     foreach (string oldToken in oldTokens)
                     {
-                        if (!newItemTokens.Contains(oldToken) && oldToken != "" && oldToken != "amd" && oldToken != "intel") //&& !stopWord.ContainsKey(oldToken))
+                        if (!newItemTokens.Contains(oldToken) && oldToken != "" && !stopWord.ContainsKey(oldToken))
                         {
                             isEqual = false;
                             break;
-                        }
-                        else if (newItemTokens.Contains(oldToken))
-                        {
-
                         }
                     }
 
                     foreach (string newToken in newItemTokens)
                     {
-                        if (!oldTokens.Contains(newToken) && newToken != "" && newToken != "amd" && newToken != "intel")//&& !stopWord.ContainsKey(newToken))
+                        if (!oldTokens.Contains(newToken) && newToken != "" && !stopWord.ContainsKey(newToken))
                         {
                             isEqual = false;
                             break;
-                        }
-                        else if (oldTokens.Contains(newToken))
-                        {
-
                         }
                     }
 
@@ -173,10 +167,50 @@ namespace analyzer.Products.DistinctProductList.types
 
             if (item.GetType() == typeof(CPU))
             {
+                stopWord = new Dictionary<string, bool>()
+                {
+                    { "quad", true },
+                    { "octa", true },
+                    { "dual", true },
+                    { "duo", true },
+                    { "a", true },
+                    { "second", true },
+                    { "first", true },
+                    { "third", true },
+                    { "serie", true },
+                    { "series", true },
+                    { "radeon", true },
+                    { "extreme", true },
+                    { "edition", true },
+                    { "generation", true },
+                    { "pentium", true },
+                    { "r", true },
+                    { "r1", true },
+                    { "r2", true },
+                    { "r3", true },
+                    { "r4", true },
+                    { "r5", true },
+                    { "r6", true },
+                    { "r7", true },
+                    { "r8", true },
+                    { "r9", true },
+                    { "amd", true },
+                    { "intel", true }
+                };
+
                 result = generateCPUString((CPU)(object)item);
             }
             else if (item.GetType() == typeof(GPU))
             {
+                stopWord = new Dictionary<string, bool>()
+                {
+                    { "nvidia", true },
+                    { "geforce", true },
+                    { "radeon", true },
+                    { "amd", true },
+                    { "gtx", true }
+                };
+
                 result = generateGPUString((GPU)(object)item);
             }
             else if (item.GetType() == typeof(Motherboard))
@@ -206,37 +240,6 @@ namespace analyzer.Products.DistinctProductList.types
 
             return result;
         }
-
-        private Dictionary<string, bool> stopWord = new Dictionary<string, bool>()
-            {
-                { "quad", true },
-                { "octa", true },
-                { "dual", true },
-                { "duo", true },
-                { "a", true },
-                { "second", true },
-                { "first", true },
-                { "third", true },
-                { "serie", true },
-                { "series", true },
-                { "radeon", true },
-                { "extreme", true },
-                { "edition", true },
-                { "generation", true },
-                { "pentium", true },
-                { "r", true },
-                { "r1", true },
-                { "r2", true },
-                { "r3", true },
-                { "r4", true },
-                { "r5", true },
-                { "r6", true },
-                { "r7", true },
-                { "r8", true },
-                { "r9", true },
-                { "amd", true },
-                { "intel", true }
-            };
 
         public void NearDublicates()
         {
