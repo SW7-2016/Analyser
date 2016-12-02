@@ -34,7 +34,7 @@ namespace analyzer.Products.ProductComponents
         public string Manufacturer { get; }
         public string CpuSeries { get; }
 
-        public override void MatchReviewAndProduct(List<Review> reviewList, ReviewProductLinks reviewProductLinks)
+        /*public override void MatchReviewAndProduct(List<Review> reviewList, ReviewProductLinks reviewProductLinks)
         {
             List<string> restrictedTokens = new List<string>();
             string productStrings = Model.ToLower() + " " + CpuSeries.ToLower();
@@ -74,14 +74,11 @@ namespace analyzer.Products.ProductComponents
                     reviewProductLinks.reviewList.Add(review);
                 }
             }
-        }
+        }*/
 
-        /*
-        public override void MatchReviewAndProduct<T>(List<Review> reviewList, List<T> productList)
+        
+        public override void MatchReviewAndProduct(List<Review> reviewList, ReviewProductLinks reviewProductLinks)
         {
-            bool modelMatch = false; //Number must match
-            bool CPUSeriesMatch = false; //Must match
-
             //Split model and cpuSeries into tokens
             List<string> modelToken = SplitStringToTokens(Model.ToLower());
             List<string> cpuSeriesToken = SplitStringToTokens(CpuSeries.ToLower());
@@ -90,8 +87,11 @@ namespace analyzer.Products.ProductComponents
             {
                 if (review.Category != "CPU")
                     continue;
+
                 int tempCount = 0; //used in modle match
-                
+                bool modelMatch = false; //Number must match
+                bool CPUSeriesMatch = false; //Must match
+
                 foreach (string token in review.TokenList)
                 {
                     //Only match if every word in model is pressent in review title
@@ -124,12 +124,20 @@ namespace analyzer.Products.ProductComponents
                     //Debug.WriteLine(review.ToString());
                     //Debug.WriteLine(this.ToString());
                     //Debug.WriteLine(""); 
-                }
+                    review.linkedProducts.Add(this.Id);
 
-                modelMatch = false;
-                CPUSeriesMatch = false;
+                    if (!reviewProductLinks.productList.Contains(this))
+                    {
+                        reviewProductLinks.productList.Add(this);
+                    }
+
+                    if (!reviewProductLinks.reviewList.Contains(review))
+                    {
+                        reviewProductLinks.reviewList.Add(review);
+                    }
+                }
             }
-        }*/
+        }
 
         public override string ToString()
         {
