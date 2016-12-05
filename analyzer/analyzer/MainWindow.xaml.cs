@@ -93,7 +93,7 @@ namespace analyzer
             reviewList.AddRange(criticReviewList);
             reviewList.AddRange(userReviewList);
 
-            foreach (var gpu in cpuList)
+            foreach (var gpu in gpuList)
             {
                 gpu.MatchReviewAndProduct(reviewList, reviewProductLinks);
             }
