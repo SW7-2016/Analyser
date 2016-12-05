@@ -120,11 +120,11 @@ namespace analyzer.Products.ProductComponents
                 //if both cpuseries and model is true = link.
                 if (modelMatch && CPUSeriesMatch)
                 {
-                    reviewMatches.Add(review.Id);
+                    reviewMatches.Add(review);
                     //Debug.WriteLine(review.ToString());
                     //Debug.WriteLine(this.ToString());
                     //Debug.WriteLine(""); 
-                    review.linkedProducts.Add(this.Id);
+                    review.linkedProducts.Add(this);
 
                     if (!reviewProductLinks.productList.Contains(this))
                     {

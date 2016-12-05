@@ -84,8 +84,8 @@ namespace analyzer.Products.ProductComponents
                 Debug.WriteLine(this.Id + " " + this.ToString());
                 Debug.WriteLine(review.Id + " " + review.Title);
                 //add review id to product
-                reviewMatches.Add(review.Id);
-                review.linkedProducts.Add(this.Id);
+                reviewMatches.Add(review);
+                review.linkedProducts.Add(this);
 
                 if (!reviewProductLinks.productList.Contains(this))
                 {

@@ -9,7 +9,7 @@ namespace analyzer.Products.Reviews
     {
         public List<string> pros;
         public List<string> cons;
-        public List<int> linkedProducts;
+        public List<Product> linkedProducts;
 
         public int positiveReception;
         public int negativeReception;
@@ -27,7 +27,7 @@ namespace analyzer.Products.Reviews
             ReviewDate = date;
             Rating = rating;
             MaxRating = maxRating;
-            linkedProducts = new List<int>();
+            linkedProducts = new List<Product>();
         }
 
         public int Id { get; }

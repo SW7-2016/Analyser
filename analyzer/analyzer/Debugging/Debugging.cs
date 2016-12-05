@@ -99,7 +99,7 @@ namespace analyzer.Debugging
             {
                 foreach (var element in reviewIdList)
                 {
-                    if (element.ReviewId == instans)
+                    if (element.ReviewId == instans.Id)
                     {
                         element.ProductId.Add(product.Id);
                         temp = true;
@@ -110,7 +110,7 @@ namespace analyzer.Debugging
                     List<int> TList = new List<int>();
                     TList.Add(product.Id);
 
-                    reviewIdList.Add(new ProductReviewId(TList, instans));
+                    reviewIdList.Add(new ProductReviewId(TList, instans.Id));
                 }
             }
             return reviewIdList;
@@ -197,9 +197,9 @@ namespace analyzer.Debugging
         {
             foreach (var reviewID in product.reviewMatches)
             {
-                if (!reviewIdList.Contains(reviewID))
+                if (!reviewIdList.Contains(reviewID.Id))
                 {
-                    reviewIdList.Add(reviewID);
+                    reviewIdList.Add(reviewID.Id);
                 }
             }
 

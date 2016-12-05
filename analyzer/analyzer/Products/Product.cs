@@ -14,14 +14,16 @@ namespace analyzer.Products
         public double criticScore = 0;
         public double userScore = 0;
         public string description = "";
-        public List<Retailer> retailers = new List<Retailer>();
-        public List<int> reviewMatches = new List<int>();
+        public List<Retailer> retailers;
+        public List<Review> reviewMatches;
 
         protected Product(int id, string category, string name)
         {
             Id = id;
             Category = category;
             Name = name;
+            retailers = new List<Retailer>();
+            reviewMatches = new List<Review>();
         }
 
         public string Category { get; }

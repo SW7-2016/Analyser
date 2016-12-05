@@ -47,9 +47,9 @@ namespace analyzer
                     {
                         foreach (var product in reviewProductLinks.productList)
                         {
-                            if (product.Id == id)
+                            if (product.Id == id.Id)
                             {
-                                product.reviewMatches.Remove(review.Id);
+                                product.reviewMatches.Remove(review);
                             }
                         }
                     }
@@ -93,7 +93,7 @@ namespace analyzer
             reviewList.AddRange(criticReviewList);
             reviewList.AddRange(userReviewList);
 
-            foreach (var gpu in gpuList)
+            foreach (var gpu in cpuList)
             {
                 gpu.MatchReviewAndProduct(reviewList, reviewProductLinks);
             }
@@ -113,5 +113,32 @@ namespace analyzer
             //Debugging.Debugging.GetUnlinkedReviews(reviewList, chassisList, cpuList, gpuList, hardDriveList, motherboardList, psuList, ramList);
             Debugging.Debugging.NumberOfReviewForEachProduct(cpuList);
         }
+        
+        public void AssessScores(List<Product> productList)
+        {
+            //todo move/instanciate to proper place
+            Dictionary<string,double> categoryFactors = new Dictionary<string, double>();
+            categoryFactors.Add("GPU", 2);
+            categoryFactors.Add("CPU", 3);
+
+            foreach (var product in productList)
+            {
+                //find oldest _critic_ review to assess product age
+                List<Review> reviewList = product.reviewMatches;
+                foreach (Review review in product.reviewMatches)
+                {
+                    double score;
+
+                }
+                //compute score
+            }
+        }
+        
+        public double ComputeSuperscore(double age, double categoryFactor)
+        {
+
+            return 0;
+        }
+
     }
 }
