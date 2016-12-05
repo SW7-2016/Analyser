@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
@@ -123,21 +124,69 @@ namespace analyzer
 
             foreach (var product in productList)
             {
-                //find oldest _critic_ review to assess product age
-                List<Review> reviewList = product.reviewMatches;
+                DateTime oldestReviewAge = product.reviewMatches[0].ReviewDate;
+                //double criticReviewWeightSum = 0;
+                //double userReviewWeightSum = 0;
+                double criticReviewNumerator = 0, 
+                    criticReviewDenominator = 0,
+                    userReviewNumerator = 0, 
+                    userReviewDenominator = 0;
+
+                // product category factor
+                double productFactor = 1;
+                if (categoryFactors.ContainsKey(product.Category))
+                    productFactor = categoryFactors[product.Category];
+
+                List<double> normalizedCriticScores = new List<double>();
+                List<double> normalizedUserScores = new List<double>();
+
+
+                // find oldest critic review to assess product age
                 foreach (Review review in product.reviewMatches)
                 {
-                    double score;
-
+                    if (review.ReviewDate < oldestReviewAge && review.GetType() == typeof(CriticReview))
+                        oldestReviewAge = review.ReviewDate;
                 }
-                //compute score
+
+                // review specific calculations
+                foreach (Review review in product.reviewMatches)
+                {
+                    bool isCriticReview = review.GetType() == typeof(CriticReview);
+
+                    // review weight (age)
+                    TimeSpan reviewAge = review.ReviewDate.Subtract(oldestReviewAge);
+                    double reviewAgeInYears = reviewAge.Days / 365;
+                    review.reviewWeight = ComputeReviewWeight(reviewAgeInYears, productFactor);
+
+                    // review average score
+                    double normalizedScore = review.Rating/review.MaxRating;
+
+                    //compute score
+                    if (isCriticReview)
+                    {
+                        criticReviewNumerator += normalizedScore*review.reviewWeight;
+                        criticReviewDenominator += review.reviewWeight;
+                    }
+                    else
+                    {
+                        userReviewNumerator += normalizedScore * review.reviewWeight;
+                        userReviewDenominator += review.reviewWeight;
+                    }
+                }
+
+                double criticScore = criticReviewNumerator/criticReviewDenominator;
+
+                //superscore = critic*weigth + user*weight / sum weight
             }
         }
         
-        public double ComputeSuperscore(double age, double categoryFactor)
+        public double ComputeReviewWeight(double age, double categoryFactor)
         {
+            //\frac{1}{(1 + 10 * e^{-2 * x + 2.5}) + 1}
+            double exponent = -2 * age + 2.5;
+            double result = 1/(1 + 10 * Math.Pow(Math.E, exponent)) + 1;
 
-            return 0;
+            return result;
         }
 
     }

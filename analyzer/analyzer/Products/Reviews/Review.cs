@@ -13,8 +13,9 @@ namespace analyzer.Products.Reviews
 
         public int positiveReception;
         public int negativeReception;
+        public double productAgeAtReviewTime;
         public double credibility;
-        public double timeDecayWeight;
+        public double reviewWeight;
 
    
 
