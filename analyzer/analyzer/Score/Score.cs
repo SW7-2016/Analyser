@@ -11,7 +11,13 @@ namespace analyzer.Score
     class Score
     {
         //todo move/instanciate to proper place
-        private static Dictionary<string, double> categoryFactors = new Dictionary<string, double>() { { "GPU", 2 }, { "CPU", 3 } };//category factors: GPU 2, CPU 3
+        private static readonly Dictionary<string, double> categoryFactors = 
+            new Dictionary<string, double>() {
+                { "GPU", 2 },
+                { "CPU", 3 }
+            };//category factors: GPU 2, CPU 3
+        private static double userScoreWeight = 1;
+        private static double criticScoreWeight = 2;
 
 
         public void AssessProductScores(Product product)
@@ -40,7 +46,7 @@ namespace analyzer.Score
                     oldestReviewAge = review.ReviewDate;
             }
 
-            // review specific calculations
+            // review-specific calculations
             foreach (Review review in product.reviewMatches)
             {
                 bool isCriticReview = review.GetType() == typeof(CriticReview);
@@ -70,6 +76,19 @@ namespace analyzer.Score
             double userScore = userReviewNumerator / userReviewDenominator;
 
             //superscore = critic*weigth + user*weight / sum weight
+            double superScore = ((criticScore*criticScoreWeight) + (userScore*userScoreWeight))/
+                                (criticScoreWeight + userScoreWeight);
+
+            // set scores on product
+            //setProductScores(product,superScore,criticScore,userScore);
+            
+        }
+
+        private void setProductScores(Product product, double superScore, double criticScore, double userScore)
+        {
+            product.criticScore = criticScore;
+            product.userScore = userScore;
+            product.superScore = superScore;
         }
 
 
