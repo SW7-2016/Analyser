@@ -99,11 +99,11 @@ namespace analyzer
 
             foreach (var gpu in cpuList)
             {
-                gpu.MatchReviewAndProduct(reviewList, cpuList.stopWord, ref reviewProductLinks);
+                gpu.MatchReviewAndProduct1(reviewList, cpuList.stopWord, ref reviewProductLinks);
             }
 
             actualReviewProductLinks = RemoveInvalidLinks(reviewProductLinks);
-
+            /*
             foreach (var product in actualReviewProductLinks.productList)
             {
                 foreach (var review in product.reviewMatches)
@@ -113,7 +113,7 @@ namespace analyzer
                     Debug.WriteLine(review.Id + " " + review.Title);
                 }
             }
-
+            */
             dbConnection.connection.Close();
 
             /* ||===================================================||
