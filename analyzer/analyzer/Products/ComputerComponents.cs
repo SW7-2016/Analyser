@@ -1,4 +1,7 @@
-﻿namespace analyzer.Products
+﻿using System.Collections.Generic;
+using analyzer.Products.Reviews;
+
+namespace analyzer.Products
 {
     public abstract class ComputerComponents : Product
     {
@@ -6,5 +9,9 @@
         {
         }
 
+        public override void MatchReviewAndProduct(List<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

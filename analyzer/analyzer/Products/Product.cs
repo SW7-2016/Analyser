@@ -32,16 +32,15 @@ namespace analyzer.Products
 
         internal List<string> SplitStringToTokens(string name)
         {
-            List<string> tokenNameList = new List<string>();
-
+            List<string> tokenList;
             Regex rgx = new Regex(@"(\s)|([\-])|(\,)|(\.)|(\()|(\))|(\/)");
             string result = rgx.Replace(name, " ").ToLower();
 
-            tokenNameList = result.Split(' ').ToList();
-            tokenNameList.RemoveAll(item => item == "");
-            tokenNameList = tokenNameList.OrderByDescending(item => item.Length).ToList();
+            tokenList = result.Split(' ').ToList();
+            tokenList.RemoveAll(item => item == "");
+            tokenList = tokenList.OrderByDescending(item => item.Length).ToList();
 
-            return tokenNameList;
+            return tokenList;
         }
 
         internal string ConcatenateString(string name)
@@ -51,76 +50,15 @@ namespace analyzer.Products
 
             return result;
         }
-        internal string RemoveRestrictedTokens(string modifyString, List<string> restrictedTokens)
+
+        internal List<string> RemoveRestrictedTokens(List<string> stringToProcess, Dictionary<string, bool> restrictedTokens)
         {
+
             foreach (var token in restrictedTokens)
             {
-                if (modifyString.Contains(token.ToLower()))
-                {
-                    modifyString = modifyString.Replace(token.ToLower(), "");
-                }
+                stringToProcess.RemoveAll(t => t.Equals(token.Key));
             }
-
-            return modifyString.ToLower();
-        }
-        
-        internal MatchCollection ExtractNumbersFromString(string str)
-        {
-            MatchCollection result = Regex.Matches(str, @"\d+");
-            return result;
-        }
-
-        internal bool MatchStringNumbers(string productString1, string reviewString2)
-        {
-            MatchCollection firstStringNumbers = ExtractNumbersFromString(productString1);
-            MatchCollection secondStringNumbers = ExtractNumbersFromString(reviewString2);
-            List<bool> correctMatches = new List<bool>();
-            bool correctMatch;
-
-            foreach (Match firstStringNumber in firstStringNumbers)
-            {
-                correctMatch = false;
-                foreach (Match secondStringNumber in secondStringNumbers)
-                {
-                    if (int.Parse(firstStringNumber.Value) == int.Parse(secondStringNumber.Value))
-                    {
-                        correctMatch = true;
-                    }
-                }
-
-                if (correctMatch)
-                {
-                    correctMatches.Add(true);
-                }
-                else
-                {
-                    correctMatches.Add(false);
-                }
-            }
-
-            foreach (var numberMatch in correctMatches)
-            {
-                if (!numberMatch)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        internal bool ReviewLinksToMultipleProducts(Review review)
-        {
-            if (review.linkedProducts.Count > 1)
-            {
-                
-            }
-            return false;
-        }
-
-        internal void RemoveMultipleLinkReview(Review review)
-        {
-            
+            return stringToProcess;
         }
         
         internal bool MatchStringToTokens(string string1, List<string> string2)
@@ -136,11 +74,10 @@ namespace analyzer.Products
             return false;
         }
 
-        public abstract void MatchReviewAndProduct(List<Review> reviewList, ReviewProductLinks reviewProductLinks);
+        public abstract void MatchReviewAndProduct(List<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks);
 
-        internal virtual bool CompareReviewTitleWithProductStrings(string concatenatedReviewTitle, string productStrings)
+        internal virtual bool CompareReviewTitleWithProductStrings(string concatenatedReviewTitle, List<string> allTokens)
         {
-            List<string> allTokens = SplitStringToTokens(productStrings);
             List<string> nonDuplicateAllTokens = new List<string>();
             int count = 0;
 
@@ -170,5 +107,39 @@ namespace analyzer.Products
 
             return false;
         }
+
+        public virtual void MatchReviewAndProduct1(List<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
+        {
+        }
+
+        internal virtual bool CompareReviewTitleWithProductStrings1(string concatenatedReviewTitle, List<string> allTokens, Dictionary<string, bool> stopWords)
+        {
+            List<string> nonDuplicateAllTokens = new List<string>();
+
+            foreach (var token in allTokens)
+            {
+                if (!nonDuplicateAllTokens.Contains(token))
+                {
+                    nonDuplicateAllTokens.Add(token);
+                }
+            }
+            nonDuplicateAllTokens = nonDuplicateAllTokens.OrderByDescending(item => item.Length).ToList();
+            bool isEqual = true;
+            foreach (string newToken in allTokens)
+            {
+                if (!(SplitStringToTokens(concatenatedReviewTitle)).Contains(newToken) && newToken != "" &&
+                    !stopWords.ContainsKey(newToken))
+                {
+                    isEqual = false;
+                    break;
+                }
+            }
+            if (isEqual)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }
+

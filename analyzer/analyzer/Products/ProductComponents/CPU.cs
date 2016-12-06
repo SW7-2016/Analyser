@@ -34,96 +34,61 @@ namespace analyzer.Products.ProductComponents
         public string Manufacturer { get; }
         public string CpuSeries { get; }
 
-        /*public override void MatchReviewAndProduct(List<Review> reviewList, ReviewProductLinks reviewProductLinks)
+        public override void MatchReviewAndProduct(List<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
         {
-            List<string> restrictedTokens = new List<string>();
-            string productStrings = Model.ToLower() + " " + CpuSeries.ToLower();
-
-            restrictedTokens.Add("intel");
-            restrictedTokens.Add("core");
-            restrictedTokens.Add("amd");
-            productStrings = RemoveRestrictedTokens(productStrings, restrictedTokens);
+            List<string> productTokens = SplitStringToTokens(Model.ToLower() + " " + CpuSeries.ToLower());
+            productTokens = RemoveRestrictedTokens(productTokens, stopWords);
 
             foreach (var review in reviewList)
             {
                 if (review.Category.ToLower() != "cpu")
                     continue;
 
-                string concatenatedReviewTitle = RemoveRestrictedTokens(ConcatenateString(review.Title.ToLower()), restrictedTokens);
+                List<string> reviewTitleNoStopWords = RemoveRestrictedTokens(SplitStringToTokens(review.Title.ToLower()), stopWords);
+                string concatenatedReviewTitle = "";
 
-                if (!CompareReviewTitleWithProductStrings(concatenatedReviewTitle, productStrings))
+                foreach (var token in reviewTitleNoStopWords)
                 {
-                    continue;
+                    concatenatedReviewTitle += token;
                 }
 
-
-
-                Debug.WriteLine(this.Id + " " + this.ToString());
-                Debug.WriteLine(review.Id + " " + review.Title);
-                //add review id to product
-                reviewMatches.Add(review.Id);
-                review.linkedProducts.Add(this.Id);
-
-                if (!reviewProductLinks.productList.Contains(this))
+                if (CompareReviewTitleWithProductStrings(concatenatedReviewTitle, productTokens))
                 {
-                    reviewProductLinks.productList.Add(this);
-                }
+                    //Debug.WriteLine("");
+                    //Debug.WriteLine(this.Id + " " + this);
+                    //Debug.WriteLine(review.Id + " " + review.Title);
+                    //add review id to product
+                    reviewMatches.Add(review);
+                    review.linkedProducts.Add(this);
 
-                if (!reviewProductLinks.reviewList.Contains(review))
-                {
-                    reviewProductLinks.reviewList.Add(review);
+                    if (!reviewProductLinks.productList.Contains(this))
+                    {
+                        reviewProductLinks.productList.Add(this);
+                    }
+
+                    if (!reviewProductLinks.reviewList.Contains(review))
+                    {
+                        reviewProductLinks.reviewList.Add(review);
+                    }
                 }
             }
-        }*/
+        }
 
-        
-        public override void MatchReviewAndProduct(List<Review> reviewList, ReviewProductLinks reviewProductLinks)
+        public override void MatchReviewAndProduct1(List<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
         {
-            //Split model and cpuSeries into tokens
-            List<string> modelToken = SplitStringToTokens(Model.ToLower());
-            List<string> cpuSeriesToken = SplitStringToTokens(CpuSeries.ToLower());
+            string productStrings = Model.ToLower() + " " + CpuSeries.ToLower();
+            List<string> productTokens = RemoveRestrictedTokens(SplitStringToTokens(productStrings), stopWords);
+
 
             foreach (var review in reviewList)
             {
-                if (review.Category != "CPU")
+                if (review.Category.ToLower() != "cpu")
                     continue;
 
-                int tempCount = 0; //used in modle match
-                bool modelMatch = false; //Number must match
-                bool CPUSeriesMatch = false; //Must match
-
-                foreach (string token in review.TokenList)
+                if (CompareReviewTitleWithProductStrings1(review.Title.ToLower(), productTokens, stopWords))
                 {
-                    //Only match if every word in model is pressent in review title
-                    foreach (string model in modelToken)
-                    {
-                        if (token.ToLower() == model.ToLower())
-                        {
-                            tempCount++;
-                        }
-
-                        if (tempCount == modelToken.Count)
-                        {
-                                modelMatch = true;
-                        }
-                    }
-                    //match cpu series with review
-                    foreach (string series in cpuSeriesToken)
-                    {
-                        
-                        if (token == series)
-                            CPUSeriesMatch = true;
-                        //TODO Fix så den ikke kun får true på den første
-                    }
-                }
-
-                //if both cpuseries and model is true = link.
-                if (modelMatch && CPUSeriesMatch)
-                {
+                   //add review id to product
                     reviewMatches.Add(review);
-                    //Debug.WriteLine(review.ToString());
-                    //Debug.WriteLine(this.ToString());
-                    //Debug.WriteLine(""); 
                     review.linkedProducts.Add(this);
 
                     if (!reviewProductLinks.productList.Contains(this))
@@ -141,8 +106,10 @@ namespace analyzer.Products.ProductComponents
 
         public override string ToString()
         {
-            return $"{nameof(PhysicalCores)}: {PhysicalCores}, {nameof(LogicalCores)}: {LogicalCores}, {nameof(StockCooler)}: {StockCooler}, {nameof(Model)}: {Model}, {nameof(Clock)}: {Clock}, {nameof(Socket)}: {Socket}, {nameof(MaxTurbo)}: {MaxTurbo}, {nameof(IntegratedGpu)}: {IntegratedGpu}, {nameof(Manufacturer)}: {Manufacturer}, {nameof(CpuSeries)}: {CpuSeries}";
+            //return $"{nameof(PhysicalCores)}: {PhysicalCores}, {nameof(LogicalCores)}: {LogicalCores}, {nameof(StockCooler)}: {StockCooler}, {nameof(Model)}: {Model}, {nameof(Clock)}: {Clock}, {nameof(Socket)}: {Socket}, {nameof(MaxTurbo)}: {MaxTurbo}, {nameof(IntegratedGpu)}: {IntegratedGpu}, {nameof(Manufacturer)}: {Manufacturer}, {nameof(CpuSeries)}: {CpuSeries}";
+            return $"{nameof(Model)}: {Model}, {nameof(Manufacturer)}: {Manufacturer}, {nameof(CpuSeries)}: {CpuSeries}";
         }
+
     }
 
 }

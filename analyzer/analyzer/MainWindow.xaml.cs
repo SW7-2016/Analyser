@@ -34,8 +34,9 @@ namespace analyzer
             InitializeComponent();
         }
 
-        private void RemoveInvalidLinks(ReviewProductLinks reviewProductLinks, ReviewProductLinks actualReviewProductLinks)
+        private ReviewProductLinks RemoveInvalidLinks(ReviewProductLinks reviewProductLinks)
         {
+            ReviewProductLinks actualReviewProductLinks = new ReviewProductLinks();
             foreach (var review in reviewProductLinks.reviewList)
             {
                 if (!(review.linkedProducts.Count > 1))
@@ -64,6 +65,8 @@ namespace analyzer
                     actualReviewProductLinks.productList.Add(product);
                 }
             }
+
+            return actualReviewProductLinks;
         }
 
         private void GetDataTest_bt_Click(object sender, RoutedEventArgs e)
@@ -71,7 +74,7 @@ namespace analyzer
 
             DBConnect dbConnection = new DBConnect();
             ReviewProductLinks reviewProductLinks = new ReviewProductLinks();
-            ReviewProductLinks actualReviewProductLinks = new ReviewProductLinks();
+            ReviewProductLinks actualReviewProductLinks;
 
             dbConnection.DbInitialize(true);
 
@@ -79,13 +82,13 @@ namespace analyzer
 
             #region Add data from crawlerDB
 
-            gpuList = dbConnection.GetGpuData();
-            chassisList = dbConnection.GetChassisData();
+            //gpuList = dbConnection.GetGpuData();
+            //chassisList = dbConnection.GetChassisData();
             cpuList = dbConnection.GetCpuData();
-            hardDriveList = dbConnection.GetHardDriveData();
-            motherboardList = dbConnection.GetMotherboardData();
-            psuList = dbConnection.GetPsuData();
-            ramList = dbConnection.GetRamData();
+            //hardDriveList = dbConnection.GetHardDriveData();
+            //motherboardList = dbConnection.GetMotherboardData();
+            //psuList = dbConnection.GetPsuData();
+            //ramList = dbConnection.GetRamData();
             criticReviewList = dbConnection.GetCriticReviewData();
             userReviewList = dbConnection.GetUserReviewData();
 
@@ -96,10 +99,20 @@ namespace analyzer
 
             foreach (var gpu in cpuList)
             {
-                gpu.MatchReviewAndProduct(reviewList, reviewProductLinks);
+                gpu.MatchReviewAndProduct(reviewList, cpuList.stopWord, ref reviewProductLinks);
             }
 
-            RemoveInvalidLinks(reviewProductLinks, actualReviewProductLinks);
+            actualReviewProductLinks = RemoveInvalidLinks(reviewProductLinks);
+
+            foreach (var product in actualReviewProductLinks.productList)
+            {
+                foreach (var review in product.reviewMatches)
+                {
+                    Debug.WriteLine("");
+                    Debug.WriteLine(product.Id + " " + product);
+                    Debug.WriteLine(review.Id + " " + review.Title);
+                }
+            }
 
             dbConnection.connection.Close();
 
