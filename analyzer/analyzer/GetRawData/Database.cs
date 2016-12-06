@@ -282,7 +282,7 @@ namespace analyzer.GetRawData
 
         public List<CriticReview> GetCriticReviewData()
         {
-            MySqlCommand command = new MySqlCommand("SELECT * FROM Review WHERE isCriticReview limit 100", connection);
+            MySqlCommand command = new MySqlCommand("SELECT * FROM Review WHERE isCriticReview limit 1000", connection);
             List<CriticReview> result = new List<CriticReview>();
             MySqlDataReader reader = command.ExecuteReader();
 
@@ -310,7 +310,7 @@ namespace analyzer.GetRawData
 
         public List<UserReview> GetUserReviewData()
         {
-            MySqlCommand command = new MySqlCommand("SELECT * FROM Review WHERE isCriticReview<>1 limit 100", connection);
+            MySqlCommand command = new MySqlCommand("SELECT * FROM Review WHERE isCriticReview<>1 limit 1000", connection);
             List<UserReview> result = new List<UserReview>();
             MySqlDataReader reader = command.ExecuteReader();
 
@@ -320,7 +320,7 @@ namespace analyzer.GetRawData
                 reader.GetValues(tempResult);
 
                 UserReview row = new UserReview((int) tempResult[0], (float) tempResult[4], (float) tempResult[14],
-                    reader.GetDateTime(2),
+                    reader.GetDateTime(1),
                     (string) tempResult[13], (string) tempResult[12], (string) tempResult[11], reader.GetBoolean(9));
                 if (!reader.IsDBNull(7) && !reader.IsDBNull(8))
                 {

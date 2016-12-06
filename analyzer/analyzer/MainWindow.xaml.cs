@@ -112,8 +112,11 @@ namespace analyzer
 
             //Debugging.Debugging.DebugReviewDuplicates(chassisList, cpuList, gpuList, hardDriveList, motherboardList, psuList, ramList);
             //Debugging.Debugging.GetUnlinkedReviews(reviewList, chassisList, cpuList, gpuList, hardDriveList, motherboardList, psuList, ramList);
-            Debugging.Debugging.NumberOfReviewForEachProduct(cpuList);
-        }
+            //Debugging.Debugging.NumberOfReviewForEachProduct(cpuList);
 
+            Score.Score.AssessProductListScores(cpuList);
+
+        }
+        
     }
 }
