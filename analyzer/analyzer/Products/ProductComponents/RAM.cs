@@ -24,7 +24,7 @@ namespace analyzer.Products.ProductComponents
         public string FormFactor { get; }
         public string CasLatency { get; }
 
-        public override void MatchReviewAndProduct(List<Review> reviewList, ReviewProductLinks reviewProductLinks)
+        public override void MatchReviewAndProduct(List<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
         {
             throw new System.NotImplementedException();
         }

@@ -12,7 +12,7 @@ namespace analyzer.Products.DistinctProductList.types
     public class DistinctProductList<T> : List<T>
     {
         List<string[]> oldTokensList = new List<string[]>();
-        private Dictionary<string, bool> stopWord = new Dictionary<string, bool>();
+        public Dictionary<string, bool> stopWord = new Dictionary<string, bool>();
 
         public int deletedDoublicates = 0;
 
@@ -183,7 +183,7 @@ namespace analyzer.Products.DistinctProductList.types
                     { "extreme", true },
                     { "edition", true },
                     { "generation", true },
-                    { "pentium", true },
+                    //{ "pentium", true },
                     { "r", true },
                     { "r1", true },
                     { "r2", true },
@@ -194,6 +194,11 @@ namespace analyzer.Products.DistinctProductList.types
                     { "r7", true },
                     { "r8", true },
                     { "r9", true },
+                    { "core", true },
+                    { "i", true },
+                    { "ii", true },
+                    { "iii", true },
+                    { "iiii", true },
                     { "amd", true },
                     { "intel", true }
                 };
