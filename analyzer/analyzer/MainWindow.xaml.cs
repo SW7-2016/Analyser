@@ -119,8 +119,8 @@ namespace analyzer
         {
             //todo move/instanciate to proper place
             Dictionary<string,double> categoryFactors = new Dictionary<string, double>();
-            categoryFactors.Add("GPU", 2);
-            categoryFactors.Add("CPU", 3);
+            categoryFactors.Add("GPU", 2);// set GPU category factor to 2
+            categoryFactors.Add("CPU", 3);// set CPU category factor to 3
 
             foreach (var product in productList)
             {
@@ -175,6 +175,7 @@ namespace analyzer
                 }
 
                 double criticScore = criticReviewNumerator/criticReviewDenominator;
+                double userScore = userReviewNumerator / userReviewDenominator;
 
                 //superscore = critic*weigth + user*weight / sum weight
             }
