@@ -12,6 +12,7 @@ using analyzer.Products;
 using analyzer.Products.DistinctProductList.types;
 using System.Threading;
 using analyzer.Threading;
+using analyzer.Score;
 
 namespace analyzer
 {
@@ -108,6 +109,10 @@ namespace analyzer
             //Debugging.Debugging.GetUnlinkedReviews(reviewList, chassisList, cpuList, gpuList, hardDriveList, motherboardList, psuList, ramList);
             //Debugging.Debugging.NumberOfReviewForEachProduct(cpuList);
             #endregion
+
+            Score.Score.AssessProductListScores(cpuList);
+            Score.Score.AssessProductListScores(gpuList);
+
         }
 
         public void StartThreads<T>(int productsPerThread, DistinctProductList<T> productList, List<Review> reviewList) where T : Product
@@ -130,6 +135,7 @@ namespace analyzer
 
             }
         }
+
         public void ThreadfunctionProduct<T>(object data) where T : Product
         {
             DistinctProductList<T> hii = ((ThreadingData<T>)data).productList;
@@ -178,23 +184,5 @@ namespace analyzer
 
             return actualReviewProductLinks;
         }
-
-
-
-            /* ||===================================================||
-             * ||!! Warning! you are now entering the debug area. !!||
-             * ||---------------------------------------------------||
-             * ||Here are noting true and everything might be wrong ||
-             * ||            Proceed at your own risk               ||
-             * ||===================================================||*/
-
-            //Debugging.Debugging.DebugReviewDuplicates(chassisList, cpuList, gpuList, hardDriveList, motherboardList, psuList, ramList);
-            //Debugging.Debugging.GetUnlinkedReviews(reviewList, chassisList, cpuList, gpuList, hardDriveList, motherboardList, psuList, ramList);
-            //Debugging.Debugging.NumberOfReviewForEachProduct(cpuList);
-
-            Score.Score.AssessProductListScores(cpuList);
-            Score.Score.AssessProductListScores(gpuList);
-        }
-        
     }
 }
