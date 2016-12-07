@@ -54,25 +54,16 @@ namespace analyzer.Products.ProductComponents
                     }
                 }
 
-                if (!manufactureMatch)
+                string productStrings = Model.ToLower() + " " + Manufacturer.ToLower() + " " + GraphicsProcessor.ToLower();
+
+                List<string> productTokens = RemoveRestrictedTokens(SplitStringToTokens(productStrings), stopWords);
+
+
+                if (!CompareReviewTitleWithProductStrings(review.Title.ToLower(), productTokens, stopWords))
                 {
                     continue;
                 }
 
-                if (!MatchStringNumbers(GraphicsProcessor, review.Title))
-                {
-                    continue;
-                }
-
-                if (!CompareGraphicsProcessorStrings(review.Title.ToLower(), GraphicsProcessor.ToLower(), stopWords))
-                {
-                    continue;
-                }
-
-                if (!CompareModelStrings(review.Title.ToLower(), Model.ToLower(), GraphicsProcessor.ToLower(), stopWords))
-                {
-                    continue;
-                }
                 //check if added review is correct in debug console
                 Debug.WriteLine(this.Id + " " + this.ToString());
                 Debug.WriteLine(review.Id + " " + review.Title);

@@ -30,6 +30,7 @@ namespace analyzer.Products
 
         internal List<string> SplitStringToTokens(string name)
         {
+
             List<string> tokenNameList = new List<string>();
 
             Regex rgx = new Regex(@"(\s)|([\-])|(\,)|(\.)|(\()|(\))|(\/)");
@@ -38,6 +39,11 @@ namespace analyzer.Products
             tokenNameList = result.Split(' ').ToList();
             tokenNameList.RemoveAll(item => item == "");
             tokenNameList = tokenNameList.OrderByDescending(item => item.Length).ToList();
+
+            if (name.Contains("-"))
+            {
+
+            }
 
             return tokenNameList;
         }
@@ -147,42 +153,23 @@ namespace analyzer.Products
 
             nonDuplicateAllTokens = nonDuplicateAllTokens.OrderByDescending(item => item.Length).ToList();
 
-            bool isDup = false;
-
-                bool isEqual = true;
+            bool isEqual = true;
 
             foreach (string newToken in allTokens)
             {
-                if (!SplitStringToTokens(concatenatedReviewTitle).Contains(newToken) && newToken != "" &&
+                if (!(SplitStringToTokens(concatenatedReviewTitle)).Contains(newToken) && newToken != "" &&
                     !stopWords.ContainsKey(newToken))
                 {
                     isEqual = false;
                     break;
                 }
+                else
+                {
+
+                }
             }
 
             if (isEqual)
-            {
-                /*foreach (var newstr in newItemTokens)
-                {
-                    Debug.Write(newstr + " ");
-                }
-
-                Debug.WriteLine("");
-
-                foreach (var oldstr in oldTokens)
-                {
-                    Debug.Write(oldstr + " ");
-                }
-
-                Debug.WriteLine("");
-                Debug.WriteLine("");*/
-
-                isDup = true;
-            }
-
-
-            if (isDup)
             {
                 return true;
             }

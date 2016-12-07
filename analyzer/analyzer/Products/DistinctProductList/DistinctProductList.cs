@@ -196,6 +196,10 @@ namespace analyzer.Products.DistinctProductList.types
                     { "r9", true },
                     { "amd", true },
                     { "core", true },
+                    { "i", true },
+                    { "ii", true },
+                    { "iii", true },
+                    { "iiii", true },
                     { "intel", true }
                 };
 

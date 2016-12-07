@@ -79,12 +79,12 @@ namespace analyzer
             #region Add data from crawlerDB
 
             gpuList = dbConnection.GetGpuData();
-            chassisList = dbConnection.GetChassisData();
+            //chassisList = dbConnection.GetChassisData();
             cpuList = dbConnection.GetCpuData();
-            hardDriveList = dbConnection.GetHardDriveData();
-            motherboardList = dbConnection.GetMotherboardData();
-            psuList = dbConnection.GetPsuData();
-            ramList = dbConnection.GetRamData();
+            //hardDriveList = dbConnection.GetHardDriveData();
+            //motherboardList = dbConnection.GetMotherboardData();
+            //psuList = dbConnection.GetPsuData();
+            //ramList = dbConnection.GetRamData();
             criticReviewList = dbConnection.GetCriticReviewData();
             userReviewList = dbConnection.GetUserReviewData();
 
@@ -95,7 +95,7 @@ namespace analyzer
 
             foreach (var gpu in cpuList)
             {
-                gpu.MatchReviewAndProduct(reviewList, reviewProductLinks, cpuList.stopWord);
+                gpu.MatchReviewAndProduct(reviewList, reviewProductLinks, gpuList.stopWord);
             }
 
             RemoveInvalidLinks(reviewProductLinks, actualReviewProductLinks);
@@ -108,6 +108,10 @@ namespace analyzer
              * ||Here are noting true and everything might be wrong ||
              * ||            Proceed at your own risk               ||
              * ||===================================================||*/
+
+
+            Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine("");
+            Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine(""); Debug.WriteLine("");
 
             //Debugging.Debugging.DebugReviewDuplicates(chassisList, cpuList, gpuList, hardDriveList, motherboardList, psuList, ramList);
             //Debugging.Debugging.GetUnlinkedReviews(reviewList, chassisList, cpuList, gpuList, hardDriveList, motherboardList, psuList, ramList);
