@@ -4,6 +4,7 @@ using analyzer.Products.ProductComponents;
 using analyzer.Products.Reviews;
 using analyzer.Products.DistinctProductList.types;
 using System.Text.RegularExpressions;
+using analyzer.Products;
 
 namespace analyzer.GetRawData
 {
@@ -336,6 +337,41 @@ namespace analyzer.GetRawData
             reader.Close();
 
             return result;
+        }
+
+        public void WriteReviewToDB(int productID, Review review)
+        {
+            MySqlCommand command = new MySqlCommand("INSERT INTO cpu" +
+                                                   "(ProductID,type,atx,miniAtx,miniItx,fans,brand,height,width,depth,weight)" +
+                                                   "VALUES(@ProductID, @type, @atx, @miniAtx, @miniItx, @fans, @brand, @height, @width, @depth, @weight)",
+               connection);
+            command.Parameters.AddWithValue("@ProductID", productID);
+            command.Parameters.AddWithValue("@ProductID", productID);
+
+            command.ExecuteNonQuery();
+        }
+
+        public void WriteGpuToDB(GPU product)
+        {
+            MySqlCommand command = new MySqlCommand("INSERT INTO gpu" +
+                                                   "(product_id,name,model,processor_manufacturer,manufacturer,graphic_processor,mem_size,boosted_clock,superscore,avg_critic_score,avg_user_score,oldest_review_date,newest_review_date)" +
+                                                   "VALUES(@ProductID, @name, @model, @processor_manufacturer, @manufacturer, @graphic_processor, @mem_size, @boosted_clock, @superscore, @avg_critic_score, @avg_user_score, @oldest_review_date, @newest_review_date)",
+               connection);
+            command.Parameters.AddWithValue("@ProductID", product.Id);
+            command.Parameters.AddWithValue("@name", product.Name);
+            command.Parameters.AddWithValue("@model", product.Model);
+            command.Parameters.AddWithValue("@processor_manufacturer", product.ProcessorManufacturer);
+            command.Parameters.AddWithValue("@manufacturer", product.Manufacturer);
+            command.Parameters.AddWithValue("@graphic_processor", product.GraphicsProcessor);
+            command.Parameters.AddWithValue("@mem_size", product.MemSize);
+            command.Parameters.AddWithValue("@boosted_clock", product);//todo get boosted clock somehow
+            command.Parameters.AddWithValue("@superscore", product.superScore);
+            command.Parameters.AddWithValue("@avg_critic_score", product.criticScore);
+            command.Parameters.AddWithValue("@avg_user_score", product.userScore);
+            command.Parameters.AddWithValue("@oldest_review_date", product.oldestReviewDate);
+            command.Parameters.AddWithValue("@newest_review_date", product.newestReviewDate);
+
+            command.ExecuteNonQuery();
         }
     }
 }

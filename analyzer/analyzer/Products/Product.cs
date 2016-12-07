@@ -14,6 +14,8 @@ namespace analyzer.Products
         public int superScore = 0;
         public int criticScore = 0;
         public int userScore = 0;
+        public DateTime oldestReviewDate;
+        public DateTime newestReviewDate;
         public string description = "";
         public List<Retailer> retailers;
         public List<Review> reviewMatches;

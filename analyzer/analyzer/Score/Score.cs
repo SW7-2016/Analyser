@@ -27,7 +27,8 @@ namespace analyzer.Score
         {
             double userScoreWeight = UserScoreWeight;
             double criticScoreWeight = CriticScoreWeight;
-            DateTime oldestReviewAge = product.reviewMatches[0].ReviewDate;
+            DateTime oldestReviewDate = product.reviewMatches[0].ReviewDate;
+            DateTime newestReviewDate = oldestReviewDate;
             double criticReviewNumerator = 0,
                 criticReviewDenominator = 0,
                 userReviewNumerator = 0,
@@ -48,8 +49,10 @@ namespace analyzer.Score
             // find oldest review to assess product age
             foreach (Review review in product.reviewMatches)
             {
-                if (review.ReviewDate < oldestReviewAge)
-                    oldestReviewAge = review.ReviewDate;  
+                if (review.ReviewDate < oldestReviewDate)
+                    oldestReviewDate = review.ReviewDate;
+                if (review.ReviewDate > newestReviewDate)
+                    newestReviewDate = review.ReviewDate;
 
                 if (review.GetType() == typeof(CriticReview))
                 {
@@ -67,7 +70,7 @@ namespace analyzer.Score
                 return;
 
             // Assume age 
-            double productAge = (DateTime.Today.Subtract(oldestReviewAge).Days) / (double) 365;
+            double productAge = (DateTime.Today.Subtract(oldestReviewDate).Days) / (double) 365;
 
             // review-specific calculations
             foreach (Review review in product.reviewMatches)
@@ -75,7 +78,7 @@ namespace analyzer.Score
                 bool isCriticReview = review.GetType() == typeof(CriticReview);
 
                 // review weight (age)
-                TimeSpan reviewAge = review.ReviewDate.Subtract(oldestReviewAge);
+                TimeSpan reviewAge = review.ReviewDate.Subtract(oldestReviewDate);
                 double reviewAgeInYears = reviewAge.Days / (double) 365;
                 review.reviewWeight = ComputeReviewWeight(reviewAgeInYears, productFactor);
 
@@ -123,6 +126,8 @@ namespace analyzer.Score
 
             // set scores on product
             setProductScores(product,superScore,avgCriticScore,avgUserScore);
+            product.newestReviewDate = newestReviewDate;
+            product.oldestReviewDate = oldestReviewDate;
         }
 
         private static void setProductScores(Product product, int superScore, int criticScore, int userScore)
