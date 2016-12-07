@@ -10,9 +10,10 @@ namespace analyzer.Products
 {
     public abstract class Product
     {
-        public double superScore = 0;
-        public double criticScore = 0;
-        public double userScore = 0;
+        public bool scoreAssessed = false;
+        public int superScore = 0;
+        public int criticScore = 0;
+        public int userScore = 0;
         public string description = "";
         public List<Retailer> retailers;
         public List<Review> reviewMatches;

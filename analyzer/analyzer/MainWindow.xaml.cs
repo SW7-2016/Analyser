@@ -82,7 +82,7 @@ namespace analyzer
 
             #region Add data from crawlerDB
 
-            //gpuList = dbConnection.GetGpuData();
+            gpuList = dbConnection.GetGpuData();
             //chassisList = dbConnection.GetChassisData();
             cpuList = dbConnection.GetCpuData();
             //hardDriveList = dbConnection.GetHardDriveData();
@@ -97,13 +97,18 @@ namespace analyzer
             reviewList.AddRange(criticReviewList);
             reviewList.AddRange(userReviewList);
 
-            foreach (var gpu in cpuList)
+            foreach (var cpu in cpuList)
             {
-                gpu.MatchReviewAndProduct(reviewList, cpuList.stopWord, ref reviewProductLinks);
+                cpu.MatchReviewAndProduct1(reviewList, cpuList.stopWord, ref reviewProductLinks);
+            }
+
+            foreach (var gpu in gpuList)
+            {
+                gpu.MatchReviewAndProduct1(reviewList, gpuList.stopWord, ref reviewProductLinks);
             }
 
             actualReviewProductLinks = RemoveInvalidLinks(reviewProductLinks);
-
+            /*
             foreach (var product in actualReviewProductLinks.productList)
             {
                 foreach (var review in product.reviewMatches)
@@ -113,7 +118,7 @@ namespace analyzer
                     Debug.WriteLine(review.Id + " " + review.Title);
                 }
             }
-
+            */
             dbConnection.connection.Close();
 
             /* ||===================================================||
@@ -124,83 +129,12 @@ namespace analyzer
              * ||===================================================||*/
 
             //Debugging.Debugging.DebugReviewDuplicates(chassisList, cpuList, gpuList, hardDriveList, motherboardList, psuList, ramList);
-            Debugging.Debugging.GetUnlinkedReviews(reviewList, chassisList, cpuList, gpuList, hardDriveList, motherboardList, psuList, ramList);
+            //Debugging.Debugging.GetUnlinkedReviews(reviewList, chassisList, cpuList, gpuList, hardDriveList, motherboardList, psuList, ramList);
             //Debugging.Debugging.NumberOfReviewForEachProduct(cpuList);
+
+            Score.Score.AssessProductListScores(cpuList);
+            Score.Score.AssessProductListScores(gpuList);
         }
         
-        public void AssessScores(List<Product> productList)
-        {
-            //todo move/instanciate to proper place
-            Dictionary<string,double> categoryFactors = new Dictionary<string, double>();
-            categoryFactors.Add("GPU", 2);
-            categoryFactors.Add("CPU", 3);
-
-            foreach (var product in productList)
-            {
-                DateTime oldestReviewAge = product.reviewMatches[0].ReviewDate;
-                //double criticReviewWeightSum = 0;
-                //double userReviewWeightSum = 0;
-                double criticReviewNumerator = 0, 
-                    criticReviewDenominator = 0,
-                    userReviewNumerator = 0, 
-                    userReviewDenominator = 0;
-
-                // product category factor
-                double productFactor = 1;
-                if (categoryFactors.ContainsKey(product.Category))
-                    productFactor = categoryFactors[product.Category];
-
-                List<double> normalizedCriticScores = new List<double>();
-                List<double> normalizedUserScores = new List<double>();
-
-
-                // find oldest critic review to assess product age
-                foreach (Review review in product.reviewMatches)
-                {
-                    if (review.ReviewDate < oldestReviewAge && review.GetType() == typeof(CriticReview))
-                        oldestReviewAge = review.ReviewDate;
-                }
-
-                // review specific calculations
-                foreach (Review review in product.reviewMatches)
-                {
-                    bool isCriticReview = review.GetType() == typeof(CriticReview);
-
-                    // review weight (age)
-                    TimeSpan reviewAge = review.ReviewDate.Subtract(oldestReviewAge);
-                    double reviewAgeInYears = reviewAge.Days / 365;
-                    review.reviewWeight = ComputeReviewWeight(reviewAgeInYears, productFactor);
-
-                    // review average score
-                    double normalizedScore = review.Rating/review.MaxRating;
-
-                    //compute score
-                    if (isCriticReview)
-                    {
-                        criticReviewNumerator += normalizedScore*review.reviewWeight;
-                        criticReviewDenominator += review.reviewWeight;
-                    }
-                    else
-                    {
-                        userReviewNumerator += normalizedScore * review.reviewWeight;
-                        userReviewDenominator += review.reviewWeight;
-                    }
-                }
-
-                double criticScore = criticReviewNumerator/criticReviewDenominator;
-
-                //superscore = critic*weigth + user*weight / sum weight
-            }
-        }
-        
-        public double ComputeReviewWeight(double age, double categoryFactor)
-        {
-            //\frac{1}{(1 + 10 * e^{-2 * x + 2.5}) + 1}
-            double exponent = -2 * age + 2.5;
-            double result = 1/(1 + 10 * Math.Pow(Math.E, exponent)) + 1;
-
-            return result;
-        }
-
     }
 }
