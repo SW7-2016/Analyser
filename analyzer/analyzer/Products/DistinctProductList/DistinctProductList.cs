@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls.Primitives;
 
 namespace analyzer.Products.DistinctProductList.types
 {
@@ -15,6 +16,15 @@ namespace analyzer.Products.DistinctProductList.types
         public Dictionary<string, bool> stopWord = new Dictionary<string, bool>();
 
         public int deletedDoublicates = 0;
+
+        public DistinctProductList(List<T> Items, Dictionary<string, bool> StopWord, List<string[]> OldTokensList)
+        {
+            AddRange(Items);
+            stopWord = StopWord;
+            oldTokensList = OldTokensList;
+        }
+
+        public DistinctProductList(){ }
 
         public new void Add(T item)
         {
@@ -183,7 +193,7 @@ namespace analyzer.Products.DistinctProductList.types
                     { "extreme", true },
                     { "edition", true },
                     { "generation", true },
-                    //{ "pentium", true },
+                    { "pentium", true },
                     { "r", true },
                     { "r1", true },
                     { "r2", true },
@@ -244,6 +254,11 @@ namespace analyzer.Products.DistinctProductList.types
             }
 
             return result;
+        }
+
+        public new DistinctProductList<T> GetRange(int index, int count)
+        {
+             return new DistinctProductList<T>(base.GetRange(index, count), stopWord, oldTokensList);
         }
 
         public void NearDublicates()

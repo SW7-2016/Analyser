@@ -280,9 +280,10 @@ namespace analyzer.GetRawData
             return result;
         }
 
-        public List<CriticReview> GetCriticReviewData()
+        public List<CriticReview> GetCriticReviewData(string category)
         {
-            MySqlCommand command = new MySqlCommand("SELECT * FROM Review WHERE isCriticReview", connection);// limit 1000
+            MySqlCommand command = new MySqlCommand("SELECT * FROM Review WHERE isCriticReview AND productType = \"" + category + "\"", connection);
+        
             List<CriticReview> result = new List<CriticReview>();
             MySqlDataReader reader = command.ExecuteReader();
 
@@ -308,9 +309,9 @@ namespace analyzer.GetRawData
             return result;
         }
 
-        public List<UserReview> GetUserReviewData()
+        public List<UserReview> GetUserReviewData(string category)
         {
-            MySqlCommand command = new MySqlCommand("SELECT * FROM Review WHERE isCriticReview<>1", connection);// limit 1000
+            MySqlCommand command = new MySqlCommand("SELECT * FROM Review WHERE isCriticReview<>1 AND productType = \"" + category + "\"", connection);
             List<UserReview> result = new List<UserReview>();
             MySqlDataReader reader = command.ExecuteReader();
 
