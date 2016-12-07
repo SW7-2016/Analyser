@@ -82,7 +82,7 @@ namespace analyzer
 
             #region Add data from crawlerDB
 
-            //gpuList = dbConnection.GetGpuData();
+            gpuList = dbConnection.GetGpuData();
             //chassisList = dbConnection.GetChassisData();
             cpuList = dbConnection.GetCpuData();
             //hardDriveList = dbConnection.GetHardDriveData();
@@ -97,9 +97,14 @@ namespace analyzer
             reviewList.AddRange(criticReviewList);
             reviewList.AddRange(userReviewList);
 
-            foreach (var gpu in cpuList)
+            foreach (var cpu in cpuList)
             {
-                gpu.MatchReviewAndProduct1(reviewList, cpuList.stopWord, ref reviewProductLinks);
+                cpu.MatchReviewAndProduct1(reviewList, cpuList.stopWord, ref reviewProductLinks);
+            }
+
+            foreach (var gpu in gpuList)
+            {
+                gpu.MatchReviewAndProduct1(reviewList, gpuList.stopWord, ref reviewProductLinks);
             }
 
             actualReviewProductLinks = RemoveInvalidLinks(reviewProductLinks);
@@ -128,7 +133,7 @@ namespace analyzer
             //Debugging.Debugging.NumberOfReviewForEachProduct(cpuList);
 
             Score.Score.AssessProductListScores(cpuList);
-
+            Score.Score.AssessProductListScores(gpuList);
         }
         
     }

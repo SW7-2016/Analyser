@@ -282,7 +282,7 @@ namespace analyzer.GetRawData
 
         public List<CriticReview> GetCriticReviewData()
         {
-            MySqlCommand command = new MySqlCommand("SELECT * FROM Review WHERE isCriticReview limit 1000", connection);
+            MySqlCommand command = new MySqlCommand("SELECT * FROM Review WHERE isCriticReview", connection);// limit 1000
             List<CriticReview> result = new List<CriticReview>();
             MySqlDataReader reader = command.ExecuteReader();
 
@@ -310,7 +310,7 @@ namespace analyzer.GetRawData
 
         public List<UserReview> GetUserReviewData()
         {
-            MySqlCommand command = new MySqlCommand("SELECT * FROM Review WHERE isCriticReview<>1 limit 1000", connection);
+            MySqlCommand command = new MySqlCommand("SELECT * FROM Review WHERE isCriticReview<>1", connection);// limit 1000
             List<UserReview> result = new List<UserReview>();
             MySqlDataReader reader = command.ExecuteReader();
 

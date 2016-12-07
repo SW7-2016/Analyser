@@ -19,6 +19,8 @@ namespace analyzer.Score
             };//category factors: GPU 2, CPU 4
         private const double UserScoreWeight = 1;
         private const double CriticScoreWeight = 2;
+        private const double CriticReviewQuantityThreshold = 1;
+        private const double UserReviewQuantityThreshold = 10;
 
 
         public static void AssessProductScores(Product product)
@@ -29,7 +31,9 @@ namespace analyzer.Score
             double criticReviewNumerator = 0,
                 criticReviewDenominator = 0,
                 userReviewNumerator = 0,
-                userReviewDenominator = 0;
+                userReviewDenominator = 0,
+                criticScore = 0,
+                userScore = 0;
             bool hasCriticReview = false, hasUserReview = false;
 
             //debugs
@@ -37,18 +41,32 @@ namespace analyzer.Score
             List<double> userRatings = new List<double>();
 
             // product category factor
-            double productFactor = 1;
+            double productFactor = 4;// default decay weight
             if (categoryFactors.ContainsKey(product.Category))
                 productFactor = categoryFactors[product.Category];
 
-
-            // find oldest critic review to assess product age
+            // find oldest review to assess product age
             foreach (Review review in product.reviewMatches)
             {
-                if (review.ReviewDate < oldestReviewAge && review.GetType() == typeof(CriticReview))
-                    oldestReviewAge = review.ReviewDate;
+                if (review.ReviewDate < oldestReviewAge)
+                    oldestReviewAge = review.ReviewDate;  
+
+                if (review.GetType() == typeof(CriticReview))
+                {
+                    criticRatings.Add(review.Rating/review.MaxRating);                  
+                }
+                else
+                {
+                    userRatings.Add(review.Rating / review.MaxRating);
+                }
             }
 
+            // If not sufficient amount of reviews, do not assess superscore
+            if (criticRatings.Count < CriticReviewQuantityThreshold &&
+                userRatings.Count < UserReviewQuantityThreshold)
+                return;
+
+            // Assume age 
             double productAge = (DateTime.Today.Subtract(oldestReviewAge).Days) / (double) 365;
 
             // review-specific calculations
@@ -62,31 +80,25 @@ namespace analyzer.Score
                 review.reviewWeight = ComputeReviewWeight(reviewAgeInYears, productFactor);
 
                 // review average score
-                double normalizedScore = review.Rating / review.MaxRating;
-
+                review.normalizedScore = review.Rating / review.MaxRating;
+                double weightedReviewScore = review.normalizedScore*review.reviewWeight;
                 //compute score
                 if (isCriticReview)
                 {
-                    criticReviewNumerator += normalizedScore * review.reviewWeight;
+                    criticReviewNumerator += review.normalizedScore * review.reviewWeight;
                     criticReviewDenominator += review.reviewWeight;
                     hasCriticReview = true;
-                    criticRatings.Add(review.Rating);//debug
                 }
                 else
                 {
-                    userReviewNumerator += normalizedScore * review.reviewWeight;
+                    userReviewNumerator += review.normalizedScore * review.reviewWeight;
                     userReviewDenominator += review.reviewWeight;
                     hasUserReview = true;
-                    userRatings.Add(review.Rating);//debug
                 }
             }
 
-
-            double criticScore = 0, 
-                userScore = 0;
-
             if (hasCriticReview)
-                criticScore = criticReviewNumerator/criticReviewDenominator;
+                criticScore = criticReviewNumerator / criticReviewDenominator;
 
             if(hasUserReview)
                 userScore = userReviewNumerator / userReviewDenominator;
@@ -98,22 +110,27 @@ namespace analyzer.Score
                 userScoreWeight = 0;
 
             //superscore = critic*weigth + user*weight / sum weight
-            double averageScore = ((criticScore*criticScoreWeight) + (userScore*userScoreWeight))/
+            double weightedAverageScore = ((criticScore*criticScoreWeight) + (userScore*userScoreWeight))/
                                 (criticScoreWeight + userScoreWeight);
 
-            double tempSuperScore = averageScore * ComputeDecayWeight(productAge, productFactor) + 0.01;
+            double tempSuperScore = weightedAverageScore * ComputeDecayWeight(productAge, productFactor) + 0.01;
+            userScore = userRatings.Average();
+            criticScore = criticRatings.Average();
+
             int superScore = (int) Math.Round(tempSuperScore*100);
-            
+            int avgUserScore = (int)Math.Round(userScore * 100);
+            int avgCriticScore = (int)Math.Round(criticScore * 100);
+
             // set scores on product
-            setProductScores(product,superScore,criticScore,userScore);
-            
+            setProductScores(product,superScore,avgCriticScore,avgUserScore);
         }
 
-        private static void setProductScores(Product product, int superScore, double criticScore, double userScore)
+        private static void setProductScores(Product product, int superScore, int criticScore, int userScore)
         {
             product.criticScore = criticScore;
             product.userScore = userScore;
             product.superScore = superScore;
+            product.scoreAssessed = true;
         }
 
 
@@ -127,11 +144,12 @@ namespace analyzer.Score
                 if (product.reviewMatches.Count > 0)
                 {
                     AssessProductScores(product);
+                    if(product.scoreAssessed)
                     superscores.Add(product.Id, product.superScore);
                     reviews += 1;
                 }
             }
-            int i = 1;
+            int i = 1;//todo remove
         }
 
         public static double ComputeReviewWeight(double age, double categoryFactor)

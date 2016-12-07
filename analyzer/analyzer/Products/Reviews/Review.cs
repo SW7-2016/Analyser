@@ -16,6 +16,7 @@ namespace analyzer.Products.Reviews
         public double productAgeAtReviewTime;
         public double credibility;
         public double reviewWeight;
+        public double normalizedScore;
 
    
 
