@@ -117,8 +117,11 @@ namespace analyzer.Score
                                 (criticScoreWeight + userScoreWeight);
 
             double tempSuperScore = weightedAverageScore * ComputeDecayWeight(productAge, productFactor) + 0.01;
-            userScore = userRatings.Average();
-            criticScore = criticRatings.Average();
+
+            if(hasUserReview)
+                userScore = userRatings.Average();
+            if(hasCriticReview)
+                criticScore = criticRatings.Average();
 
             int superScore = (int) Math.Round(tempSuperScore*100);
             int avgUserScore = (int)Math.Round(userScore * 100);
@@ -154,7 +157,6 @@ namespace analyzer.Score
                     reviews += 1;
                 }
             }
-            int i = 1;//todo remove
         }
 
         public static double ComputeReviewWeight(double age, double categoryFactor)

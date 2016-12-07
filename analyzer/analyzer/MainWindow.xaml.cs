@@ -29,8 +29,6 @@ namespace analyzer
             InitializeComponent();
         }
 
-
-
         private void GetDataTest_bt_Click(object sender, RoutedEventArgs e)
         {
             DistinctProductList<CPU> cpuList = new DistinctProductList<CPU>();
@@ -112,7 +110,6 @@ namespace analyzer
 
             Score.Score.AssessProductListScores(cpuList);
             Score.Score.AssessProductListScores(gpuList);
-
         }
 
         public void StartThreads<T>(int productsPerThread, DistinctProductList<T> productList, List<Review> reviewList) where T : Product
