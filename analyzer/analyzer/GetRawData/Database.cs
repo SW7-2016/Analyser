@@ -342,12 +342,20 @@ namespace analyzer.GetRawData
 
         public void WriteReviewToDB(int productID, Review review)
         {
-            MySqlCommand command = new MySqlCommand("INSERT INTO cpu" +
-                                                   "(ProductID,type,atx,miniAtx,miniItx,fans,brand,height,width,depth,weight)" +
-                                                   "VALUES(@ProductID, @type, @atx, @miniAtx, @miniItx, @fans, @brand, @height, @width, @depth, @weight)",
+            MySqlCommand command = new MySqlCommand("INSERT INTO review" +
+                                                   "(id,product_id,date,is_critic,url,title,author,rating,content)" +
+                                                   "VALUES(@id, @product_id, @date, @is_critic, @url, @title, @author, @rating, @content)",
                connection);
-            command.Parameters.AddWithValue("@ProductID", productID);
-            command.Parameters.AddWithValue("@ProductID", productID);
+
+            command.Parameters.AddWithValue("@id", productID);
+            command.Parameters.AddWithValue("@product_id", productID);//todo what?
+            command.Parameters.AddWithValue("@date", review.ReviewDate);
+            command.Parameters.AddWithValue("@is_critic", review.isCritic);
+            command.Parameters.AddWithValue("@url", review.Url);
+            command.Parameters.AddWithValue("@title", review.Title);
+            command.Parameters.AddWithValue("@author", review.Author);//todo must be set in Review
+            command.Parameters.AddWithValue("@rating", review.Rating);
+            command.Parameters.AddWithValue("@content", review.Content);//todo must be set in Review
 
             command.ExecuteNonQuery();
         }
@@ -374,5 +382,34 @@ namespace analyzer.GetRawData
 
             command.ExecuteNonQuery();
         }
+
+        public void WriteCpuToDB(CPU product)
+        {
+            MySqlCommand command = new MySqlCommand("INSERT INTO gpu" +
+                                                   "(id,name,model,clock,max_turbo,integrated_gpu,stock_cooler,manufacturer,cpu_series,logical_cores,physical_cores,socket,superscore,avg_critic_score,avg_user_score,oldest_review_date,newest_review_date)" +
+                                                   "VALUES(@ProductID, @name, @model, @clock, @max_turbo, @integrated_gpu, @stock_cooler, @manufacturer, @cpu_series, @logical_cores, @physical_cores, @socket, @superscore, @avg_critic_score, @avg_user_score, @oldest_review_date, @newest_review_date)",
+               connection);
+            command.Parameters.AddWithValue("@ProductID", product.Id);
+            command.Parameters.AddWithValue("@name", product.Name);
+            command.Parameters.AddWithValue("@model", product.Model);
+            command.Parameters.AddWithValue("@clock", product.Clock);
+            command.Parameters.AddWithValue("@max_turbo", product.MaxTurbo);
+            command.Parameters.AddWithValue("@integrated_gpu", product.IntegratedGpu);
+            command.Parameters.AddWithValue("@stock_cooler", product.StockCooler);
+            command.Parameters.AddWithValue("@manufacturer", product.Manufacturer);
+            command.Parameters.AddWithValue("@cpu_series", product.CpuSeries);
+            command.Parameters.AddWithValue("@logical_cores", product.LogicalCores);
+            command.Parameters.AddWithValue("@physical_cores", product.PhysicalCores);
+            command.Parameters.AddWithValue("@socket", product.Socket);
+            command.Parameters.AddWithValue("@superscore", product.superScore);
+            command.Parameters.AddWithValue("@avg_critic_score", product.criticScore);
+            command.Parameters.AddWithValue("@avg_user_score", product.userScore);
+            command.Parameters.AddWithValue("@oldest_review_date", product.oldestReviewDate);
+            command.Parameters.AddWithValue("@newest_review_date", product.newestReviewDate);
+
+            command.ExecuteNonQuery();
+        }
+        @"(,,,,,,superscore,avg_critic_score,avg_user_score,oldest_review_date,newest_review_date)"
+        @"(id,name,model,clock,max_turbo,integrated_gpu,stock_cooler,manufacturer,cpu_series,logical_cores,physical_cores,socket,superscore,avg_critic_score,avg_user_score,oldest_review_date,newest_review_date)"
     }
 }

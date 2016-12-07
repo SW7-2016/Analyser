@@ -17,8 +17,11 @@ namespace analyzer.Products.Reviews
         public double credibility;
         public double reviewWeight;
         public double normalizedScore;
+        public bool isCritic = false;
+        private string content = "";//todo must be set
+        private string author = "";//todo must be set
 
-   
+
 
         protected Review(int id, double rating, double maxRating, DateTime date, string title, string url, string category)
         {
@@ -39,6 +42,8 @@ namespace analyzer.Products.Reviews
         public string Url { get; }
         public string Title { get; }
         public string Category { get; }
+        public string Content { get; }
+        public string Author { get; }
 
         public List<string> TokenList
         {
