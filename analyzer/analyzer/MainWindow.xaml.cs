@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using analyzer.Debugging;
 using analyzer.Products.Reviews;
@@ -9,6 +10,8 @@ using analyzer.Products.ProductComponents;
 using analyzer.GetRawData;
 using analyzer.Products;
 using analyzer.Products.DistinctProductList.types;
+using System.Threading;
+using analyzer.Threading;
 
 namespace analyzer
 {
@@ -17,21 +20,128 @@ namespace analyzer
     /// </summary>
     public partial class MainWindow : Window
     {
-        public DistinctProductList<Chassis> chassisList = new DistinctProductList<Chassis>();
-        public DistinctProductList<CPU> cpuList = new DistinctProductList<CPU>();
-        public DistinctProductList<GPU> gpuList = new DistinctProductList<GPU>();
-        public DistinctProductList<HardDrive> hardDriveList = new DistinctProductList<HardDrive>();
-        public DistinctProductList<Motherboard> motherboardList = new DistinctProductList<Motherboard>();
-        public DistinctProductList<PSU> psuList = new DistinctProductList<PSU>();
-        public DistinctProductList<RAM> ramList = new DistinctProductList<RAM>();
-        public List<CriticReview> criticReviewList = new List<CriticReview>();
-        public List<UserReview> userReviewList = new List<UserReview>();
-        public List<Review> reviewList = new List<Review>();
-
+        public int semaphore = 0;
+        List<ReviewProductLinks> threadProcessedData = new List<ReviewProductLinks>();
 
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+
+
+        private void GetDataTest_bt_Click(object sender, RoutedEventArgs e)
+        {
+            DistinctProductList<CPU> cpuList = new DistinctProductList<CPU>();
+            DistinctProductList<GPU> gpuList = new DistinctProductList<GPU>();
+            List<CriticReview> criticReviewListCpu = new List<CriticReview>();
+            List<CriticReview> criticReviewListGpu = new List<CriticReview>();
+            List<UserReview> userReviewListCpu = new List<UserReview>();
+            List<UserReview> userReviewListGpu = new List<UserReview>();
+            List<Review> reviewListCpu = new List<Review>();
+            List<Review> reviewListGpu = new List<Review>();
+
+            DBConnect dbConnection = new DBConnect();
+
+            #region Add data from crawlerDB
+            dbConnection.DbInitialize(true);
+            dbConnection.connection.Open();
+
+            gpuList = dbConnection.GetGpuData();
+            //chassisList = dbConnection.GetChassisData();
+            cpuList = dbConnection.GetCpuData();
+            //hardDriveList = dbConnection.GetHardDriveData();
+            //motherboardList = dbConnection.GetMotherboardData();
+            //psuList = dbConnection.GetPsuData();
+            //ramList = dbConnection.GetRamData();
+            criticReviewListCpu = dbConnection.GetCriticReviewData("CPU");
+            criticReviewListGpu = dbConnection.GetCriticReviewData("GPU");
+            userReviewListGpu = dbConnection.GetUserReviewData("GPU");
+            userReviewListCpu = dbConnection.GetUserReviewData("CPU");
+
+            reviewListCpu.AddRange(criticReviewListCpu);
+            reviewListCpu.AddRange(userReviewListCpu);
+            reviewListGpu.AddRange(criticReviewListGpu);
+            reviewListGpu.AddRange(userReviewListGpu);
+
+            dbConnection.connection.Close();
+            #endregion
+
+            int productsPerThread = 200;
+
+            StartThreads(productsPerThread, cpuList, reviewListCpu);
+            StartThreads(productsPerThread, gpuList, reviewListGpu);
+
+            while (semaphore != 0)
+            {
+                Thread.Sleep(500);
+            }
+
+            ReviewProductLinks threadReviewProductLinks = new ReviewProductLinks();
+            
+            foreach (var threadededreviewProductLink in threadProcessedData)
+            {
+                threadReviewProductLinks.productList.AddRange(threadededreviewProductLink.productList);
+                threadReviewProductLinks.reviewList.AddRange(threadededreviewProductLink.reviewList);
+            }
+            ReviewProductLinks actualThreadReviewProductLinks = RemoveInvalidLinks(threadReviewProductLinks);
+
+            #region DebuGZ
+            /* ||===================================================||
+             * ||!! Warning! you are now entering the debug area. !!||
+             * ||---------------------------------------------------||
+             * ||Here are noting true and everything might be wrong ||
+             * ||            Proceed at your own risk               ||
+             * ||===================================================||*/
+
+            /*foreach (var product in actualReviewProductLinks.productList)
+            {
+                foreach (var review in product.reviewMatches)
+                {
+                    Debug.WriteLine("");
+                    Debug.WriteLine(product.Id + " " + product);
+                    Debug.WriteLine(review.Id + " " + review.Title);
+                }
+            }*/
+
+            //Debugging.Debugging.DebugReviewDuplicates(chassisList, cpuList, gpuList, hardDriveList, motherboardList, psuList, ramList);
+            //Debugging.Debugging.GetUnlinkedReviews(reviewList, chassisList, cpuList, gpuList, hardDriveList, motherboardList, psuList, ramList);
+            //Debugging.Debugging.NumberOfReviewForEachProduct(cpuList);
+            #endregion
+        }
+
+        public void StartThreads<T>(int productsPerThread, DistinctProductList<T> productList, List<Review> reviewList) where T : Product
+        {
+            for (int i = 0; i < productList.Count; i += productsPerThread)
+            {
+                if (productList.Count - i > productsPerThread)
+                {
+                    threadProcessedData.Add(new ReviewProductLinks());
+                    ThreadPool.QueueUserWorkItem(ThreadfunctionProduct<T>, new ThreadingData<T>(semaphore, productList.GetRange(i, productsPerThread), reviewList));
+                    Interlocked.Increment(ref semaphore);
+                }
+                else
+                {
+                    threadProcessedData.Add(new ReviewProductLinks());
+                    ThreadPool.QueueUserWorkItem(ThreadfunctionProduct<T>, new ThreadingData<T>(semaphore, productList.GetRange(i, productList.Count - i), reviewList));
+                    Interlocked.Increment(ref semaphore);
+                    break;
+                }
+
+            }
+        }
+        public void ThreadfunctionProduct<T>(object data) where T : Product
+        {
+            DistinctProductList<T> hii = ((ThreadingData<T>)data).productList;
+            List<Review> reviewList = ((ThreadingData<T>)data).reviewList;
+
+            ReviewProductLinks threadededreviewProductLinks = threadProcessedData[((ThreadingData<T>)data).id];
+
+            foreach (var product in hii)
+            {
+                product.MatchReviewAndProduct1(reviewList, hii.stopWord, ref threadededreviewProductLinks);
+            }
+            Interlocked.Decrement(ref semaphore);
         }
 
         private ReviewProductLinks RemoveInvalidLinks(ReviewProductLinks reviewProductLinks)
@@ -69,57 +179,7 @@ namespace analyzer
             return actualReviewProductLinks;
         }
 
-        private void GetDataTest_bt_Click(object sender, RoutedEventArgs e)
-        {
 
-            DBConnect dbConnection = new DBConnect();
-            ReviewProductLinks reviewProductLinks = new ReviewProductLinks();
-            ReviewProductLinks actualReviewProductLinks;
-
-            dbConnection.DbInitialize(true);
-
-            dbConnection.connection.Open();
-
-            #region Add data from crawlerDB
-
-            gpuList = dbConnection.GetGpuData();
-            //chassisList = dbConnection.GetChassisData();
-            cpuList = dbConnection.GetCpuData();
-            //hardDriveList = dbConnection.GetHardDriveData();
-            //motherboardList = dbConnection.GetMotherboardData();
-            //psuList = dbConnection.GetPsuData();
-            //ramList = dbConnection.GetRamData();
-            criticReviewList = dbConnection.GetCriticReviewData();
-            userReviewList = dbConnection.GetUserReviewData();
-
-            #endregion
-
-            reviewList.AddRange(criticReviewList);
-            reviewList.AddRange(userReviewList);
-
-            foreach (var cpu in cpuList)
-            {
-                cpu.MatchReviewAndProduct1(reviewList, cpuList.stopWord, ref reviewProductLinks);
-            }
-
-            foreach (var gpu in gpuList)
-            {
-                gpu.MatchReviewAndProduct1(reviewList, gpuList.stopWord, ref reviewProductLinks);
-            }
-
-            actualReviewProductLinks = RemoveInvalidLinks(reviewProductLinks);
-            /*
-            foreach (var product in actualReviewProductLinks.productList)
-            {
-                foreach (var review in product.reviewMatches)
-                {
-                    Debug.WriteLine("");
-                    Debug.WriteLine(product.Id + " " + product);
-                    Debug.WriteLine(review.Id + " " + review.Title);
-                }
-            }
-            */
-            dbConnection.connection.Close();
 
             /* ||===================================================||
              * ||!! Warning! you are now entering the debug area. !!||
