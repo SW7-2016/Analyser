@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using analyzer.Products.Reviews;
+using MySql.Data.MySqlClient;
 
 namespace analyzer.Products.ProductComponents
 {
@@ -28,6 +29,11 @@ namespace analyzer.Products.ProductComponents
         public string Weight { get; }
         public bool Modular { get; }
         public override void MatchReviewAndProduct(List<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void WriteToDB(MySqlConnection dbConnection)
         {
             throw new System.NotImplementedException();
         }

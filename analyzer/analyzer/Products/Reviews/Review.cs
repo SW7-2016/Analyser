@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using analyzer.GetRawData;
 using MySql.Data.MySqlClient;
 
 namespace analyzer.Products.Reviews
@@ -11,7 +12,6 @@ namespace analyzer.Products.Reviews
         public List<string> pros;
         public List<string> cons;
         public List<Product> linkedProducts;
-
         public int positiveReception;
         public int negativeReception;
         public double productAgeAtReviewTime;
@@ -19,7 +19,6 @@ namespace analyzer.Products.Reviews
         public double reviewWeight;
         public double normalizedScore;
         public bool isCritic = false;
-
 
         protected Review(int id, double rating, double maxRating, DateTime date, string title, string url, string category, string content, string author)
         {
@@ -45,35 +44,11 @@ namespace analyzer.Products.Reviews
         public string Content { get; }
         public string Author { get; }
 
-        public List<string> TokenList
-        {
-            get { return SplitTitle(Title); }
-        }
-
-        internal List<string> SplitTitle(string name)
-        {
-            List<string> tokenNameList = new List<string>();
-
-            Regex rgx = new Regex(@"(\s)|([\-])|(\,)|(\.)|(\()|(\))|(\/)");
-            string result = rgx.Replace(name, " ").ToLower();
-
-            tokenNameList = result.Split(' ').ToList();
-            tokenNameList.RemoveAll(item => item == "");
-
-            return tokenNameList;
-        }
-
-        internal MatchCollection ExtractNumbersFromString(string str)
-        {
-            MatchCollection result = Regex.Matches(str, @"\d+");
-            return result;
-        }
-
-
         public override string ToString()
         {
             return $"{nameof(Id)}: {Id}, {nameof(Rating)}: {Rating}, {nameof(ReviewDate)}: {ReviewDate}, {nameof(Url)}: {Url}, {nameof(Title)}: {Title}, {nameof(Category)}: {Category}";
         }
+
 
         public void WriteToDB(MySqlConnection connection)
         {

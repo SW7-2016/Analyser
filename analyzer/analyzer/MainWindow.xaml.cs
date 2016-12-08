@@ -21,26 +21,27 @@ namespace analyzer
     /// </summary>
     public partial class MainWindow : Window
     {
-        public int semaphore = 0;
-        List<ReviewProductLinks> threadProcessedData = new List<ReviewProductLinks>();
 
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        private void GetDataTest_bt_Click(object sender, RoutedEventArgs e)
+        private void GetDataTest_bt_Click(object sender, RoutedEventArgs e) 
         {
-            DistinctProductList<CPU> cpuList = new DistinctProductList<CPU>();
+            DistinctProductList<CPU> cpuList = new DistinctProductList<CPU>(); //list of all cpu products, after merging
             DistinctProductList<GPU> gpuList = new DistinctProductList<GPU>();
             List<CriticReview> criticReviewListCpu = new List<CriticReview>();
             List<CriticReview> criticReviewListGpu = new List<CriticReview>();
             List<UserReview> userReviewListCpu = new List<UserReview>();
             List<UserReview> userReviewListGpu = new List<UserReview>();
-            List<Review> reviewListCpu = new List<Review>();
+            List<Review> reviewListCpu = new List<Review>(); //list of all cpu reviews
             List<Review> reviewListGpu = new List<Review>();
+            ReviewProductLinks reviewProductLinks = new ReviewProductLinks(); //contains the products and reviews which have been linked
+            ReviewProductLinks actualReviewProductLinks = new ReviewProductLinks(); //contains linked products and reviews, reviews linking to multiple products removed
+            int productsPerThread = 200; //determines the amount of products each thread task should process
 
-            DBConnect dbConnection = new DBConnect();
+            DBConnect dbConnection = new DBConnect(); //create a database connection handler
 
             #region Add data from crawlerDB
             dbConnection.DbInitialize(true);
@@ -66,24 +67,21 @@ namespace analyzer
             dbConnection.connection.Close();
             #endregion
 
-            int productsPerThread = 200;
-
-            StartThreads(productsPerThread, cpuList, reviewListCpu);
+            StartThreads(productsPerThread, cpuList, reviewListCpu); //execute threaded processing for CPUs
             StartThreads(productsPerThread, gpuList, reviewListGpu);
 
-            while (semaphore != 0)
+            while (ThreadingData.semaphore != 0) //wait until all threads are done
             {
-                Thread.Sleep(500);
+                Thread.Sleep(500); //no need for main thread to work while waiting
             }
 
-            ReviewProductLinks threadReviewProductLinks = new ReviewProductLinks();
-            
-            foreach (var threadededreviewProductLink in threadProcessedData)
+            foreach (var threadReviewProductLink in ThreadingData.threadProcessedData) //collect each thread's processed data
             {
-                threadReviewProductLinks.productList.AddRange(threadededreviewProductLink.productList);
-                threadReviewProductLinks.reviewList.AddRange(threadededreviewProductLink.reviewList);
+                reviewProductLinks.productList.AddRange(threadReviewProductLink.productList);
+                reviewProductLinks.reviewList.AddRange(threadReviewProductLink.reviewList);
             }
-            ReviewProductLinks actualThreadReviewProductLinks = RemoveInvalidLinks(threadReviewProductLinks);
+
+            actualReviewProductLinks = RemoveInvalidLinks(ref reviewProductLinks); //remove invalid links (reviews which link to multiple products)
 
             #region DebuGZ
             /* ||===================================================||
@@ -108,17 +106,26 @@ namespace analyzer
             //Debugging.Debugging.NumberOfReviewForEachProduct(cpuList);
             #endregion
 
-            Score.Score.AssessProductListScores(cpuList);
-            Score.Score.AssessProductListScores(gpuList);
+            //Score.Score.AssessProductListScores(cpuList);
+            var scoredProducts = Score.Score.AssessProductListScores(actualReviewProductLinks.productList);
 
             dbConnection.DbInitialize(false);
             dbConnection.connection.Open();
-            
-            cpuList[0].WriteToDB(dbConnection.connection);
-            cpuList[0].reviewMatches[0].WriteToDB(dbConnection.connection);
-            gpuList[0].WriteToDB(dbConnection.connection);
-            gpuList[0].reviewMatches[0].WriteToDB(dbConnection.connection);
 
+            foreach (Product product in actualReviewProductLinks.productList)
+            {
+                product.WriteToDB(dbConnection.connection);
+                foreach (Review review in product.reviewMatches)
+                {
+                    review.WriteToDB(dbConnection.connection);
+                }
+            }
+            /*
+            cpuList[1].WriteToDB(dbConnection.connection);
+            cpuList[1].reviewMatches[0].WriteToDB(dbConnection.connection);
+            gpuList[1].WriteToDB(dbConnection.connection);
+            gpuList[1].reviewMatches[0].WriteToDB(dbConnection.connection);
+            */
             dbConnection.connection.Close();
         }
 
@@ -126,17 +133,17 @@ namespace analyzer
         {
             for (int i = 0; i < productList.Count; i += productsPerThread)
             {
-                if (productList.Count - i > productsPerThread)
+                if (productList.Count - i > productsPerThread) //amount of products left to process is above that which the thread task should process
                 {
-                    threadProcessedData.Add(new ReviewProductLinks());
-                    ThreadPool.QueueUserWorkItem(ThreadfunctionProduct<T>, new ThreadingData<T>(semaphore, productList.GetRange(i, productsPerThread), reviewList));
-                    Interlocked.Increment(ref semaphore);
+                    ThreadingData.threadProcessedData.Add(new ReviewProductLinks()); //this specific thread's container for processed data
+                    ThreadPool.QueueUserWorkItem(ThreadfunctionProduct<T>, new ThreadingData<T>(ThreadingData.semaphore, productList.GetRange(i, productsPerThread), reviewList));
+                    Interlocked.Increment(ref ThreadingData.semaphore); //interlocked ensure atomic increment of semaphore
                 }
-                else
+                else //amount of products left to process is the last batch to process
                 {
-                    threadProcessedData.Add(new ReviewProductLinks());
-                    ThreadPool.QueueUserWorkItem(ThreadfunctionProduct<T>, new ThreadingData<T>(semaphore, productList.GetRange(i, productList.Count - i), reviewList));
-                    Interlocked.Increment(ref semaphore);
+                    ThreadingData.threadProcessedData.Add(new ReviewProductLinks());
+                    ThreadPool.QueueUserWorkItem(ThreadfunctionProduct<T>, new ThreadingData<T>(ThreadingData.semaphore, productList.GetRange(i, productList.Count - i), reviewList));
+                    Interlocked.Increment(ref ThreadingData.semaphore);
                     break;
                 }
 
@@ -145,20 +152,20 @@ namespace analyzer
 
         public void ThreadfunctionProduct<T>(object data) where T : Product
         {
-            DistinctProductList<T> hii = ((ThreadingData<T>)data).productList;
+            DistinctProductList<T> productList = ((ThreadingData<T>)data).productList;
             List<Review> reviewList = ((ThreadingData<T>)data).reviewList;
+            ReviewProductLinks processedReviewProductLinks = ThreadingData.threadProcessedData[((ThreadingData<T>)data).id];
 
-            ReviewProductLinks threadededreviewProductLinks = threadProcessedData[((ThreadingData<T>)data).id];
-
-            foreach (var product in hii)
+            foreach (var product in productList)
             {
-                product.MatchReviewAndProduct1(reviewList, hii.stopWord, ref threadededreviewProductLinks);
+                product.MatchReviewAndProduct1(reviewList, productList.stopWord, ref processedReviewProductLinks); //execute linking processing
             }
-            Interlocked.Decrement(ref semaphore);
+
+            Interlocked.Decrement(ref ThreadingData.semaphore);
         }
 
-        private ReviewProductLinks RemoveInvalidLinks(ReviewProductLinks reviewProductLinks)
-        {
+        private ReviewProductLinks RemoveInvalidLinks(ref ReviewProductLinks reviewProductLinks)
+        { //removes links from products and reviews, when a review links to multiple products. 
             ReviewProductLinks actualReviewProductLinks = new ReviewProductLinks();
             foreach (var review in reviewProductLinks.reviewList)
             {

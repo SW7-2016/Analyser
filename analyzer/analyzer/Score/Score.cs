@@ -132,12 +132,12 @@ namespace analyzer.Score
             int avgCriticScore = (int)Math.Round(criticScore * 100);
 
             // set scores on product
-            setProductScores(product,superScore,avgCriticScore,avgUserScore);
+            SetProductScores(product,superScore,avgCriticScore,avgUserScore);
             product.newestReviewDate = newestReviewDate;
             product.oldestReviewDate = oldestReviewDate;
         }
 
-        private static void setProductScores(Product product, int superScore, int criticScore, int userScore)
+        private static void SetProductScores(Product product, int superScore, int criticScore, int userScore)
         {
             product.criticScore = criticScore;
             product.userScore = userScore;
@@ -146,21 +146,18 @@ namespace analyzer.Score
         }
 
 
-        public static void AssessProductListScores<T> (List<T> productList) where T : Product
+        public static List<T> AssessProductListScores<T> (List<T> productList) where T : Product
         {
-            int reviews = 0, products = 0;
-            Dictionary<int, int> superscores = new Dictionary<int, int>();
+            List<T> scoredProducts = new List<T>();
+
             foreach (var product in productList)
             {
-                products += 1;
-                if (product.reviewMatches.Count > 0)
-                {
-                    AssessProductScores(product);
-                    if(product.scoreAssessed)
-                    superscores.Add(product.Id, product.superScore);
-                    reviews += 1;
-                }
+                AssessProductScores(product);
+                if (product.scoreAssessed)// happens when review has no rating
+                    scoredProducts.Add(product);
             }
+
+            return scoredProducts;
         }
 
         public static double ComputeReviewWeight(double age, double categoryFactor)

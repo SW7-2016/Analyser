@@ -14,8 +14,7 @@ namespace analyzer.Products.DistinctProductList.types
     {
         List<string[]> oldTokensList = new List<string[]>();
         public Dictionary<string, bool> stopWord = new Dictionary<string, bool>();
-
-        public int deletedDoublicates = 0;
+        public int deletedDuplicates = 0;
 
         public DistinctProductList(List<T> Items, Dictionary<string, bool> StopWord, List<string[]> OldTokensList)
         {
@@ -77,7 +76,7 @@ namespace analyzer.Products.DistinctProductList.types
                         Debug.WriteLine("");
                         Debug.WriteLine("");*/
 
-                        deletedDoublicates++;
+                        deletedDuplicates++;
                         isDup = true;
                         break;
                     }
@@ -86,7 +85,7 @@ namespace analyzer.Products.DistinctProductList.types
                 if (!isDup)
                 {
                     oldTokensList.Add(newItemTokens);
-                    base.Add((T)(object)item);
+                    base.Add(item);
                 }
             }
         }
@@ -262,7 +261,7 @@ namespace analyzer.Products.DistinctProductList.types
         }
 
         public void NearDublicates()
-        {
+        { //test of merging of products
             Debug.WriteLine("");
             Debug.WriteLine(""); Debug.WriteLine("");
             Debug.WriteLine(""); Debug.WriteLine("");
