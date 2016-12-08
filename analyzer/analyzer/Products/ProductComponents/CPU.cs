@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.Serialization.Formatters;
 using analyzer.Products.Reviews;
+using MySql.Data.MySqlClient;
 
 namespace analyzer.Products.ProductComponents
 {
@@ -108,6 +109,33 @@ namespace analyzer.Products.ProductComponents
         {
             //return $"{nameof(PhysicalCores)}: {PhysicalCores}, {nameof(LogicalCores)}: {LogicalCores}, {nameof(StockCooler)}: {StockCooler}, {nameof(Model)}: {Model}, {nameof(Clock)}: {Clock}, {nameof(Socket)}: {Socket}, {nameof(MaxTurbo)}: {MaxTurbo}, {nameof(IntegratedGpu)}: {IntegratedGpu}, {nameof(Manufacturer)}: {Manufacturer}, {nameof(CpuSeries)}: {CpuSeries}";
             return $"{nameof(Model)}: {Model}, {nameof(Manufacturer)}: {Manufacturer}, {nameof(CpuSeries)}: {CpuSeries}";
+        }
+
+        public void WriteToDB(MySqlConnection connection)
+        {
+            MySqlCommand command = new MySqlCommand("INSERT INTO cpu" +
+                                                   "(id,name,model,clock,max_turbo,integrated_gpu,stock_cooler,manufacturer,cpu_series,logical_cores,physical_cores,socket,superscore,avg_critic_score,avg_user_score,oldest_review_date,newest_review_date)" +
+                                                   "VALUES(@ProductID, @name, @model, @clock, @max_turbo, @integrated_gpu, @stock_cooler, @manufacturer, @cpu_series, @logical_cores, @physical_cores, @socket, @superscore, @avg_critic_score, @avg_user_score, @oldest_review_date, @newest_review_date)",
+               connection);
+            command.Parameters.AddWithValue("@ProductID", Id);
+            command.Parameters.AddWithValue("@name", Name);
+            command.Parameters.AddWithValue("@model", Model);
+            command.Parameters.AddWithValue("@clock", Clock);
+            command.Parameters.AddWithValue("@max_turbo", MaxTurbo);
+            command.Parameters.AddWithValue("@integrated_gpu", IntegratedGpu);
+            command.Parameters.AddWithValue("@stock_cooler", StockCooler);
+            command.Parameters.AddWithValue("@manufacturer", Manufacturer);
+            command.Parameters.AddWithValue("@cpu_series", CpuSeries);
+            command.Parameters.AddWithValue("@logical_cores", LogicalCores);
+            command.Parameters.AddWithValue("@physical_cores", PhysicalCores);
+            command.Parameters.AddWithValue("@socket", Socket);
+            command.Parameters.AddWithValue("@superscore", superScore);
+            command.Parameters.AddWithValue("@avg_critic_score", criticScore);
+            command.Parameters.AddWithValue("@avg_user_score", userScore);
+            command.Parameters.AddWithValue("@oldest_review_date", oldestReviewDate);
+            command.Parameters.AddWithValue("@newest_review_date", newestReviewDate);
+
+            command.ExecuteNonQuery();
         }
 
     }

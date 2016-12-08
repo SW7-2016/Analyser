@@ -110,6 +110,16 @@ namespace analyzer
 
             Score.Score.AssessProductListScores(cpuList);
             Score.Score.AssessProductListScores(gpuList);
+
+            dbConnection.DbInitialize(false);
+            dbConnection.connection.Open();
+            
+            cpuList[0].WriteToDB(dbConnection.connection);
+            cpuList[0].reviewMatches[0].WriteToDB(dbConnection.connection);
+            gpuList[0].WriteToDB(dbConnection.connection);
+            gpuList[0].reviewMatches[0].WriteToDB(dbConnection.connection);
+
+            dbConnection.connection.Close();
         }
 
         public void StartThreads<T>(int productsPerThread, DistinctProductList<T> productList, List<Review> reviewList) where T : Product

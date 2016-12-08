@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using MySql.Data.MySqlClient;
 
 namespace analyzer.Products.Reviews
 {
@@ -18,12 +19,9 @@ namespace analyzer.Products.Reviews
         public double reviewWeight;
         public double normalizedScore;
         public bool isCritic = false;
-        private string content = "";//todo must be set
-        private string author = "";//todo must be set
 
 
-
-        protected Review(int id, double rating, double maxRating, DateTime date, string title, string url, string category)
+        protected Review(int id, double rating, double maxRating, DateTime date, string title, string url, string category, string content, string author)
         {
             Id = id;
             Category = category;
@@ -33,6 +31,8 @@ namespace analyzer.Products.Reviews
             Rating = rating;
             MaxRating = maxRating;
             linkedProducts = new List<Product>();
+            Content = content;
+            Author = author;
         }
 
         public int Id { get; }
@@ -73,6 +73,26 @@ namespace analyzer.Products.Reviews
         public override string ToString()
         {
             return $"{nameof(Id)}: {Id}, {nameof(Rating)}: {Rating}, {nameof(ReviewDate)}: {ReviewDate}, {nameof(Url)}: {Url}, {nameof(Title)}: {Title}, {nameof(Category)}: {Category}";
+        }
+
+        public void WriteToDB(MySqlConnection connection)
+        {
+            MySqlCommand command = new MySqlCommand("INSERT INTO review" +
+                                                   "(id,product_id,date,is_critic,url,title,author,rating,content)" +
+                                                   "VALUES(@id, @product_id, @date, @is_critic, @url, @title, @author, @rating, @content)",
+               connection);
+
+            command.Parameters.AddWithValue("@id", Id);
+            command.Parameters.AddWithValue("@product_id", linkedProducts[0].Id);
+            command.Parameters.AddWithValue("@date", ReviewDate);
+            command.Parameters.AddWithValue("@is_critic", isCritic);
+            command.Parameters.AddWithValue("@url", Url);
+            command.Parameters.AddWithValue("@title", Title);
+            command.Parameters.AddWithValue("@author", Author);
+            command.Parameters.AddWithValue("@rating", Rating);
+            command.Parameters.AddWithValue("@content", Content);
+
+            command.ExecuteNonQuery();
         }
     }
 }

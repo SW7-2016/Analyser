@@ -49,6 +49,8 @@ namespace analyzer.Score
             // find oldest review to assess product age
             foreach (Review review in product.reviewMatches)
             {
+                if (review.Rating == -1)
+                    continue;
                 if (review.ReviewDate < oldestReviewDate)
                     oldestReviewDate = review.ReviewDate;
                 if (review.ReviewDate > newestReviewDate)
@@ -56,7 +58,8 @@ namespace analyzer.Score
 
                 if (review.GetType() == typeof(CriticReview))
                 {
-                    criticRatings.Add(review.Rating/review.MaxRating);                  
+                    criticRatings.Add(review.Rating/review.MaxRating);
+                    review.isCritic = true;
                 }
                 else
                 {
@@ -75,7 +78,8 @@ namespace analyzer.Score
             // review-specific calculations
             foreach (Review review in product.reviewMatches)
             {
-                bool isCriticReview = review.GetType() == typeof(CriticReview);
+                if (review.Rating == -1)
+                    continue;
 
                 // review weight (age)
                 TimeSpan reviewAge = review.ReviewDate.Subtract(oldestReviewDate);
@@ -86,7 +90,7 @@ namespace analyzer.Score
                 review.normalizedScore = review.Rating / review.MaxRating;
                 double weightedReviewScore = review.normalizedScore*review.reviewWeight;
                 //compute score
-                if (isCriticReview)
+                if (review.isCritic)
                 {
                     criticReviewNumerator += review.normalizedScore * review.reviewWeight;
                     criticReviewDenominator += review.reviewWeight;
