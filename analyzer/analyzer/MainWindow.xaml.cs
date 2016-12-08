@@ -13,6 +13,7 @@ using analyzer.Products.DistinctProductList.types;
 using System.Threading;
 using analyzer.Threading;
 using analyzer.Score;
+using analyzer.Products.DistinctProductList;
 
 namespace analyzer
 {
@@ -31,15 +32,15 @@ namespace analyzer
         {
             DistinctProductList<CPU> cpuList = new DistinctProductList<CPU>(); //list of all cpu products, after merging
             DistinctProductList<GPU> gpuList = new DistinctProductList<GPU>();
-            List<CriticReview> criticReviewListCpu = new List<CriticReview>();
-            List<CriticReview> criticReviewListGpu = new List<CriticReview>();
-            List<UserReview> userReviewListCpu = new List<UserReview>();
-            List<UserReview> userReviewListGpu = new List<UserReview>();
-            List<Review> reviewListCpu = new List<Review>(); //list of all cpu reviews
-            List<Review> reviewListGpu = new List<Review>();
+            DistinctReviewList<CriticReview> criticReviewListCpu = new DistinctReviewList<CriticReview>();
+            DistinctReviewList<CriticReview> criticReviewListGpu = new DistinctReviewList<CriticReview>();
+            DistinctReviewList<UserReview> userReviewListCpu = new DistinctReviewList<UserReview>();
+            DistinctReviewList<UserReview> userReviewListGpu = new DistinctReviewList<UserReview>();
+            DistinctReviewList<Review> reviewListCpu = new DistinctReviewList<Review>(); //list of all cpu reviews
+            DistinctReviewList<Review> reviewListGpu = new DistinctReviewList<Review>();
             ReviewProductLinks reviewProductLinks = new ReviewProductLinks(); //contains the products and reviews which have been linked
             ReviewProductLinks actualReviewProductLinks = new ReviewProductLinks(); //contains linked products and reviews, reviews linking to multiple products removed
-            int productsPerThread = 200; //determines the amount of products each thread task should process
+            int productsPerThread = 10; //determines the amount of products each thread task should process
 
             DBConnect dbConnection = new DBConnect(); //create a database connection handler
 
@@ -59,10 +60,10 @@ namespace analyzer
             userReviewListGpu = dbConnection.GetUserReviewData("GPU");
             userReviewListCpu = dbConnection.GetUserReviewData("CPU");
 
-            reviewListCpu.AddRange(criticReviewListCpu);
-            reviewListCpu.AddRange(userReviewListCpu);
-            reviewListGpu.AddRange(criticReviewListGpu);
-            reviewListGpu.AddRange(userReviewListGpu);
+            reviewListCpu.AddDistinctList(criticReviewListCpu.ToReview<CriticReview>());
+            reviewListCpu.AddDistinctList(userReviewListCpu.ToReview<UserReview>());
+            reviewListGpu.AddDistinctList(criticReviewListGpu.ToReview<CriticReview>());
+            reviewListGpu.AddDistinctList(userReviewListGpu.ToReview<UserReview>());
 
             dbConnection.connection.Close();
             #endregion
@@ -72,7 +73,7 @@ namespace analyzer
 
             while (ThreadingData.semaphore != 0) //wait until all threads are done
             {
-                Thread.Sleep(500); //no need for main thread to work while waiting
+                Thread.Sleep(300); //no need for main thread to work while waiting
             }
 
             foreach (var threadReviewProductLink in ThreadingData.threadProcessedData) //collect each thread's processed data
@@ -135,7 +136,7 @@ namespace analyzer
             dbConnection.connection.Close();
         }
 
-        public void StartThreads<T>(int productsPerThread, DistinctProductList<T> productList, List<Review> reviewList) where T : Product
+        public void StartThreads<T>(int productsPerThread, DistinctProductList<T> productList, DistinctReviewList<Review> reviewList) where T : Product
         {
             for (int i = 0; i < productList.Count; i += productsPerThread)
             {

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using analyzer.Products.Reviews;
+using analyzer.Products.DistinctProductList;
 
 namespace analyzer.Products
 {
@@ -9,7 +10,7 @@ namespace analyzer.Products
         {
         }
 
-        public override void MatchReviewAndProduct(List<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
+        public override void MatchReviewAndProduct(DistinctReviewList<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
         {
             throw new System.NotImplementedException();
         }

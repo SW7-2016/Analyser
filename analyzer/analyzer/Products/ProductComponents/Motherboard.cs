@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using analyzer.Products.Reviews;
 using MySql.Data.MySqlClient;
+using analyzer.Products.DistinctProductList;
 
 namespace analyzer.Products.ProductComponents
 {
@@ -41,7 +42,7 @@ namespace analyzer.Products.ProductComponents
         public int MemSlots { get; }
         public int MaxMem { get; }
         public int CpuCount { get; }
-        public override void MatchReviewAndProduct(List<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
+        public override void MatchReviewAndProduct(DistinctReviewList<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
         {
             throw new System.NotImplementedException();
         }

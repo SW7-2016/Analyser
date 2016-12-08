@@ -7,11 +7,13 @@ using analyzer.Products.Reviews;
 using analyzer.Products.ProductComponents;
 using analyzer.GetRawData;
 using MySql.Data.MySqlClient;
+using analyzer.Products.DistinctProductList;
 
 namespace analyzer.Products
 {
     public abstract class Product
     {
+        public List<int> prunNumbers= new List<int>();
         public bool scoreAssessed = false;
         public int superScore = 0;
         public int criticScore = 0;
@@ -92,7 +94,7 @@ namespace analyzer.Products
             return false;
         }
 
-        public virtual void MatchReviewAndProduct1(List<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
+        public virtual void MatchReviewAndProduct1(DistinctReviewList<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
         {
         }
 

@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Runtime.Serialization.Formatters;
 using analyzer.Products.Reviews;
 using MySql.Data.MySqlClient;
+using analyzer.Products.DistinctProductList;
+using System.Linq;
 
 namespace analyzer.Products.ProductComponents
 {
@@ -35,12 +37,20 @@ namespace analyzer.Products.ProductComponents
         public string Manufacturer { get; }
         public string CpuSeries { get; }
 
-        public override void MatchReviewAndProduct(List<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
+        public override void MatchReviewAndProduct(DistinctReviewList<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
         {
             List<string> productTokens = SplitStringToTokens(Model.ToLower() + " " + CpuSeries.ToLower());
             productTokens = RemoveRestrictedTokens(productTokens, stopWords);
 
-            foreach (var review in reviewList)
+            List<Review> matchingReviews = new List<Review>();
+
+            foreach (int searchNumber in prunNumbers)
+            {
+                if (reviewList.prunedList.ContainsKey(searchNumber))
+                    matchingReviews.AddRange(reviewList.prunedList[searchNumber]);
+            }
+
+            foreach (var review in matchingReviews)
             {
                 List<string> reviewTitleWithoutStopWordTokens = RemoveRestrictedTokens(SplitStringToTokens(review.Title.ToLower()), stopWords);
                 string reviewTitleWithoutStopWords = "";
@@ -68,13 +78,20 @@ namespace analyzer.Products.ProductComponents
             }
         }
 
-        public override void MatchReviewAndProduct1(List<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
+        public override void MatchReviewAndProduct1(DistinctReviewList<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
         {
             string productStrings = Model.ToLower() + " " + CpuSeries.ToLower();
             List<string> productTokens = RemoveRestrictedTokens(SplitStringToTokens(productStrings), stopWords);
 
+            List<Review> matchingReviews = new List<Review>();
 
-            foreach (var review in reviewList)
+            foreach (int searchNumber in prunNumbers)
+            {
+                if (reviewList.prunedList.ContainsKey(searchNumber))
+                    matchingReviews.AddRange(reviewList.prunedList[searchNumber]);
+            }
+
+            foreach (var review in matchingReviews.Distinct())
             {
                 if (review.Category.ToLower() != "cpu")
                     continue;

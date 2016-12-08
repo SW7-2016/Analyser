@@ -5,22 +5,25 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Controls.Primitives;
 
 namespace analyzer.Products.DistinctProductList.types
 {
-    public class DistinctProductList<T> : List<T>
+    public class DistinctProductList<T> : List<T> where T : Product
     {
         List<string[]> oldTokensList = new List<string[]>();
         public Dictionary<string, bool> stopWord = new Dictionary<string, bool>();
-        public int deletedDuplicates = 0;
+        public Dictionary<int, List<T>> prunedList = new Dictionary<int, List<T>>();
+        public int deletedDoublicates = 0;
 
-        public DistinctProductList(List<T> Items, Dictionary<string, bool> StopWord, List<string[]> OldTokensList)
+        public DistinctProductList(List<T> Items, Dictionary<string, bool> StopWord, List<string[]> OldTokensList, Dictionary<int, List<T>> PrunedList)
         {
             AddRange(Items);
             stopWord = StopWord;
             oldTokensList = OldTokensList;
+            prunedList = PrunedList;
         }
 
         public DistinctProductList(){ }
@@ -76,7 +79,7 @@ namespace analyzer.Products.DistinctProductList.types
                         Debug.WriteLine("");
                         Debug.WriteLine("");*/
 
-                        deletedDuplicates++;
+                        deletedDoublicates++;
                         isDup = true;
                         break;
                     }
@@ -86,8 +89,73 @@ namespace analyzer.Products.DistinctProductList.types
                 {
                     oldTokensList.Add(newItemTokens);
                     base.Add(item);
+
+                    MatchCollection numbers = Regex.Matches(concatinateStrArray(newItemTokens), "\\d+\\.\\d+|\\d+");
+
+                    List<int> nonDupNumbers = new List<int>();
+
+                    foreach (Match number in numbers)
+                    {
+                        if (!number.ToString().Contains(".") && number.Value.Count() < 6)
+                        {
+                            int value = int.Parse(number.Value);
+
+                            if (!nonDupNumbers.Contains(value))
+                            {
+                                nonDupNumbers.Add(value);
+                            }
+                        }
+                    }
+
+                    if (nonDupNumbers.Count() == 0)
+                    {
+                        if (prunedList.ContainsKey(0))
+                        {
+                            prunedList[0].Add(item);
+                        }
+                        else
+                        {
+                            prunedList.Add(0, new List<T>() { item });
+                        }
+
+                        item.prunNumbers.Add(0);
+                    }
+
+
+                    foreach (int number in nonDupNumbers)
+                    {
+
+                        if (((item.Category.ToLower() == "gpu" && number > 0) || (item.Category.ToLower() == "cpu" && number > 20))
+                            && number < 15000)
+                        {
+                            if (prunedList.ContainsKey(number))
+                            {
+                                prunedList[number].Add(item);
+                            }
+                            else
+                            {
+                                prunedList.Add(number, new List<T>() { item });
+                            }
+
+                            item.prunNumbers.Add(number);
+                        }
+                    }
                 }
             }
+        }
+
+
+
+        private string concatinateStrArray(string[] strArray)
+        {
+            string temp = "";
+
+            foreach (var item in strArray)
+            {
+                temp += item + " ";
+            }
+
+            return temp.Trim();
         }
 
         private string[] generateCPUString(CPU newItem)
@@ -257,7 +325,7 @@ namespace analyzer.Products.DistinctProductList.types
 
         public new DistinctProductList<T> GetRange(int index, int count)
         {
-             return new DistinctProductList<T>(base.GetRange(index, count), stopWord, oldTokensList);
+             return new DistinctProductList<T>(base.GetRange(index, count), stopWord, oldTokensList, prunedList);
         }
 
         public void NearDublicates()

@@ -59,6 +59,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Products\DistinctProductList\DistinctReviewList.cs" />
     <Compile Include="Score\Score.cs" />
     <Compile Include="Threading\ThreadingData.cs" />
     <Page Include="MainWindow.xaml">

@@ -6,6 +6,7 @@ using System.Windows.Automation.Peers;
 using analyzer.CompareAndMerge;
 using analyzer.Products.Reviews;
 using MySql.Data.MySqlClient;
+using analyzer.Products.DistinctProductList;
 
 namespace analyzer.Products.ProductComponents
 {
@@ -38,12 +39,28 @@ namespace analyzer.Products.ProductComponents
         public string BoostedClock { get; }
         public string Manufacturer { get; }
 
-        public override void MatchReviewAndProduct(List<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
+        public override void MatchReviewAndProduct(DistinctReviewList<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
         {//linking method which uses the title.contains(productToken) way for linking
             List<string> productTokens = SplitStringToTokens(Model.ToLower() + " " + GraphicsProcessor.ToLower() + " " + Manufacturer.ToLower());
             productTokens = RemoveRestrictedTokens(productTokens, stopWords);
-            
-            foreach (var review in reviewList)
+
+            List<Review> matchingReviews = new List<Review>();
+
+            foreach (int searchNumber in prunNumbers)
+            {
+                if (reviewList.prunedList.ContainsKey(searchNumber))
+                    matchingReviews.AddRange(reviewList.prunedList[searchNumber]);
+            }
+
+            foreach (var review in matchingReviews)
+            {
+                if (review.Category.ToLower() != "gpu")
+                    continue;
+
+                List<string> reviewTitleNoStopWordTokens = RemoveRestrictedTokens(SplitStringToTokens(review.Title.ToLower()), stopWords);
+                string reviewTitleNoStopWords = "";
+
+                foreach (var token in reviewTitleNoStopWordTokens)
             {
                 List<string> reviewTitleWithoutStopWordTokens = RemoveRestrictedTokens(SplitStringToTokens(review.Title.ToLower()), stopWords);
                 string reviewTitleWithoutStopWords = "";
@@ -71,12 +88,23 @@ namespace analyzer.Products.ProductComponents
             }
         }
 
-        public override void MatchReviewAndProduct1(List<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
+        public override void MatchReviewAndProduct1(DistinctReviewList<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
         {
             string productStrings = Model.ToLower() + " " + GraphicsProcessor.ToLower() + " " + Manufacturer.ToLower();
             List<string> productTokens = RemoveRestrictedTokens(SplitStringToTokens(productStrings), stopWords);
 
-            foreach (var review in reviewList)
+            List<Review> matchingReviews = new List<Review>();
+
+            foreach (int searchNumber in prunNumbers)
+            {
+                if (reviewList.prunedList.ContainsKey(searchNumber))
+                    matchingReviews.AddRange(reviewList.prunedList[searchNumber]);
+            }
+
+            foreach (var review in matchingReviews.Distinct())
+            {
+                if (review.Category.ToLower() != "gpu")
+                    continue;
             {
                 if (CompareReviewTitleWithProductStrings1(review.Title.ToLower(), productTokens, stopWords))
                 {
