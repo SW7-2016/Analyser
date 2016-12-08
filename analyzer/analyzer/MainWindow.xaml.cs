@@ -114,8 +114,13 @@ namespace analyzer
             #endregion
 
             //Score.Score.AssessProductListScores(cpuList);
-            var scoredProducts = Score.Score.AssessProductListScores(actualReviewProductLinks.productList);
+            //var scoredProducts = Score.Score.AssessProductListScores(actualReviewProductLinks.productList);
 
+            //
+            Score2 scoreProcessor = new Score2();
+            scoreProcessor.CalculateProductScores(actualReviewProductLinks.productList);
+
+            //
             dbConnection.DbInitialize(false);
             dbConnection.connection.Open();
 

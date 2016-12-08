@@ -18,10 +18,10 @@ namespace analyzer.Products.Reviews
         public double credibility;
         public double reviewWeight;
         public double normalizedScore;
-        public bool isCritic = false;
+        public bool isCritic;
         public double reviewReceptionModifier;
 
-        protected Review(int id, double rating, double maxRating, DateTime date, string title, string url, string category, string content, string author)
+        protected Review(int id, bool isCriticReview, double rating, double maxRating, DateTime date, string title, string url, string category, string content, string author)
         {
             Id = id;
             Category = category;
@@ -33,6 +33,8 @@ namespace analyzer.Products.Reviews
             linkedProducts = new List<Product>();
             Content = content;
             Author = author;
+            isCritic = isCriticReview;
+
         }
 
         public int Id { get; }

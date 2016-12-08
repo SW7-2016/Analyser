@@ -35,7 +35,6 @@ namespace analyzer.Score
                 userReviewDenominator = 0,
                 criticScore = 0,
                 userScore = 0,
-                weightedUserScore,
                 totalReviews = 0;
 
             int maxDiffVotes = 0, minDiffVotes = 999999;
@@ -166,9 +165,9 @@ namespace analyzer.Score
 
         }
             
-        private static double HelpfulFactor(int maxDiffVotes, int minDiffVotes, int upvotes, int downvotes, Review review)
+        private static double HelpfulFactor(double maxDiffVotes, double minDiffVotes, double upvotes, double downvotes, Review review)
         {
-            double result = ((upvotes - downvotes) - Math.Abs(minDiffVotes))/(maxDiffVotes - minDiffVotes);
+            double result = ((upvotes - downvotes) - minDiffVotes)/(maxDiffVotes - minDiffVotes);
             review.reviewReceptionModifier = result;
             return result;
         }

@@ -261,7 +261,7 @@ namespace analyzer.GetRawData
                 object[] tempResult = new object[reader.FieldCount];
                 reader.GetValues(tempResult);
 
-                CriticReview row = new CriticReview((int) tempResult[0], (float) tempResult[4], (float) tempResult[14],
+                CriticReview row = new CriticReview((int) tempResult[0], reader.GetBoolean(10), (float) tempResult[4], (float) tempResult[14],
                     reader.GetDateTime(1),
                     (string) tempResult[13], //title
                     (string) tempResult[12], //url
@@ -294,7 +294,7 @@ namespace analyzer.GetRawData
                 object[] tempResult = new object[reader.FieldCount];
                 reader.GetValues(tempResult);
 
-                UserReview row = new UserReview((int) tempResult[0], (float) tempResult[4], (float) tempResult[14],
+                UserReview row = new UserReview((int) tempResult[0], reader.GetBoolean(10), (float) tempResult[4], (float) tempResult[14],
                     reader.GetDateTime(1),
                     (string) tempResult[13], (string) tempResult[12], (string) tempResult[11], reader.GetBoolean(9),
                     (string)tempResult[3],//content
