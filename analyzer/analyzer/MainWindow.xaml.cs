@@ -160,7 +160,7 @@ namespace analyzer
         public void ThreadfunctionProduct<T>(object data) where T : Product
         {
             DistinctProductList<T> productList = ((ThreadingData<T>)data).productList;
-            List<Review> reviewList = ((ThreadingData<T>)data).reviewList;
+            DistinctReviewList<Review> reviewList = ((ThreadingData<T>)data).reviewList;
             ReviewProductLinks processedReviewProductLinks = ThreadingData.threadProcessedData[((ThreadingData<T>)data).id];
 
             foreach (var product in productList)

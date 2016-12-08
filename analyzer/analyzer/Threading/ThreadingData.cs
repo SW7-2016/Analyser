@@ -12,7 +12,6 @@ namespace analyzer.Threading
 {
     static class ThreadingData
     {
-    {
         public static int semaphore = 0;
         public static List<ReviewProductLinks> threadProcessedData = new List<ReviewProductLinks>();
     }

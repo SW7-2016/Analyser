@@ -60,7 +60,7 @@ namespace analyzer.Products
             return stringToProcess;
         }
         
-       public abstract void MatchReviewAndProduct(List<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks);
+       public abstract void MatchReviewAndProduct(DistinctReviewList<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks);
 
         internal virtual bool MatchReviewTitleWithProductStrings(string concatenatedReviewTitle, List<string> allTokens)
         {
