@@ -19,6 +19,7 @@ namespace analyzer.Products.Reviews
         public double reviewWeight;
         public double normalizedScore;
         public bool isCritic = false;
+        public double reviewReceptionModifier;
 
         protected Review(int id, double rating, double maxRating, DateTime date, string title, string url, string category, string content, string author)
         {

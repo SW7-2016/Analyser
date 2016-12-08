@@ -34,7 +34,11 @@ namespace analyzer.Score
                 userReviewNumerator = 0,
                 userReviewDenominator = 0,
                 criticScore = 0,
-                userScore = 0;
+                userScore = 0,
+                weightedUserScore,
+                totalReviews = 0;
+
+            int maxDiffVotes = 0, minDiffVotes = 999999;
             bool hasCriticReview = false, hasUserReview = false;
 
             //debugs
@@ -63,6 +67,11 @@ namespace analyzer.Score
                 }
                 else
                 {
+                    int diff = review.positiveReception - review.negativeReception;
+                    if (diff > maxDiffVotes)
+                        maxDiffVotes = diff;
+                    else if (diff < minDiffVotes)
+                        minDiffVotes = diff;
                     userRatings.Add(review.Rating / review.MaxRating);
                 }
             }
@@ -87,17 +96,23 @@ namespace analyzer.Score
                 review.reviewWeight = ComputeReviewWeight(reviewAgeInYears, productFactor);
 
                 // review average score
-                review.normalizedScore = review.Rating / review.MaxRating;
+                
                 double weightedReviewScore = review.normalizedScore*review.reviewWeight;
                 //compute score
                 if (review.isCritic)
                 {
+                    review.normalizedScore = review.Rating / review.MaxRating;
                     criticReviewNumerator += review.normalizedScore * review.reviewWeight;
                     criticReviewDenominator += review.reviewWeight;
                     hasCriticReview = true;
                 }
                 else
                 {
+                    double normalizedScore = review.Rating / review.MaxRating;
+
+                    review.normalizedScore = normalizedScore;
+                    totalReviews += HelpfulFactor(maxDiffVotes, minDiffVotes, review.positiveReception, review.negativeReception, review);
+
                     userReviewNumerator += review.normalizedScore * review.reviewWeight;
                     userReviewDenominator += review.reviewWeight;
                     hasUserReview = true;
@@ -122,8 +137,8 @@ namespace analyzer.Score
 
             double tempSuperScore = weightedAverageScore * ComputeDecayWeight(productAge, productFactor) + 0.01;
 
-            if(hasUserReview)
-                userScore = userRatings.Average();
+            if (hasUserReview)
+                userScore = AverageWeightedUserScore(product.reviewMatches, totalReviews);
             if(hasCriticReview)
                 criticScore = criticRatings.Average();
 
@@ -135,6 +150,27 @@ namespace analyzer.Score
             SetProductScores(product,superScore,avgCriticScore,avgUserScore);
             product.newestReviewDate = newestReviewDate;
             product.oldestReviewDate = oldestReviewDate;
+        }
+
+        private static double AverageWeightedUserScore(List<Review> reviews, double totalReviews)
+        {
+            double totalScore = 0;
+            foreach (var review in reviews)
+            {
+                if (review.isCritic == false)
+                {
+                    totalScore += (review.normalizedScore * review.reviewReceptionModifier);
+                }
+            }
+            return (totalScore/totalReviews);
+
+        }
+            
+        private static double HelpfulFactor(int maxDiffVotes, int minDiffVotes, int upvotes, int downvotes, Review review)
+        {
+            double result = ((upvotes - downvotes) - Math.Abs(minDiffVotes))/(maxDiffVotes - minDiffVotes);
+            review.reviewReceptionModifier = result;
+            return result;
         }
 
         private static void SetProductScores(Product product, int superScore, int criticScore, int userScore)
