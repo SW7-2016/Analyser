@@ -118,8 +118,7 @@ namespace analyzer.Debugging
         #endregion
 
         #region Show all reviews whitout a link
-        public static void GetUnlinkedReviews(List<Review> allReviews, List<Chassis> chassisList, List<CPU> cpuList, List<GPU> gpuList,
-            List<HardDrive> hardDriveList, List<Motherboard> motherboardList, List<PSU> psuList, List<RAM> ramList)
+        public static void GetUnlinkedReviews(List<Review> allReviews, List<CPU> cpuList, List<GPU> gpuList)
         {
             List<int> reviewIdList = new List<int>();
             List<int> allReviewsIds = new List<int>();
@@ -134,11 +133,6 @@ namespace analyzer.Debugging
 
             #region add to shared list
             //add reviews with links to reviewIdList
-            foreach (var chassis in chassisList)
-            {
-                reviewIdList = helper2(reviewIdList, chassis);
-
-            }
             foreach (var cpu in cpuList)
             {
                 reviewIdList = helper2(reviewIdList, cpu);
@@ -147,25 +141,6 @@ namespace analyzer.Debugging
             foreach (var gpu in gpuList)
             {
                 reviewIdList = helper2(reviewIdList, gpu);
-
-            }
-            foreach (var hardDrive in hardDriveList)
-            {
-                reviewIdList = helper2(reviewIdList, hardDrive);
-
-            }
-            foreach (var motherboard in motherboardList)
-            {
-                reviewIdList = helper2(reviewIdList, motherboard);
-            }
-            foreach (var psu in psuList)
-            {
-                reviewIdList = helper2(reviewIdList, psu);
-
-            }
-            foreach (var ram in ramList)
-            {
-                reviewIdList = helper2(reviewIdList, ram);
 
             }
             #endregion
@@ -179,7 +154,7 @@ namespace analyzer.Debugging
             {
                 if (first)
                 {
-                    sb.Append("select * from Review where ReviewID = ");
+                    sb.Append("select title from Review where Review.productType = \"" + allReviews.GetType() + "\" AND ReviewID = ");
                     sb.Append(id);
                     first = false;
                 }
@@ -189,7 +164,7 @@ namespace analyzer.Debugging
                     sb.Append(id);
                 }
             }
-            sb.Append(";");
+            sb.Append(" group by title;");
             Debug.WriteLine(sb);
         }
 
