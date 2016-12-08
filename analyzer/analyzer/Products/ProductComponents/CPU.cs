@@ -41,25 +41,18 @@ namespace analyzer.Products.ProductComponents
 
             foreach (var review in reviewList)
             {
-                if (review.Category.ToLower() != "cpu")
-                    continue;
+                List<string> reviewTitleWithoutStopWordTokens = RemoveRestrictedTokens(SplitStringToTokens(review.Title.ToLower()), stopWords);
+                string reviewTitleWithoutStopWords = "";
 
-                List<string> reviewTitleNoStopWords = RemoveRestrictedTokens(SplitStringToTokens(review.Title.ToLower()), stopWords);
-                string concatenatedReviewTitle = "";
-
-                foreach (var token in reviewTitleNoStopWords)
+                foreach (var token in reviewTitleWithoutStopWordTokens)
                 {
-                    concatenatedReviewTitle += token;
+                    reviewTitleWithoutStopWords += token;
                 }
 
-                if (CompareReviewTitleWithProductStrings(concatenatedReviewTitle, productTokens))
+                if (MatchReviewTitleWithProductStrings(reviewTitleWithoutStopWords, productTokens))
                 {
-                    //Debug.WriteLine("");
-                    //Debug.WriteLine(this.Id + " " + this);
-                    //Debug.WriteLine(review.Id + " " + review.Title);
-                    //add review id to product
-                    reviewMatches.Add(review);
-                    review.linkedProducts.Add(this);
+                    reviewMatches.Add(review); //add review to list of reviews that link to this product
+                    review.linkedProducts.Add(this); //add this GPU product to review list of products it links to
 
                     if (!reviewProductLinks.productList.Contains(this))
                     {

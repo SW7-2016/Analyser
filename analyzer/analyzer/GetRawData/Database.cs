@@ -10,18 +10,6 @@ namespace analyzer.GetRawData
 {
     class DBConnect
     {
-        /*
-        MySqlCommand command = new MySqlCommand("SELECT * FROM CPU WHERE url=@url", connection);
-        command.Parameters.AddWithValue("@url", url);
-
-            MySqlDataReader reader = command.ExecuteReader();
-
-        reader.Read();
-
-            int result = (int)reader.GetValue(0);
-
-        reader.Close();*/
-
         private readonly string connectionString =
             "server=172.25.23.57;database=crawlerdb;user=analyser;port=3306;password=Analyser23!;";
 
@@ -48,7 +36,6 @@ namespace analyzer.GetRawData
                     "Motherboard.memSlots, Motherboard.memType, Motherboard.graphicsCard, Motherboard.chipset " +
                     "FROM Product, Motherboard " +
                     "WHERE Product.ProductID = Motherboard.ProductID", connection);
-
 
             DistinctProductList<Motherboard> result = new DistinctProductList<Motherboard>();
             MySqlDataReader reader = command.ExecuteReader();
@@ -114,11 +101,7 @@ namespace analyzer.GetRawData
                     "GPU.architecture, GPU.cooling, GPU.memSize, GPU.pciSlots, GPU.manufacturer, GPU.model " +
                     "FROM Product, GPU " +
                     "WHERE Product.ProductID = GPU.ProductID AND GPU.manufacturer != \"\" AND GPU.graphicsProcessor != \"\" AND GPU.model != \"\"", connection);
-            /*MySqlCommand command = new MySqlCommand(
-            SELECT processorManufacturer, chipset, model, architecture, cooling, memSize, pciSlots, manufacturer, count(*) 
-            FROM GPU
-            GROUP BY processorManufacturer, chipset, model, architecture, cooling, memSize, pciSlots, manufacturer);
-            */
+            
             DistinctProductList<GPU> result = new DistinctProductList<GPU>();
             MySqlDataReader reader = command.ExecuteReader();
 
@@ -148,24 +131,7 @@ namespace analyzer.GetRawData
                     "CPU.stockCooler, CPU.manufacturer, CPU.cpuSeries, CPU.logicalCores, CPU.physicalCores, CPU.socket " +
                     "FROM Product, CPU " +
                     "WHERE Product.ProductID = CPU.ProductID AND CPU.Model != \"\" AND CPU.cpuSeries != \"\"", connection);
-            /*
-            CREATE TABLE MergedProduct2 AS SELECT * FROM Product;
-
-            update MergedProduct2, CPU SET name = REPLACE(name, ', Tray', '') WHERE MergedProduct2.ProductID = CPU.ProductID;
-            update MergedProduct2, CPU SET name = REPLACE(name, ', Box', '') WHERE MergedProduct2.ProductID = CPU.ProductID;
-            update MergedProduct2, CPU SET name = REPLACE(name, ' Tray', '') WHERE MergedProduct2.ProductID = CPU.ProductID;
-            update MergedProduct2, CPU SET name = REPLACE(name, ' Box', '') WHERE MergedProduct2.ProductID = CPU.ProductID;
-            update MergedProduct2, CPU SET name = REPLACE(name, ' (Inteled)', '') WHERE MergedProduct2.ProductID = CPU.ProductID;
-            update MergedProduct2, CPU SET name = REPLACE(name, ' (OEM/bakke)', '') WHERE MergedProduct2.ProductID = CPU.ProductID;
-            update MergedProduct2, CPU SET name = REPLACE(name, ' (AMD Processor in a (PIB))', '') WHERE MergedProduct2.ProductID = CPU.ProductID;
-
-
-            SELECT *
-            FROM MergedProduct2, CPU
-            where MergedProduct2.ProductID = CPU.ProductID;
-
-            drop table MergedProduct2;
-             */
+            
             DistinctProductList<CPU> result = new DistinctProductList<CPU>();
             MySqlDataReader reader = command.ExecuteReader();
 
@@ -187,7 +153,6 @@ namespace analyzer.GetRawData
                 }
             }
 
-
             reader.Close();
 
             return result;
@@ -201,8 +166,8 @@ namespace analyzer.GetRawData
                     "Chassis.fans, Chassis.brand, Chassis.height, Chassis.width, Chassis.depth, Chassis.weight " +
                     "FROM Product, Chassis " +
                     "WHERE Product.ProductID = Chassis.ProductID", connection);
-            DistinctProductList<Chassis> result = new DistinctProductList<Chassis>();
 
+            DistinctProductList<Chassis> result = new DistinctProductList<Chassis>();
             MySqlDataReader reader = command.ExecuteReader();
 
             while (reader.Read())
@@ -218,7 +183,6 @@ namespace analyzer.GetRawData
                 result.Add(row);
             }
 
-
             reader.Close();
 
             return result;
@@ -231,6 +195,7 @@ namespace analyzer.GetRawData
                                  "PSU.width, PSU.depth, PSU.height, PSU.weight, PSU.brand " +
                                  "FROM Product, PSU " +
                                  "WHERE Product.ProductID = PSU.ProductID", connection);
+
             DistinctProductList<PSU> result = new DistinctProductList<PSU>();
             MySqlDataReader reader = command.ExecuteReader();
 
@@ -247,7 +212,6 @@ namespace analyzer.GetRawData
                 result.Add(row);
             }
 
-
             reader.Close();
 
             return result;
@@ -260,6 +224,7 @@ namespace analyzer.GetRawData
                                  "RAM.technology, RAM.formFactor, RAM.casLatens " +
                                  "FROM Product, RAM " +
                                  "WHERE Product.ProductID = RAM.ProductID", connection);
+
             DistinctProductList<RAM> result = new DistinctProductList<RAM>();
             MySqlDataReader reader = command.ExecuteReader();
 
@@ -274,7 +239,6 @@ namespace analyzer.GetRawData
 
                 result.Add(row);
             }
-
 
             reader.Close();
 
@@ -313,6 +277,7 @@ namespace analyzer.GetRawData
         public List<UserReview> GetUserReviewData(string category)
         {
             MySqlCommand command = new MySqlCommand("SELECT * FROM Review WHERE isCriticReview<>1 AND productType = \"" + category + "\"", connection);
+
             List<UserReview> result = new List<UserReview>();
             MySqlDataReader reader = command.ExecuteReader();
 
@@ -333,7 +298,6 @@ namespace analyzer.GetRawData
 
                 result.Add(row);
             }
-
 
             reader.Close();
 
@@ -409,7 +373,7 @@ namespace analyzer.GetRawData
 
             command.ExecuteNonQuery();
         }
-        @"(,,,,,,superscore,avg_critic_score,avg_user_score,oldest_review_date,newest_review_date)"
-        @"(id,name,model,clock,max_turbo,integrated_gpu,stock_cooler,manufacturer,cpu_series,logical_cores,physical_cores,socket,superscore,avg_critic_score,avg_user_score,oldest_review_date,newest_review_date)"
+        //@"(,,,,,,superscore,avg_critic_score,avg_user_score,oldest_review_date,newest_review_date)"
+        //@"(id,name,model,clock,max_turbo,integrated_gpu,stock_cooler,manufacturer,cpu_series,logical_cores,physical_cores,socket,superscore,avg_critic_score,avg_user_score,oldest_review_date,newest_review_date)"
     }
 }

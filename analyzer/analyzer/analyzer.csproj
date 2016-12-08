@@ -80,7 +80,6 @@
     <Compile Include="GetRawData\Database.cs" />
     <Compile Include="Products\ComputerComponents.cs" />
     <Compile Include="Products\DistinctProductList\DistinctProductList.cs" />
-    <Compile Include="Products\FinalProduct.cs" />
     <Compile Include="Products\Product.cs" />
     <Compile Include="Products\ProductComponents\Chassis.cs" />
     <Compile Include="Products\ProductComponents\CPU.cs" />
