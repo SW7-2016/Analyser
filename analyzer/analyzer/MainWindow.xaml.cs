@@ -90,19 +90,25 @@ namespace analyzer
              * ||Here are noting true and everything might be wrong ||
              * ||            Proceed at your own risk               ||
              * ||===================================================||*/
-
-            /*foreach (var product in actualReviewProductLinks.productList)
+            Dictionary<string, bool> helloo = new Dictionary<string, bool>();
+            
+          
+            foreach (var product in actualReviewProductLinks.productList)
             {
                 foreach (var review in product.reviewMatches)
                 {
-                    Debug.WriteLine("");
-                    Debug.WriteLine(product.Id + " " + product);
-                    Debug.WriteLine(review.Id + " " + review.Title);
+                    if (!helloo.ContainsKey(review.Title))
+                    {
+                        Debug.WriteLine("");
+                        Debug.WriteLine(product.Id + " " + product);
+                        Debug.WriteLine(review.Id + " " + review.Title);
+                        helloo.Add(review.Title, true);
+                    }
                 }
-            }*/
+            }
 
             //Debugging.Debugging.DebugReviewDuplicates(chassisList, cpuList, gpuList, hardDriveList, motherboardList, psuList, ramList);
-            //Debugging.Debugging.GetUnlinkedReviews(reviewList, chassisList, cpuList, gpuList, hardDriveList, motherboardList, psuList, ramList);
+            Debugging.Debugging.GetUnlinkedReviews(reviewListGpu, cpuList, gpuList);
             //Debugging.Debugging.NumberOfReviewForEachProduct(cpuList);
             #endregion
 
