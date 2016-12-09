@@ -30,12 +30,8 @@ namespace analyzer
 
         private void GetDataTest_bt_Click(object sender, RoutedEventArgs e)
         {
-            DistinctProductList<CPU> cpuList = new DistinctProductList<CPU>(); //list of all cpu products, after merging
-            DistinctProductList<GPU> gpuList = new DistinctProductList<GPU>();
-            DistinctReviewList<CriticReview> criticReviewListCpu = new DistinctReviewList<CriticReview>();
-            DistinctReviewList<CriticReview> criticReviewListGpu = new DistinctReviewList<CriticReview>();
-            DistinctReviewList<UserReview> userReviewListCpu = new DistinctReviewList<UserReview>();
-            DistinctReviewList<UserReview> userReviewListGpu = new DistinctReviewList<UserReview>();
+            DistinctProductList<CPU> cpuList; //list of all cpu products, after merging
+            DistinctProductList<GPU> gpuList;
             DistinctReviewList<Review> reviewListCpu = new DistinctReviewList<Review>(); //list of all cpu reviews
             DistinctReviewList<Review> reviewListGpu = new DistinctReviewList<Review>();
             ReviewProductLinks reviewProductLinks = new ReviewProductLinks(); //contains the products and reviews which have been linked
@@ -49,22 +45,13 @@ namespace analyzer
             dbConnection.connection.Open();
 
             gpuList = dbConnection.GetGpuData();
-            //chassisList = dbConnection.GetChassisData();
             cpuList = dbConnection.GetCpuData();
-            //hardDriveList = dbConnection.GetHardDriveData();
-            //motherboardList = dbConnection.GetMotherboardData();
-            //psuList = dbConnection.GetPsuData();
-            //ramList = dbConnection.GetRamData();
-            criticReviewListCpu = dbConnection.GetCriticReviewData("CPU");
-            criticReviewListGpu = dbConnection.GetCriticReviewData("GPU");
-            userReviewListGpu = dbConnection.GetUserReviewData("GPU");
-            userReviewListCpu = dbConnection.GetUserReviewData("CPU");
 
-            reviewListCpu.AddDistinctList(criticReviewListCpu.ToReview());
-            reviewListCpu.AddDistinctList(userReviewListCpu.ToReview());
-            reviewListGpu.AddDistinctList(criticReviewListGpu.ToReview());
-            reviewListGpu.AddDistinctList(userReviewListGpu.ToReview());
-
+            reviewListCpu.AddDistinctList(dbConnection.GetCriticReviewData("CPU").ToReview());
+            reviewListCpu.AddDistinctList(dbConnection.GetUserReviewData("CPU").ToReview());
+            reviewListGpu.AddDistinctList(dbConnection.GetCriticReviewData("GPU").ToReview());
+            reviewListGpu.AddDistinctList(dbConnection.GetUserReviewData("GPU").ToReview());
+  
             dbConnection.connection.Close();
             #endregion
 
@@ -112,9 +99,9 @@ namespace analyzer
                     }
                 }
             }*/
-
+            //gpuList.NearDublicates();
             //Debugging.Debugging.DebugReviewDuplicates(chassisList, cpuList, gpuList, hardDriveList, motherboardList, psuList, ramList);
-            Debugging.Debugging.GetUnlinkedReviews(reviewListGpu, cpuList, gpuList);
+            //Debugging.Debugging.GetUnlinkedReviews(reviewListGpu, cpuList, gpuList);
             //Debugging.Debugging.NumberOfReviewForEachProduct(cpuList);
             #endregion
 
