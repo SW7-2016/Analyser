@@ -27,8 +27,10 @@ namespace analyzer.Score
             int criticReviewAmount = 0;
             int userReviewAmount = 0;
 
+            //Gets product factor for curren product
             productFactor = GetProductFactor(product);
 
+            //Calculate and normalizes revies scores
             foreach (var review in product.reviewMatches)
             {
                 review.normalizedScore = NormalizeRating(review.Rating, review.MaxRating);
@@ -43,7 +45,9 @@ namespace analyzer.Score
                 }
             }
 
-            CalculateReviewWeight(product); //Burde critic og userscore at være påvirket af tid?
+            CalculateReviewWeight(product);
+
+            //UserScore
             if (userReviewAmount > 0)
             {
                 userScore = (int) CalculateUserScore(product);
@@ -52,7 +56,7 @@ namespace analyzer.Score
             {
                 userScore = -1;
             }
-
+            //CriticScore
             if (criticReviewAmount > 0)
             {
                 criticScore = (int) CalculateCriticScore(product);
@@ -61,7 +65,7 @@ namespace analyzer.Score
             {
                 criticScore = -1;
             }
-
+            //SuperScore
             if (criticReviewAmount >= CriticReviewQuantityThreshold || userReviewAmount >= UserReviewQuantityThreshold)
             {
                 superScore = (int) CalculateSuperScore(product, userScore, criticScore);
