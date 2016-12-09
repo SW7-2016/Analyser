@@ -8,7 +8,6 @@ namespace analyzer.DistinctProductList
 {
     public abstract class DistinctList<T> : List<T> 
     {
-
         //Stops some pruning groups from forming for CPU, because titles might contain specifications that we dont need.
         internal bool isCpuNumberPrunable(int number)
         {

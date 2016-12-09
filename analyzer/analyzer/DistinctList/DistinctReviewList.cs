@@ -14,6 +14,7 @@ namespace analyzer.Products.DistinctProductList
         public List<int[]> testPruning = new List<int[]>();
         public Dictionary<int, List<Review>> prunGroups = new Dictionary<int, List<Review>>();
 
+        //*************
         public DistinctReviewList(Dictionary<int, List<Review>> PrunGroups, List<int[]> TestPruning, List<T> old)
         {
             prunGroups = PrunGroups;
@@ -22,7 +23,8 @@ namespace analyzer.Products.DistinctProductList
         }
 
         public DistinctReviewList() { }
-        
+
+        //*************
         public new void Add(T item)
         {
             base.Add(item);
@@ -31,6 +33,7 @@ namespace analyzer.Products.DistinctProductList
             CreatePruningList(item);
         }
 
+        //*************
         private void CreatePruningList(T review)
         {
             //Find all numbers in the review title.

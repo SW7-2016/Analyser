@@ -31,6 +31,7 @@ namespace analyzer.Products.DistinctProductList.types
 
         public DistinctProductList(){ }
 
+        //*************
         public new void Add(T item)
         {
             string[] newItemTokens = generateCompareString(item);
@@ -93,11 +94,13 @@ namespace analyzer.Products.DistinctProductList.types
                     oldTokensList.Add(newItemTokens);
                     base.Add(item);
 
+                    //*************
                     CreatePruningList(concatinateStrArray(newItemTokens), item);
                 }
             }
         }
 
+        //*************
         private void CreatePruningList(string productString, T product)
         {
             //*************
@@ -176,6 +179,7 @@ namespace analyzer.Products.DistinctProductList.types
             return temp.Trim();
         }
 
+        //*************
         private string[] generateCPUString(CPU newItem)
         {
             string newString = newItem.CpuSeries + " " + newItem.Model;
@@ -185,7 +189,7 @@ namespace analyzer.Products.DistinctProductList.types
             return newStringArray;
         }
 
-
+        //*************
         private string[] generateGPUString(GPU newItem)
         {
             string newString = newItem.GraphicsProcessor + " " + newItem.Manufacturer + " " + newItem.Model;
@@ -256,6 +260,7 @@ namespace analyzer.Products.DistinctProductList.types
             return null;
         }
 
+        //*************
         private string[] generateCompareString(T item)
         {
             string[] result;
@@ -341,6 +346,7 @@ namespace analyzer.Products.DistinctProductList.types
             return result;
         }
 
+        //*************
         public new DistinctProductList<T> GetRange(int index, int count)
         {
              return new DistinctProductList<T>(base.GetRange(index, count), stopWord, oldTokensList, prunGroups);
