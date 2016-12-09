@@ -117,8 +117,10 @@ namespace analyzer
             //var scoredProducts = Score.Score.AssessProductListScores(actualReviewProductLinks.productList);
 
             //
-            Score2 scoreProcessor = new Score2();
-            scoreProcessor.CalculateProductScores(actualReviewProductLinks.productList);
+            foreach (var product in actualReviewProductLinks.productList)
+            {
+                product.score.CalculateProductScore(product);
+            }
 
             //
             dbConnection.DbInitialize(false);

@@ -8,6 +8,7 @@ using analyzer.Products.ProductComponents;
 using analyzer.GetRawData;
 using MySql.Data.MySqlClient;
 using analyzer.Products.DistinctProductList;
+using analyzer.Score;
 
 namespace analyzer.Products
 {
@@ -23,6 +24,7 @@ namespace analyzer.Products
         public string description = "";
         public List<Retailer> retailers;
         public List<Review> reviewMatches;
+        public Score2 score = new Score2();
 
         protected Product(int id, string category, string name)
         {
