@@ -24,6 +24,7 @@ namespace analyzer.Products.ProductComponents
             LogicalCores = logicalCores;
             PhysicalCores = physicalCores;
             Socket = socket;
+            productFactor = 5;
         }
 
         public int PhysicalCores { get; }
@@ -139,9 +140,9 @@ namespace analyzer.Products.ProductComponents
             command.Parameters.AddWithValue("@logical_cores", LogicalCores);
             command.Parameters.AddWithValue("@physical_cores", PhysicalCores);
             command.Parameters.AddWithValue("@socket", Socket);
-            command.Parameters.AddWithValue("@superscore", superScore);
-            command.Parameters.AddWithValue("@avg_critic_score", criticScore);
-            command.Parameters.AddWithValue("@avg_user_score", userScore);
+            command.Parameters.AddWithValue("@superscore", score.superScore);
+            command.Parameters.AddWithValue("@avg_critic_score", score.avgCriticScore);
+            command.Parameters.AddWithValue("@avg_user_score", score.avgUserScore);
             command.Parameters.AddWithValue("@oldest_review_date", oldestReviewDate);
             command.Parameters.AddWithValue("@newest_review_date", newestReviewDate);
 

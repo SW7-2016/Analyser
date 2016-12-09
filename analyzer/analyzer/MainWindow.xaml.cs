@@ -116,10 +116,11 @@ namespace analyzer
             //Score.Score.AssessProductListScores(cpuList);
             //var scoredProducts = Score.Score.AssessProductListScores(actualReviewProductLinks.productList);
 
-            //
+            //SCORE
             foreach (var product in actualReviewProductLinks.productList)
             {
                 product.score.CalculateProductScore(product);
+
             }
 
             //
@@ -128,7 +129,11 @@ namespace analyzer
 
             foreach (Product product in actualReviewProductLinks.productList)
             {
-                product.WriteToDB(dbConnection.connection);
+                if (product.score.superScore != -1)
+                {
+                    product.WriteToDB(dbConnection.connection);
+                }
+                
                 foreach (Review review in product.reviewMatches)
                 {
                     review.WriteToDB(dbConnection.connection);

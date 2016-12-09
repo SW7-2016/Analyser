@@ -12,23 +12,20 @@ namespace analyzer.Score
 {
     public class Score2
     {
-        private static double UserScoreWeight = 1;
-        private static double CriticScoreWeight = 2;
+        
         private static double CriticReviewQuantityThreshold = 1;
         private static double UserReviewQuantityThreshold = 10;
 
-        private double productFactor = 4;
-        public double userScore;
-        public double criticScore;
+        private double weightedUserScore;
+        private double weightedCriticScore;
         public double superScore;
+        public double avgCriticScore;
+        public double avgUserScore;
 
         public void CalculateProductScore(Product product)
         {
             int criticReviewAmount = 0;
             int userReviewAmount = 0;
-
-            //Gets product factor for curren product
-            productFactor = GetProductFactor(product);
 
             //Calculate and normalizes revies scores
             foreach (var review in product.reviewMatches)
@@ -50,25 +47,25 @@ namespace analyzer.Score
             //UserScore
             if (userReviewAmount > 0)
             {
-                userScore = (int) CalculateUserScore(product);
+                weightedUserScore = (int) CalculateUserScore(product);
             }
             else
             {
-                userScore = -1;
+                weightedUserScore = -1;
             }
             //CriticScore
             if (criticReviewAmount > 0)
             {
-                criticScore = (int) CalculateCriticScore(product);
+                weightedCriticScore = (int) CalculateCriticScore(product);
             }
             else
             {
-                criticScore = -1;
+                weightedCriticScore = -1;
             }
             //SuperScore
             if (criticReviewAmount >= CriticReviewQuantityThreshold || userReviewAmount >= UserReviewQuantityThreshold)
             {
-                superScore = (int) CalculateSuperScore(product, userScore, criticScore);
+                superScore = (int) CalculateSuperScore(product, weightedUserScore, weightedCriticScore);
             }
             else
             {
@@ -81,6 +78,8 @@ namespace analyzer.Score
             double maxDiffVotes = 0;
             double minDiffVotes = 999999;
             double totalReviews = 0;
+            double totalUserScore = 0;
+            double numberOfUserReviews = 0;
 
             foreach (var review in product.reviewMatches)
             {
@@ -88,8 +87,16 @@ namespace analyzer.Score
                 {
                     maxDiffVotes = GetMaxVoteDiff(review, maxDiffVotes);
                     minDiffVotes = GetMinVoteDiff(review, minDiffVotes);
+                    totalUserScore += review.normalizedScore;
+                    numberOfUserReviews++;
                 }
             }
+
+            if (numberOfUserReviews > 0)
+            {
+                avgUserScore = ((totalUserScore / numberOfUserReviews) * 100);
+            }
+            
 
             foreach (var review in product.reviewMatches)
             {
@@ -119,6 +126,7 @@ namespace analyzer.Score
 
         private double CalculateCriticScore(Product product)
         {
+            double totalScoreWeighted = 0;
             double totalScore = 0;
             double totalReviews = 0;
 
@@ -126,22 +134,36 @@ namespace analyzer.Score
             {
                 if (review.isCritic)
                 {
-                    totalScore += review.normalizedScore*review.reviewWeight; //This makes sense
+                    totalScoreWeighted += review.normalizedScore*review.reviewWeight; //This makes sense
+                    totalScore += review.normalizedScore;
                     totalReviews++;
                 }
             }
 
-            return ((totalScore/totalReviews)*100);
+            avgCriticScore = ((totalScore/totalReviews) * 100);
+
+            return ((totalScoreWeighted/totalReviews)*100);
         }
 
         private double CalculateSuperScore(Product product, double userScore, double criticScore)
         {
-            double productFactor = 4;
+            double UserScoreWeight = 1;
+            double CriticScoreWeight = 2;
+
+            if (criticScore == -1)
+            {
+                CriticScoreWeight = 0;
+            }
+            if (userScore == -1)
+            {
+                UserScoreWeight = 0;
+            }
+
             double productAge = (DateTime.Today.Subtract(product.oldestReviewDate).Days)/(double) 365;
             double weightedAverageScore = ((criticScore*CriticScoreWeight) + (userScore*UserScoreWeight))/
                                           (CriticScoreWeight + UserScoreWeight);
 
-            return weightedAverageScore*ComputeDecayWeight(productAge, productFactor);
+            return weightedAverageScore*ComputeDecayWeight(productAge, product.productFactor);
         }
 
         private double ComputeDecayWeight(double age, double halfPoint)
@@ -153,29 +175,13 @@ namespace analyzer.Score
             return result;
         }
 
-        private double GetProductFactor(Product product)
-        {
-            Dictionary<string, double> categoryFactors =
-                new Dictionary<string, double>()
-                {
-                    {"GPU", 2},
-                    {"CPU", 4}
-                }; //category factors: GPU 2, CPU 4
 
-            if (categoryFactors.ContainsKey(product.Category))
-            {
-                 return categoryFactors[product.Category];
-            }
-            else
-            {
-                return productFactor;
-            }
-               
-        }
 
-        private void CalculateOldestReviewDate(Product product)
+        //calculates newest and oldest review date
+        private void CalculateExtremeReviewDates(Product product)
         {
             DateTime oldestReviewDate = DateTime.Now;
+            DateTime newestReviewDate = new DateTime(1990, 1, 1);
 
             foreach (Review review in product.reviewMatches)
             {
@@ -183,28 +189,34 @@ namespace analyzer.Score
                 {
                     oldestReviewDate = review.ReviewDate;
                 }
+                if (review.ReviewDate > newestReviewDate)
+                {
+                    newestReviewDate = review.ReviewDate;
+                }
+                    
             }
             product.oldestReviewDate = oldestReviewDate;
+            product.newestReviewDate = newestReviewDate;
         }
 
 
         private void CalculateReviewWeight(Product product)
         {
-            CalculateOldestReviewDate(product);
+            CalculateExtremeReviewDates(product);
 
             foreach (Review review in product.reviewMatches)
             {
                 // review weight (age)
-                TimeSpan reviewAge = review.ReviewDate.Subtract(product.oldestReviewDate);
+                TimeSpan reviewAge = DateTime.Now.Subtract(review.ReviewDate);
                 double reviewAgeInYears = reviewAge.Days/(double) 365;
-                review.reviewWeight = ComputeReviewWeight(reviewAgeInYears, productFactor);
+                review.reviewWeight = ComputeReviewWeight(reviewAgeInYears, product.productFactor);
             }
         }
 
         private double ComputeReviewWeight(double age, double categoryFactor)
         {
             double exponent = -2*age + 2.5;
-            double result = 1 - (1/(1 + 10*Math.Pow(Math.E, exponent)));
+            double result = 1 - (0.5/(1 + 10*Math.Pow(Math.E, exponent))) + 0.01;
 
             return result;
         }

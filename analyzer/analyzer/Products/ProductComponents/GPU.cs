@@ -26,6 +26,7 @@ namespace analyzer.Products.ProductComponents
             PciSlots = pciSlots;
             Model = model;
             BoostedClock = boostedClock;
+            productFactor = 3;
         }
 
         public int PciSlots { get; }
@@ -146,9 +147,9 @@ namespace analyzer.Products.ProductComponents
             command.Parameters.AddWithValue("@graphic_processor", GraphicsProcessor);
             command.Parameters.AddWithValue("@mem_size", MemSize);
             command.Parameters.AddWithValue("@boosted_clock", BoostedClock);//todo get boosted clock somehow
-            command.Parameters.AddWithValue("@superscore", superScore);
-            command.Parameters.AddWithValue("@avg_critic_score", criticScore);
-            command.Parameters.AddWithValue("@avg_user_score", userScore);
+            command.Parameters.AddWithValue("@superscore", score.superScore);
+            command.Parameters.AddWithValue("@avg_critic_score", score.avgCriticScore);
+            command.Parameters.AddWithValue("@avg_user_score", score.avgUserScore);
             command.Parameters.AddWithValue("@oldest_review_date", oldestReviewDate);
             command.Parameters.AddWithValue("@newest_review_date", newestReviewDate);
 

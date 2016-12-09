@@ -25,6 +25,7 @@ namespace analyzer.Products
         public List<Retailer> retailers;
         public List<Review> reviewMatches;
         public Score2 score = new Score2();
+        public double productFactor = 4;
 
         protected Product(int id, string category, string name)
         {
