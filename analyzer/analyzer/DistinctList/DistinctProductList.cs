@@ -376,6 +376,7 @@ namespace analyzer.Products.DistinctProductList.types
                 foreach (string[] str2 in oldTokensList)
                 {
                     int i = 0;
+                    int j = 0;
 
                     foreach (string token1 in str1)
                     {
@@ -385,8 +386,20 @@ namespace analyzer.Products.DistinctProductList.types
                             i++;
                         }
                     }
+                    foreach (string token1 in str1)
+                    {
+                        foreach (string token2 in str2)
+                        {
 
-                    if (i >= 1)
+                            if (token1 == token2 && !stopWord.ContainsKey(token1) && !stopWord.ContainsKey(token2))
+                            {
+                                j++;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (i >= 1 && j > 2)
                     {
                         foreach (var newstr in str1)
                         {
