@@ -28,7 +28,7 @@ namespace analyzer
             InitializeComponent();
         }
 
-        private void GetDataTest_bt_Click(object sender, RoutedEventArgs e) 
+        private void GetDataTest_bt_Click(object sender, RoutedEventArgs e)
         {
             DistinctProductList<CPU> cpuList = new DistinctProductList<CPU>(); //list of all cpu products, after merging
             DistinctProductList<GPU> gpuList = new DistinctProductList<GPU>();
@@ -60,13 +60,18 @@ namespace analyzer
             userReviewListGpu = dbConnection.GetUserReviewData("GPU");
             userReviewListCpu = dbConnection.GetUserReviewData("CPU");
 
-            reviewListCpu.AddDistinctList(criticReviewListCpu.ToReview<CriticReview>());
-            reviewListCpu.AddDistinctList(userReviewListCpu.ToReview<UserReview>());
-            reviewListGpu.AddDistinctList(criticReviewListGpu.ToReview<CriticReview>());
-            reviewListGpu.AddDistinctList(userReviewListGpu.ToReview<UserReview>());
+            reviewListCpu.AddDistinctList(criticReviewListCpu.ToReview());
+            reviewListCpu.AddDistinctList(userReviewListCpu.ToReview());
+            reviewListGpu.AddDistinctList(criticReviewListGpu.ToReview());
+            reviewListGpu.AddDistinctList(userReviewListGpu.ToReview());
 
             dbConnection.connection.Close();
             #endregion
+
+            gpuList.testPruning = gpuList.testPruning.OrderByDescending(a => a[1]).ToList();
+            cpuList.testPruning = cpuList.testPruning.OrderByDescending(a => a[1]).ToList();
+            reviewListCpu.testPruning = reviewListCpu.testPruning.OrderByDescending(a => a[1]).ToList();
+            reviewListGpu.testPruning = reviewListGpu.testPruning.OrderByDescending(a => a[1]).ToList();
 
             StartThreads(productsPerThread, cpuList, reviewListCpu); //execute threaded processing for CPUs
             StartThreads(productsPerThread, gpuList, reviewListGpu);
@@ -91,10 +96,10 @@ namespace analyzer
              * ||Here are noting true and everything might be wrong ||
              * ||            Proceed at your own risk               ||
              * ||===================================================||*/
-            Dictionary<string, bool> helloo = new Dictionary<string, bool>();
+            //Dictionary<string, bool> helloo = new Dictionary<string, bool>();
             
           
-            foreach (var product in actualReviewProductLinks.productList)
+            /*foreach (var product in actualReviewProductLinks.productList)
             {
                 foreach (var review in product.reviewMatches)
                 {
@@ -106,7 +111,7 @@ namespace analyzer
                         helloo.Add(review.Title, true);
                     }
                 }
-            }
+            }*/
 
             //Debugging.Debugging.DebugReviewDuplicates(chassisList, cpuList, gpuList, hardDriveList, motherboardList, psuList, ramList);
             Debugging.Debugging.GetUnlinkedReviews(reviewListGpu, cpuList, gpuList);

@@ -3,8 +3,8 @@ using System.Diagnostics;
 using System.Runtime.Serialization.Formatters;
 using analyzer.Products.Reviews;
 using MySql.Data.MySqlClient;
-using analyzer.Products.DistinctProductList;
 using System.Linq;
+using analyzer.Products.DistinctProductList;
 
 namespace analyzer.Products.ProductComponents
 {
@@ -47,8 +47,8 @@ namespace analyzer.Products.ProductComponents
 
             foreach (int searchNumber in prunNumbers)
             {
-                if (reviewList.prunedList.ContainsKey(searchNumber))
-                    matchingReviews.AddRange(reviewList.prunedList[searchNumber]);
+                if (reviewList.prunGroups.ContainsKey(searchNumber))
+                    matchingReviews.AddRange(reviewList.prunGroups[searchNumber]);
             }
 
             foreach (var review in matchingReviews)
@@ -88,8 +88,8 @@ namespace analyzer.Products.ProductComponents
 
             foreach (int searchNumber in prunNumbers)
             {
-                if (reviewList.prunedList.ContainsKey(searchNumber))
-                    matchingReviews.AddRange(reviewList.prunedList[searchNumber]);
+                if (reviewList.prunGroups.ContainsKey(searchNumber))
+                    matchingReviews.AddRange(reviewList.prunGroups[searchNumber]);
             }
 
             foreach (var review in matchingReviews.Distinct())

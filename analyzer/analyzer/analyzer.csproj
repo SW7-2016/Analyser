@@ -59,7 +59,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Products\DistinctProductList\DistinctReviewList.cs" />
+    <Compile Include="DistinctList\DistinctList.cs" />
+    <Compile Include="DistinctList\DistinctReviewList.cs" />
     <Compile Include="Score\Score.cs" />
     <Compile Include="Score\Score2.cs" />
     <Compile Include="Threading\ThreadingData.cs" />
@@ -81,7 +82,7 @@
   <ItemGroup>
     <Compile Include="GetRawData\Database.cs" />
     <Compile Include="Products\ComputerComponents.cs" />
-    <Compile Include="Products\DistinctProductList\DistinctProductList.cs" />
+    <Compile Include="DistinctList\DistinctProductList.cs" />
     <Compile Include="Products\Product.cs" />
     <Compile Include="Products\ProductComponents\Chassis.cs" />
     <Compile Include="Products\ProductComponents\CPU.cs" />

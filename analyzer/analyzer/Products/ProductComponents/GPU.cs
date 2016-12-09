@@ -51,8 +51,8 @@ namespace analyzer.Products.ProductComponents
 
             foreach (int searchNumber in prunNumbers)
             {
-                if (reviewList.prunedList.ContainsKey(searchNumber))
-                    matchingReviews.AddRange(reviewList.prunedList[searchNumber]);
+                if (reviewList.prunGroups.ContainsKey(searchNumber))
+                    matchingReviews.AddRange(reviewList.prunGroups[searchNumber]);
             }
 
             foreach (var review in matchingReviews)
@@ -98,8 +98,8 @@ namespace analyzer.Products.ProductComponents
 
             foreach (int searchNumber in prunNumbers)
             {
-                if (reviewList.prunedList.ContainsKey(searchNumber))
-                    matchingReviews.AddRange(reviewList.prunedList[searchNumber]);
+                if (reviewList.prunGroups.ContainsKey(searchNumber))
+                    matchingReviews.AddRange(reviewList.prunGroups[searchNumber]);
             }
 
             foreach (var review in matchingReviews.Distinct())
