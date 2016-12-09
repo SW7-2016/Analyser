@@ -10,33 +10,24 @@ using analyzer.Products.Reviews;
 
 namespace analyzer.Score
 {
-    class Score2
+    public class Score2
     {
-        private readonly Dictionary<string, double> categoryFactors =
-            new Dictionary<string, double>() {
-                { "GPU", 2 },
-                { "CPU", 4 }
-            };//category factors: GPU 2, CPU 4
-        private const double UserScoreWeight = 1;
-        private const double CriticScoreWeight = 2;
-        private const double CriticReviewQuantityThreshold = 1;
-        private const double UserReviewQuantityThreshold = 10;
+        private static double UserScoreWeight = 1;
+        private static double CriticScoreWeight = 2;
+        private static double CriticReviewQuantityThreshold = 1;
+        private static double UserReviewQuantityThreshold = 10;
 
-        public void CalculateProductScores(List<Product> productList)
-        {
-            foreach (var product in productList)
-            {
-                CalculateProductScore(product);
-            }
-        }
+        private double productFactor = 4;
+        public double userScore;
+        public double criticScore;
+        public double superScore;
 
-        private void CalculateProductScore(Product product)
+        public void CalculateProductScore(Product product)
         {
             int criticReviewAmount = 0;
             int userReviewAmount = 0;
-            int userScore;
-            int criticScore;
-            int superScore;
+
+            productFactor = GetProductFactor(product);
 
             foreach (var review in product.reviewMatches)
             {
@@ -55,7 +46,7 @@ namespace analyzer.Score
             CalculateReviewWeight(product); //Burde critic og userscore at være påvirket af tid?
             if (userReviewAmount > 0)
             {
-                userScore = (int)CalculateUserScore(product);
+                userScore = (int) CalculateUserScore(product);
             }
             else
             {
@@ -64,22 +55,23 @@ namespace analyzer.Score
 
             if (criticReviewAmount > 0)
             {
-                criticScore = (int)CalculateCriticScore(product);
+                criticScore = (int) CalculateCriticScore(product);
             }
             else
             {
                 criticScore = -1;
             }
 
-            if (criticReviewAmount >= CriticReviewQuantityThreshold && userReviewAmount >= UserReviewQuantityThreshold)
+            if (criticReviewAmount >= CriticReviewQuantityThreshold || userReviewAmount >= UserReviewQuantityThreshold)
             {
-                superScore = (int)CalculateSuperScore(product, userScore, criticScore);
+                superScore = (int) CalculateSuperScore(product, userScore, criticScore);
             }
             else
             {
                 superScore = -1;
             }
         }
+
         private double CalculateUserScore(Product product)
         {
             double maxDiffVotes = 0;
@@ -104,10 +96,11 @@ namespace analyzer.Score
                 }
                 else
                 {
-                    receptionModifier = CalculateReceptionModifier(maxDiffVotes, minDiffVotes, review.positiveReception, review.negativeReception, review);
+                    receptionModifier = CalculateReceptionModifier(maxDiffVotes, minDiffVotes, review.positiveReception,
+                        review.negativeReception, review);
                 }
-               
-                totalReviews += ((receptionModifier + review.reviewWeight) / 2); //This makes sense
+
+                totalReviews += ((receptionModifier + review.reviewWeight)/2); //This makes sense
                 review.reviewReceptionModifier = receptionModifier;
 
                 if (minDiffVotes == 0 && maxDiffVotes == 0)
@@ -117,8 +110,7 @@ namespace analyzer.Score
             }
 
 
-
-            return (AverageWeightedUserScore(product.reviewMatches, totalReviews) * 100);
+            return (AverageWeightedUserScore(product.reviewMatches, totalReviews)*100);
         }
 
         private double CalculateCriticScore(Product product)
@@ -130,37 +122,51 @@ namespace analyzer.Score
             {
                 if (review.isCritic)
                 {
-                    totalScore += review.normalizedScore * review.reviewWeight; //This makes sense
+                    totalScore += review.normalizedScore*review.reviewWeight; //This makes sense
                     totalReviews++;
                 }
-                
             }
 
-            return ((totalScore / totalReviews) * 100);
+            return ((totalScore/totalReviews)*100);
         }
 
         private double CalculateSuperScore(Product product, double userScore, double criticScore)
         {
             double productFactor = 4;
-            double productAge = (DateTime.Today.Subtract(product.oldestReviewDate).Days) / (double)365;
-            double weightedAverageScore = ((criticScore * CriticScoreWeight) + (userScore * UserScoreWeight)) /
-                                (CriticScoreWeight + UserScoreWeight);
+            double productAge = (DateTime.Today.Subtract(product.oldestReviewDate).Days)/(double) 365;
+            double weightedAverageScore = ((criticScore*CriticScoreWeight) + (userScore*UserScoreWeight))/
+                                          (CriticScoreWeight + UserScoreWeight);
 
-            if (categoryFactors.ContainsKey(product.Category))
-            {
-                productFactor = categoryFactors[product.Category];
-            }
-            
-            return  weightedAverageScore * ComputeDecayWeight(productAge, productFactor);
+            return weightedAverageScore*ComputeDecayWeight(productAge, productFactor);
         }
 
         private double ComputeDecayWeight(double age, double halfPoint)
         {
             // 1/(1 + e^(c * x/b - c))
-            double exponent = 5 * age / halfPoint - 5;
-            double result = 1 / (1 + Math.Pow(Math.E, exponent));
+            double exponent = 5*age/halfPoint - 5;
+            double result = 1/(1 + Math.Pow(Math.E, exponent));
 
             return result;
+        }
+
+        private double GetProductFactor(Product product)
+        {
+            Dictionary<string, double> categoryFactors =
+                new Dictionary<string, double>()
+                {
+                    {"GPU", 2},
+                    {"CPU", 4}
+                }; //category factors: GPU 2, CPU 4
+
+            if (categoryFactors.ContainsKey(product.Category))
+            {
+                 return categoryFactors[product.Category];
+            }
+            else
+            {
+                return productFactor;
+            }
+               
         }
 
         private void CalculateOldestReviewDate(Product product)
@@ -180,15 +186,7 @@ namespace analyzer.Score
 
         private void CalculateReviewWeight(Product product)
         {
-            double productFactor = 4;// default decay weight
-
             CalculateOldestReviewDate(product);
-
-            // product category factor
-            if (categoryFactors.ContainsKey(product.Category))
-            {
-                productFactor = categoryFactors[product.Category];
-            }
 
             foreach (Review review in product.reviewMatches)
             {
@@ -201,8 +199,8 @@ namespace analyzer.Score
 
         private double ComputeReviewWeight(double age, double categoryFactor)
         {
-            double exponent = -2 * age + 2.5;
-            double result = 1 - (1 / (1 + 10 * Math.Pow(Math.E, exponent)));
+            double exponent = -2*age + 2.5;
+            double result = 1 - (1/(1 + 10*Math.Pow(Math.E, exponent)));
 
             return result;
         }
@@ -212,7 +210,6 @@ namespace analyzer.Score
             return (rating/maxRating);
         }
 
-       
 
         private double AverageWeightedUserScore(List<Review> reviews, double totalReviews)
         {
@@ -221,15 +218,17 @@ namespace analyzer.Score
             {
                 if (!review.isCritic)
                 {
-                    totalScore += (review.normalizedScore * ((review.reviewReceptionModifier + review.reviewWeight) / (double)2));
+                    totalScore += (review.normalizedScore*
+                                   ((review.reviewReceptionModifier + review.reviewWeight)/(double) 2));
                 }
             }
-            return (totalScore / totalReviews);
+            return (totalScore/totalReviews);
         }
 
-        private double CalculateReceptionModifier(double maxDiffVotes, double minDiffVotes, double upvotes, double downvotes, Review review)
+        private double CalculateReceptionModifier(double maxDiffVotes, double minDiffVotes, double upvotes,
+            double downvotes, Review review)
         {
-            return ((upvotes - downvotes) - minDiffVotes) / (maxDiffVotes - minDiffVotes);
+            return ((upvotes - downvotes) - minDiffVotes)/(maxDiffVotes - minDiffVotes);
         }
 
         private double GetMaxVoteDiff(Review review, double maxDiffVotes)
@@ -258,7 +257,6 @@ namespace analyzer.Score
             }
         }
 
-        
 
         private double calculateTimeDecay(DateTime earliestProductReviewDateTime, double superScore)
         {
@@ -266,6 +264,5 @@ namespace analyzer.Score
 
             return newSuperScore;
         }
-
     }
 }
