@@ -17,15 +17,16 @@ namespace analyzer.Products.DistinctProductList.types
         public Dictionary<int, List<T>> prunGroups = new Dictionary<int, List<T>>();
         public List<int[]> testPruning = new List<int[]>();
 
-        List<string[]> oldTokensList = new List<string[]>();
+
+        private Dictionary<string, List<string[]>> oldTokensIndex = new Dictionary<string, List<string[]>>();
         public Dictionary<string, bool> stopWord = new Dictionary<string, bool>();
         public int deletedDoublicates = 0;
 
-        public DistinctProductList(List<T> Items, Dictionary<string, bool> StopWord, List<string[]> OldTokensList, Dictionary<int, List<T>> PrunGroups)
+        public DistinctProductList(List<T> Items, Dictionary<string, bool> StopWord, Dictionary<string, List<string[]>> OldTokensIndex, Dictionary<int, List<T>> PrunGroups)
         {
             AddRange(Items);
             stopWord = StopWord;
-            oldTokensList = OldTokensList;
+            oldTokensIndex = OldTokensIndex;
             prunGroups = PrunGroups;
         }
 
@@ -36,15 +37,25 @@ namespace analyzer.Products.DistinctProductList.types
         {
             string[] newItemTokens = generateCompareString(item);
 
-            if (oldTokensList == null && newItemTokens != null)
+            if (oldTokensIndex == null && newItemTokens != null)
             {
                 base.Add(item);
             }
             else if (newItemTokens != null)
             {
                 bool isDup = false;
+                
+                List<string[]> comparisonGroup = new List<string[]>();
 
-                foreach (var oldTokens in oldTokensList)
+                foreach (var newToken in newItemTokens)
+                {
+                    if (oldTokensIndex.ContainsKey(newToken) && !stopWord.ContainsKey(newToken))
+                    {
+                        comparisonGroup.AddRange(oldTokensIndex[newToken]);
+                    }
+                }
+
+                foreach (var oldTokens in comparisonGroup)
                 {
                     bool isEqual = true;
 
@@ -91,7 +102,18 @@ namespace analyzer.Products.DistinctProductList.types
 
                 if (!isDup)
                 {
-                    oldTokensList.Add(newItemTokens);
+                    foreach (var newToken in newItemTokens)
+                    {
+                        if (oldTokensIndex.ContainsKey(newToken))
+                        {
+                            oldTokensIndex[newToken].Add(newItemTokens);
+                        }
+                        else
+                        {
+                            oldTokensIndex.Add(newToken, new List<string[]>() { newItemTokens });
+                        }
+                    }
+
                     base.Add(item);
 
                     //*************
@@ -349,10 +371,11 @@ namespace analyzer.Products.DistinctProductList.types
         //*************
         public new DistinctProductList<T> GetRange(int index, int count)
         {
-             return new DistinctProductList<T>(base.GetRange(index, count), stopWord, oldTokensList, prunGroups);
+             return new DistinctProductList<T>(base.GetRange(index, count), stopWord, oldTokensIndex, prunGroups);
         }
 
-        public void NearDublicates()
+        //Debugging method for testing merge accuracy
+        /*public void NearDublicates()   
         { //test of merging of products
             Debug.WriteLine("");
             Debug.WriteLine(""); Debug.WriteLine("");
@@ -369,11 +392,11 @@ namespace analyzer.Products.DistinctProductList.types
             Debug.WriteLine("");
             int firstLoop = 0;
 
-            foreach (string[] str1 in oldTokensList)
+            foreach (string[] str1 in oldTokensIndex)
             {
                 int ndLoop = 0;
 
-                foreach (string[] str2 in oldTokensList)
+                foreach (string[] str2 in oldTokensIndex)
                 {
                     int i = 0;
                     int j = 0;
@@ -420,6 +443,6 @@ namespace analyzer.Products.DistinctProductList.types
                 }
                 firstLoop++;
             }
-        }
+        }*/
     }
 }
