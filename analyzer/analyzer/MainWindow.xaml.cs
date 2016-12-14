@@ -44,7 +44,7 @@ namespace analyzer
             dbConnection.DbInitialize(true);
             dbConnection.connection.Open();
 
-            gpuList = dbConnection.GetGpuData();
+            //gpuList = dbConnection.GetGpuData();
             cpuList = dbConnection.GetCpuData();
 
             reviewListCpu.AddDistinctList(dbConnection.GetCriticReviewData("CPU").ToReview());
@@ -55,13 +55,8 @@ namespace analyzer
             dbConnection.connection.Close();
             #endregion
 
-            gpuList.testPruning = gpuList.testPruning.OrderByDescending(a => a[1]).ToList();
-            cpuList.testPruning = cpuList.testPruning.OrderByDescending(a => a[1]).ToList();
-            reviewListCpu.testPruning = reviewListCpu.testPruning.OrderByDescending(a => a[1]).ToList();
-            reviewListGpu.testPruning = reviewListGpu.testPruning.OrderByDescending(a => a[1]).ToList();
-
             StartThreads(productsPerThread, cpuList, reviewListCpu); //execute threaded processing for CPUs
-            StartThreads(productsPerThread, gpuList, reviewListGpu);
+            //StartThreads(productsPerThread, gpuList, reviewListGpu);
 
             while (ThreadingData.semaphore != 0) //wait until all threads are done
             {
@@ -84,8 +79,12 @@ namespace analyzer
              * ||            Proceed at your own risk               ||
              * ||===================================================||*/
             //Dictionary<string, bool> helloo = new Dictionary<string, bool>();
-            
-          
+
+            /*gpuList.testPruning = gpuList.testPruning.OrderByDescending(a => a[1]).ToList();
+            cpuList.testPruning = cpuList.testPruning.OrderByDescending(a => a[1]).ToList();
+            reviewListCpu.testPruning = reviewListCpu.testPruning.OrderByDescending(a => a[1]).ToList();
+            reviewListGpu.testPruning = reviewListGpu.testPruning.OrderByDescending(a => a[1]).ToList();*/
+
             /*foreach (var product in actualReviewProductLinks.productList)
             {
                 foreach (var review in product.reviewMatches)

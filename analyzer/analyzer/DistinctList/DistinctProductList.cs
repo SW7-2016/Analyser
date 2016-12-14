@@ -289,54 +289,61 @@ namespace analyzer.Products.DistinctProductList.types
 
             if (item.GetType() == typeof(CPU))
             {
-                stopWord = new Dictionary<string, bool>()
+                if (stopWord.Count == 0)
                 {
-                    { "quad", true },
-                    { "octa", true },
-                    { "dual", true },
-                    { "duo", true },
-                    { "a", true },
-                    { "second", true },
-                    { "first", true },
-                    { "third", true },
-                    { "serie", true },
-                    { "series", true },
-                    { "radeon", true },
-                    { "extreme", true },
-                    { "edition", true },
-                    { "generation", true },
-                    { "pentium", true },
-                    { "r", true },
-                    { "r1", true },
-                    { "r2", true },
-                    { "r3", true },
-                    { "r4", true },
-                    { "r5", true },
-                    { "r6", true },
-                    { "r7", true },
-                    { "r8", true },
-                    { "r9", true },
-                    { "core", true },
-                    { "i", true },
-                    { "ii", true },
-                    { "iii", true },
-                    { "iiii", true },
-                    { "amd", true },
-                    { "intel", true }
-                };
+                    stopWord = new Dictionary<string, bool>()
+                    {
+                        {"quad", true},
+                        {"octa", true},
+                        {"dual", true},
+                        {"duo", true},
+                        {"a", true},
+                        {"second", true},
+                        {"first", true},
+                        {"third", true},
+                        {"serie", true},
+                        {"series", true},
+                        {"radeon", true},
+                        {"extreme", true},
+                        {"edition", true},
+                        {"generation", true},
+                        {"pentium", true},
+                        {"r", true},
+                        {"r1", true},
+                        {"r2", true},
+                        {"r3", true},
+                        {"r4", true},
+                        {"r5", true},
+                        {"r6", true},
+                        {"r7", true},
+                        {"r8", true},
+                        {"r9", true},
+                        {"core", true},
+                        {"i", true},
+                        {"ii", true},
+                        {"iii", true},
+                        {"iiii", true},
+                        {"amd", true},
+                        {"intel", true}
+                    };
+                }
+
 
                 result = generateCPUString((CPU)(object)item);
             }
             else if (item.GetType() == typeof(GPU))
             {
-                stopWord = new Dictionary<string, bool>()
+                if (stopWord.Count == 0)
                 {
-                    { "nvidia", true },
-                    { "geforce", true },
-                    { "radeon", true },
-                    { "amd", true },
-                    { "gtx", true }
-                };
+                    stopWord = new Dictionary<string, bool>()
+                    {
+                        {"nvidia", true},
+                        {"geforce", true},
+                        {"radeon", true},
+                        {"amd", true},
+                        {"gtx", true}
+                    };
+                }
 
                 result = generateGPUString((GPU)(object)item);
             }
