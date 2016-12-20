@@ -8,30 +8,30 @@ using analyzer.Products;
 using analyzer.Products.ProductComponents;
 using analyzer.Products.Reviews;
 
-namespace analyzer.Score
+namespace analyzer.Scores
 {
-    public class Score2
+    public class Score
     {
         
-        private static double CriticReviewQuantityThreshold = 1;
-        private static double UserReviewQuantityThreshold = 10;
+        private static double CriticReviewQuantityThreshold = 1; //minimum amount of critic reviews needed, before using them for superscore
+        private static double UserReviewQuantityThreshold = 10; //minimum amount of user reviews needed, before using them for superscore
 
-        private double weightedUserScore;
-        private double weightedCriticScore;
-        public double superScore;
-        public double avgCriticScore;
-        public double avgUserScore;
+        private double weightedUserScore; //user score to be used for the superscore
+        private double weightedCriticScore; //critic score to be used for the superscore
+        public double superScore; // the superscore presented in the presentation module
+        public double avgCriticScore; //an average critic score, to be shown in the presentation module
+        public double avgUserScore; //an average user score, to be shown in the presentation module
 
         public void CalculateProductScore(Product product)
         {
-            int criticReviewAmount = 0;
-            int userReviewAmount = 0;
+            double criticReviewAmount = 0; //how many critic reviews does the current product have
+            double userReviewAmount = 0; //how many user reviews does the current product have
 
-            //Calculate and normalizes revies scores
+            //Calculate and normalizes review scores
             foreach (var review in product.reviewMatches)
             {
                 review.normalizedScore = NormalizeRating(review.Rating, review.MaxRating);
-
+                //counts reviews
                 if (review.isCritic && review.Rating != -1)
                 {
                     criticReviewAmount++;
@@ -41,26 +41,26 @@ namespace analyzer.Score
                     userReviewAmount++;
                 }
             }
-
+            //calculates the weights of each review
             CalculateReviewWeight(product);
 
             //UserScore
             if (userReviewAmount > 0)
             {
-                weightedUserScore = (int) CalculateUserScore(product);
+                weightedUserScore = (int) CalculateUserScore(product, userReviewAmount);
             }
             else
             {
-                weightedUserScore = -1;
+                weightedUserScore = -1; //userscore is not used
             }
             //CriticScore
             if (criticReviewAmount > 0)
             {
-                weightedCriticScore = (int) CalculateCriticScore(product);
+                weightedCriticScore = (int) CalculateCriticScore(product, criticReviewAmount);
             }
             else
             {
-                weightedCriticScore = -1;
+                weightedCriticScore = -1; //critic score is not used
             }
             //SuperScore
             if (criticReviewAmount >= CriticReviewQuantityThreshold || userReviewAmount >= UserReviewQuantityThreshold)
@@ -69,18 +69,19 @@ namespace analyzer.Score
             }
             else
             {
-                superScore = -1;
+                superScore = -1; //no superscore is calculated - the product will not be added to the presentation module
             }
         }
 
-        private double CalculateUserScore(Product product)
+        //calculates the average and weighted userscore, returns the weighted score
+        private double CalculateUserScore(Product product, double numberOfUserReviews)
         {
-            double maxDiffVotes = 0;
-            double minDiffVotes = 999999;
-            double totalReviews = 0;
-            double totalUserScore = 0;
-            double numberOfUserReviews = 0;
+            double maxDiffVotes = 0; //Used to represent the best/highest amount of good votes of a review (goodvote - badvote)
+            double minDiffVotes = 999999; //Used to represent the worst/lowest amount of good votes of a review (goodvote - badvote)
+            double totalReviews = 0; //"total reviews" equals all reviewWeights and reception modifiers combined, used for normalization
+            double totalUserScore = 0; //combined normalized userscore for product
 
+            //finds max and min vote amount, and the all normalized user scores added up
             foreach (var review in product.reviewMatches)
             {
                 if (!review.isCritic)
@@ -88,10 +89,9 @@ namespace analyzer.Score
                     maxDiffVotes = GetMaxVoteDiff(review, maxDiffVotes);
                     minDiffVotes = GetMinVoteDiff(review, minDiffVotes);
                     totalUserScore += review.normalizedScore;
-                    numberOfUserReviews++;
                 }
             }
-
+            //if there is more than 0 reviews, calculate average
             if (numberOfUserReviews > 0)
             {
                 avgUserScore = ((totalUserScore / numberOfUserReviews) * 100);
@@ -101,7 +101,7 @@ namespace analyzer.Score
             foreach (var review in product.reviewMatches)
             {
                 double receptionModifier;
-                if (minDiffVotes == 0 && maxDiffVotes == 0)
+                if (minDiffVotes == 0 && maxDiffVotes == 0) //if not votes on any review
                 {
                     receptionModifier = 1;
                 }
@@ -110,8 +110,9 @@ namespace analyzer.Score
                     receptionModifier = CalculateReceptionModifier(maxDiffVotes, minDiffVotes, review.positiveReception,
                         review.negativeReception, review);
                 }
-
-                totalReviews += ((receptionModifier + review.reviewWeight)/2); //This makes sense
+                //"total reviews" equals all reviewWeights and reception modifiers combined
+                //used for normalization
+                totalReviews += ((receptionModifier + review.reviewWeight)/2); 
                 review.reviewReceptionModifier = receptionModifier;
 
                 if (minDiffVotes == 0 && maxDiffVotes == 0)
@@ -120,23 +121,21 @@ namespace analyzer.Score
                 }
             }
 
-
             return (AverageWeightedUserScore(product.reviewMatches, totalReviews)*100);
         }
 
-        private double CalculateCriticScore(Product product)
+        //calculates the average and weighted critic score, returns the weighted score
+        private double CalculateCriticScore(Product product, double totalReviews)
         {
             double totalScoreWeighted = 0;
             double totalScore = 0;
-            double totalReviews = 0;
 
             foreach (var review in product.reviewMatches)
             {
                 if (review.isCritic)
                 {
-                    totalScoreWeighted += review.normalizedScore*review.reviewWeight; //This makes sense
+                    totalScoreWeighted += review.normalizedScore*review.reviewWeight;
                     totalScore += review.normalizedScore;
-                    totalReviews++;
                 }
             }
 
@@ -145,6 +144,7 @@ namespace analyzer.Score
             return ((totalScoreWeighted/totalReviews)*100);
         }
 
+        //calculates superscore
         private double CalculateSuperScore(Product product, double userScore, double criticScore)
         {
             double UserScoreWeight = 1;
@@ -166,6 +166,7 @@ namespace analyzer.Score
             return weightedAverageScore*ComputeDecayWeight(productAge, product.productFactor);
         }
 
+        //calculates the time decay weight for product
         private double ComputeDecayWeight(double age, double halfPoint)
         {
             // 1/(1 + e^(c * x/b - c))
@@ -177,7 +178,7 @@ namespace analyzer.Score
 
 
 
-        //calculates newest and oldest review date
+        //finds newest and oldest review date
         private void CalculateExtremeReviewDates(Product product)
         {
             DateTime oldestReviewDate = DateTime.Now;
@@ -199,7 +200,7 @@ namespace analyzer.Score
             product.newestReviewDate = newestReviewDate;
         }
 
-
+        //calculates review weights based on time, for each review
         private void CalculateReviewWeight(Product product)
         {
             CalculateExtremeReviewDates(product);
@@ -213,6 +214,7 @@ namespace analyzer.Score
             }
         }
 
+        //computes review weight for a review
         private double ComputeReviewWeight(double age, double categoryFactor)
         {
             double exponent = -2*age + 2.5;
@@ -221,12 +223,13 @@ namespace analyzer.Score
             return result;
         }
 
+        //normalizes a rating
         private double NormalizeRating(double rating, double maxRating)
         {
             return (rating/maxRating);
         }
 
-
+        //Calculate averageweighteduserscore
         private double AverageWeightedUserScore(List<Review> reviews, double totalReviews)
         {
             double totalScore = 0;
@@ -241,12 +244,14 @@ namespace analyzer.Score
             return (totalScore/totalReviews);
         }
 
+        //calculates weight based on review reception
         private double CalculateReceptionModifier(double maxDiffVotes, double minDiffVotes, double upvotes,
             double downvotes, Review review)
         {
             return ((upvotes - downvotes) - minDiffVotes)/(maxDiffVotes - minDiffVotes);
         }
 
+        //checks current max diff vote against current review vote diff and returns the largest
         private double GetMaxVoteDiff(Review review, double maxDiffVotes)
         {
             double diff = review.positiveReception - review.negativeReception;
@@ -260,6 +265,7 @@ namespace analyzer.Score
             }
         }
 
+        //checks current min diff vote against current review vote diff and returns the smallest
         private double GetMinVoteDiff(Review review, double minDiffVotes)
         {
             double diff = review.positiveReception - review.negativeReception;
@@ -271,14 +277,6 @@ namespace analyzer.Score
             {
                 return minDiffVotes;
             }
-        }
-
-
-        private double calculateTimeDecay(DateTime earliestProductReviewDateTime, double superScore)
-        {
-            double newSuperScore = 0;
-
-            return newSuperScore;
         }
     }
 }
