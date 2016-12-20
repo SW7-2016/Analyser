@@ -79,21 +79,6 @@ namespace analyzer.Products.DistinctProductList.types
 
                     if (isEqual)
                     {
-                        /*foreach (var newstr in newItemTokens)
-                        {
-                            Debug.Write(newstr + " ");
-                        }
-
-                        Debug.WriteLine("");
-
-                        foreach (var oldstr in oldTokens)
-                        {
-                            Debug.Write(oldstr + " ");
-                        }
-
-                        Debug.WriteLine("");
-                        Debug.WriteLine("");*/
-
                         deletedDoublicates++;
                         isDup = true;
                         break;
@@ -255,7 +240,7 @@ namespace analyzer.Products.DistinctProductList.types
             return null;
         }
 
-        //Not implementingcompletely, just checks if the name is the same
+        //Not implementing completely, just checks if the name is the same
         private string[] generateMotherboardString(Motherboard newItem)
         {
 
@@ -380,76 +365,5 @@ namespace analyzer.Products.DistinctProductList.types
         {
              return new DistinctProductList<T>(base.GetRange(index, count), stopWord, oldTokensIndex, prunGroups);
         }
-
-        //Debugging method for testing merge accuracy
-        /*public void NearDublicates()   
-        { //test of merging of products
-            Debug.WriteLine("");
-            Debug.WriteLine(""); Debug.WriteLine("");
-            Debug.WriteLine(""); Debug.WriteLine("");
-            Debug.WriteLine(""); Debug.WriteLine("");
-            Debug.WriteLine(""); Debug.WriteLine("");
-            Debug.WriteLine(""); Debug.WriteLine("");
-            Debug.WriteLine(""); Debug.WriteLine("");
-            Debug.WriteLine(""); Debug.WriteLine("");
-            Debug.WriteLine(""); Debug.WriteLine("");
-            Debug.WriteLine(""); Debug.WriteLine("");
-            Debug.WriteLine(""); Debug.WriteLine("");
-            Debug.WriteLine(""); Debug.WriteLine("");
-            Debug.WriteLine("");
-            int firstLoop = 0;
-
-            foreach (string[] str1 in oldTokensIndex)
-            {
-                int ndLoop = 0;
-
-                foreach (string[] str2 in oldTokensIndex)
-                {
-                    int i = 0;
-                    int j = 0;
-
-                    foreach (string token1 in str1)
-                    {
-                        
-                        if (token1.Any(char.IsDigit) && str2.Contains(token1) && token1.Count() > 2 && firstLoop > ndLoop)
-                        {
-                            i++;
-                        }
-                    }
-                    foreach (string token1 in str1)
-                    {
-                        foreach (string token2 in str2)
-                        {
-
-                            if (token1 == token2 && !stopWord.ContainsKey(token1) && !stopWord.ContainsKey(token2))
-                            {
-                                j++;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (i >= 1 && j > 2)
-                    {
-                        foreach (var newstr in str1)
-                        {
-                            Debug.Write(newstr + " ");
-                        }
-
-                        Debug.WriteLine("");
-
-                        foreach (var oldstr in str2)
-                        {
-                            Debug.Write(oldstr + " ");
-                        }
-
-                        Debug.WriteLine("");
-                        Debug.WriteLine("");
-                    }
-                    ndLoop++;
-                }
-                firstLoop++;
-            }
-        }*/
     }
 }

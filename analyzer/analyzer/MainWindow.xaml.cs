@@ -44,7 +44,7 @@ namespace analyzer
             dbConnection.DbInitialize(true);
             dbConnection.connection.Open();
 
-            //gpuList = dbConnection.GetGpuData();
+            gpuList = dbConnection.GetGpuData();
             cpuList = dbConnection.GetCpuData();
 
             reviewListCpu.AddDistinctList(dbConnection.GetCriticReviewData("CPU").ToReview());
@@ -56,7 +56,7 @@ namespace analyzer
             #endregion
 
             StartThreads(productsPerThread, cpuList, reviewListCpu); //execute threaded processing for CPUs
-            //StartThreads(productsPerThread, gpuList, reviewListGpu);
+            StartThreads(productsPerThread, gpuList, reviewListGpu);
 
             while (ThreadingData.semaphore != 0) //wait until all threads are done
             {
@@ -71,13 +71,14 @@ namespace analyzer
 
             actualReviewProductLinks = RemoveInvalidLinks(ref reviewProductLinks); //remove invalid links (reviews which link to multiple products)
 
-            #region DebuGZ
+            #region Debug region
             /* ||===================================================||
              * ||!! Warning! you are now entering the debug area. !!||
              * ||---------------------------------------------------||
              * ||Here are noting true and everything might be wrong ||
              * ||            Proceed at your own risk               ||
              * ||===================================================||*/
+
             //Dictionary<string, bool> helloo = new Dictionary<string, bool>();
 
             /*gpuList.testPruning = gpuList.testPruning.OrderByDescending(a => a[1]).ToList();
@@ -98,10 +99,11 @@ namespace analyzer
                     }
                 }
             }*/
-            //gpuList.NearDublicates();
+           
             //Debugging.Debugging.DebugReviewDuplicates(chassisList, cpuList, gpuList, hardDriveList, motherboardList, psuList, ramList);
             //Debugging.Debugging.GetUnlinkedReviews(reviewListGpu, cpuList, gpuList);
             //Debugging.Debugging.NumberOfReviewForEachProduct(cpuList);
+
             #endregion
 
             //Score.Score.AssessProductListScores(cpuList);
@@ -114,7 +116,7 @@ namespace analyzer
 
             }
 
-            //
+            //Open analyserDB
             dbConnection.DbInitialize(false);
             dbConnection.connection.Open();
 
@@ -130,7 +132,8 @@ namespace analyzer
                     review.WriteToDB(dbConnection.connection);
                 }
             }
-            /*
+            /* 
+            //Write to database
             cpuList[1].WriteToDB(dbConnection.connection);
             cpuList[1].reviewMatches[0].WriteToDB(dbConnection.connection);
             gpuList[1].WriteToDB(dbConnection.connection);
