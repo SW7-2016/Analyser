@@ -14,27 +14,27 @@ namespace analyzer.Products.DistinctProductList
         public List<int[]> testPruning = new List<int[]>();
         public Dictionary<int, List<Review>> prunGroups = new Dictionary<int, List<Review>>();
 
-        //*************
+        //constructer, with data.
         public DistinctReviewList(Dictionary<int, List<Review>> PrunGroups, List<int[]> TestPruning, List<T> old)
         {
             prunGroups = PrunGroups;
             testPruning = TestPruning;
             this.AddRange(old);
         }
-
+        //constructer without data.
         public DistinctReviewList() { }
 
-        //*************
+        //adding the review to the list, and creates a inverted list for the review titles.
         public new void Add(T item)
         {
             base.Add(item);
 
-            //Also add the review to the prunGroup
-            CreatePruningList(item);
+            //Also add the review to the prunGroup, for fast linking.
+            AddReviewToInvertedIndex(item);
         }
 
-        //*************
-        private void CreatePruningList(T review)
+        //adding the review to the inverted index, for linking.
+        private void AddReviewToInvertedIndex(T review)
         {
             //Find all numbers in the review title.
             MatchCollection numbers = Regex.Matches(review.Title, "\\d+\\.\\d+|\\d+");
@@ -58,7 +58,7 @@ namespace analyzer.Products.DistinctProductList
             //If no prunable token is found, add to list 0, so that is is compared to all products that cant be placed in a prungroup
             if (nonDupNumbers.Count() == 0)
             {
-                AddToPrun(0, review);
+                AddUDAToIndex(0, review);
             }
 
             //Adds a review to a prunGroup. So it is only compared to the products in same prungroup
@@ -68,13 +68,13 @@ namespace analyzer.Products.DistinctProductList
                 if ((review.Category.ToLower() == "gpu" && isGpuNumberPrunable(number))
                     || (review.Category.ToLower() == "cpu" && isCpuNumberPrunable(number)))
                 {
-                    AddToPrun(number, review);
+                    AddUDAToIndex(number, review);
                 }
             }
         }
 
         //If prunGroup exists, add the review to that prun group. Else, add new prunGroup, and add review to that.
-        private void AddToPrun(int number, Review review)
+        private void AddUDAToIndex(int number, Review review)
         {
             if (prunGroups.ContainsKey(number))
             {
@@ -102,7 +102,7 @@ namespace analyzer.Products.DistinctProductList
             {
                 foreach (Review review in prunGroup.Value)
                 {
-                    AddToPrun(prunGroup.Key, review);
+                    AddUDAToIndex(prunGroup.Key, review);
                 }
             }
 

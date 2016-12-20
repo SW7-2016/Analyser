@@ -132,7 +132,7 @@ namespace analyzer
                     review.WriteToDB(dbConnection.connection);
                 }
             }
-            /* 
+            /*
             //Write to database
             cpuList[1].WriteToDB(dbConnection.connection);
             cpuList[1].reviewMatches[0].WriteToDB(dbConnection.connection);
@@ -142,6 +142,7 @@ namespace analyzer
             dbConnection.connection.Close();
         }
 
+        //method to start all threads, with their work.
         public void StartThreads<T>(int productsPerThread, DistinctProductList<T> productList, DistinctReviewList<Review> reviewList) where T : Product
         {
             for (int i = 0; i < productList.Count; i += productsPerThread)
@@ -152,7 +153,7 @@ namespace analyzer
                     ThreadPool.QueueUserWorkItem(ThreadfunctionProduct<T>, new ThreadingData<T>(ThreadingData.semaphore, productList.GetRange(i, productsPerThread), reviewList));
                     Interlocked.Increment(ref ThreadingData.semaphore); //interlocked ensure atomic increment of semaphore
                 }
-                else //amount of products left to process is the last batch to process
+                else //amount of products left to process is the last batch to process.
                 {
                     ThreadingData.threadProcessedData.Add(new ReviewProductLinks());
                     ThreadPool.QueueUserWorkItem(ThreadfunctionProduct<T>, new ThreadingData<T>(ThreadingData.semaphore, productList.GetRange(i, productList.Count - i), reviewList));
@@ -163,6 +164,7 @@ namespace analyzer
             }
         }
 
+        //The work each thread should do (link the products delegated to this thread, with the reviews.)
         public void ThreadfunctionProduct<T>(object data) where T : Product
         {
             DistinctProductList<T> productList = ((ThreadingData<T>)data).productList;
@@ -177,8 +179,9 @@ namespace analyzer
             Interlocked.Decrement(ref ThreadingData.semaphore);
         }
 
+        //removes links from products and reviews, when a review links to multiple products. 
         private ReviewProductLinks RemoveInvalidLinks(ref ReviewProductLinks reviewProductLinks)
-        { //removes links from products and reviews, when a review links to multiple products. 
+        {
             ReviewProductLinks actualReviewProductLinks = new ReviewProductLinks();
             foreach (var review in reviewProductLinks.reviewList)
             {

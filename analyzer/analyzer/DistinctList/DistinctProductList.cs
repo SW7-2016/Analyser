@@ -32,21 +32,25 @@ namespace analyzer.Products.DistinctProductList.types
 
         public DistinctProductList(){ }
 
-        //*************
+        //Tests if addition is a duplicate and saves intermidiate data, for later deduplication test. Also creates Inverted index for fast linking.
         public new void Add(T item)
         {
-            string[] newItemTokens = generateCompareString(item);
+            string[] newItemTokens = generateSpecificData(item);
+
 
             if (oldTokensIndex == null && newItemTokens != null)
-            {
+            {//if list is empthy add addition to the list.
                 base.Add(item);
+                AddProductToInvertedIndex(concatinateStrArray(newItemTokens), item);
             }
             else if (newItemTokens != null)
             {
-                bool isDup = false;
+                bool isDup = false; //if this is changed to true, the item is already added.
                 
+                //inverted index for merging. Contains only products that have some of the same tokens.
                 List<string[]> comparisonGroup = new List<string[]>();
 
+                //Find products that might be a duplicate, based on inverted matrix for merging.
                 foreach (var newToken in newItemTokens)
                 {
                     if (oldTokensIndex.ContainsKey(newToken) && !stopWord.ContainsKey(newToken))
@@ -55,10 +59,11 @@ namespace analyzer.Products.DistinctProductList.types
                     }
                 }
 
+                //Check if new item is duplicated in the comprisonGroup
                 foreach (var oldTokens in comparisonGroup)
                 {
-                    bool isEqual = true;
-
+                    bool isEqual = true; // if this is changed to false, all tokens are not equal
+                    
                     foreach (string oldToken in oldTokens)
                     {
                         if (!newItemTokens.Contains(oldToken) && oldToken != "" && !stopWord.ContainsKey(oldToken))
@@ -67,7 +72,7 @@ namespace analyzer.Products.DistinctProductList.types
                             break;
                         }
                     }
-
+                    
                     foreach (string newToken in newItemTokens)
                     {
                         if (!oldTokens.Contains(newToken) && newToken != "" && !stopWord.ContainsKey(newToken))
@@ -79,16 +84,18 @@ namespace analyzer.Products.DistinctProductList.types
 
                     if (isEqual)
                     {
-                        deletedDoublicates++;
-                        isDup = true;
+                        //one of the products contains 100% same tokens, while stop words are removed.
+                        deletedDoublicates++; //For debugging, and information
+                        isDup = true;         //Marks new product as duplicate
                         break;
                     }
                 }
 
+                //If the new addition is not a duplicate, add it
                 if (!isDup)
-                {
+                { 
                     foreach (var newToken in newItemTokens)
-                    {
+                    {//adding the tokens to the inverted index for merging
                         if (oldTokensIndex.ContainsKey(newToken))
                         {
                             oldTokensIndex[newToken].Add(newItemTokens);
@@ -99,23 +106,23 @@ namespace analyzer.Products.DistinctProductList.types
                         }
                     }
 
+                    //adding the product to the list.
                     base.Add(item);
-
-                    //*************
-                    CreatePruningList(concatinateStrArray(newItemTokens), item);
+                    //adding the product in the inverted index for linking
+                    AddProductToInvertedIndex(concatinateStrArray(newItemTokens), item);
                 }
             }
         }
 
-        //*************
-        private void CreatePruningList(string productString, T product)
+        //Add a product, and all its tokens to the inverted matrix
+        private void AddProductToInvertedIndex(string productString, T product)
         {
-            //*************
+            //Token is chosen only to be numbers, for best result.
             MatchCollection numbers = Regex.Matches(productString, "\\d+\\.\\d+|\\d+");
 
             List<int> nonDupNumbers = new List<int>();
 
-            //*************
+            //Remove the number if it is duplicate, or if the number contains a dot.
             foreach (Match number in numbers)
             {
                 if (!number.Value.Contains(".") && number.Value.Count() < 6)
@@ -129,34 +136,34 @@ namespace analyzer.Products.DistinctProductList.types
                 }
             }
 
-            //*************
+            //if there is no numbers, add it to index 0.
             if (nonDupNumbers.Count() == 0)
             {
-                AddToPrun(0, product);
+                AddUDAToIndex(0, product);
             }
 
-            //*************
+            //add each number token as term or identifier, and UDA as date or document to the inverted index.
             foreach (int number in nonDupNumbers)
             {
 
                 if ((product.Category.ToLower() == "gpu" && isGpuNumberPrunable(number))
                     || (product.Category.ToLower() == "cpu" && isCpuNumberPrunable(number)))
                 {
-                    AddToPrun(number, product);
+                    AddUDAToIndex(number, product);
                 }
             }
         }
 
 
-        //*************
-        private void AddToPrun(int number, T product)
+        //Adding UDAs to the inverted index 
+        private void AddUDAToIndex(int number, T product)
         {
             if (prunGroups.ContainsKey(number))
-            {
+            {//If the token exists 
                 prunGroups[number].Add(product);
 
                 foreach (int[] testRow in testPruning)
-                {
+                {//This is done to later be able to debug if the inverted index recieves too much data for one group.
                     if (testRow[0] == number)
                     {
                         testRow[1]++;
@@ -165,16 +172,16 @@ namespace analyzer.Products.DistinctProductList.types
                 }
             }
             else
-            {
+            {//if the token does not exist
                 prunGroups.Add(number, new List<T>() { product });
-                testPruning.Add(new int[2] { number, 1 });
+                testPruning.Add(new int[2] { number, 1 }); //This is only done for test and debug on the inverted index
             }
 
             product.prunNumbers.Add(number);
         }
 
-
-    private string concatinateStrArray(string[] strArray)
+        //adds a string array to one string
+        private string concatinateStrArray(string[] strArray)
         {
             string temp = "";
 
@@ -186,7 +193,7 @@ namespace analyzer.Products.DistinctProductList.types
             return temp.Trim();
         }
 
-        //*************
+        //generate the UDAs for the new GPU
         private string[] generateCPUString(CPU newItem)
         {
             string newString = newItem.CpuSeries + " " + newItem.Model;
@@ -196,7 +203,7 @@ namespace analyzer.Products.DistinctProductList.types
             return newStringArray;
         }
 
-        //*************
+        //Generate the UDAs for the new GPU.
         private string[] generateGPUString(GPU newItem)
         {
             string newString = newItem.GraphicsProcessor + " " + newItem.Manufacturer + " " + newItem.Model;
@@ -206,7 +213,7 @@ namespace analyzer.Products.DistinctProductList.types
             return newStringArray;
         }
 
-        //Not implementing, does normalize HDD Type, and then add like a normal list.
+        //Not implemented, needs to be changed before chassis can be used in the analyzer. Slight extra product feature resolution added.
         private string[] generateHardDriveString(HardDrive newItem)
         {
             if (newItem.Type == "SSD" || newItem.Type == "Solid state drive")
@@ -232,7 +239,7 @@ namespace analyzer.Products.DistinctProductList.types
             return null;
         }
 
-        //Not implementing, just adding item like a normal list.
+        //Not implemented, needs to be changed before chassis can be used in the analyzer
         private string[] generateChassisString(Chassis newItem)
         {
             base.Add((T)(object)newItem);
@@ -240,7 +247,7 @@ namespace analyzer.Products.DistinctProductList.types
             return null;
         }
 
-        //Not implementing completely, just checks if the name is the same
+        //Not implemented, needs to be changed before motherboard can be used in the analyzer
         private string[] generateMotherboardString(Motherboard newItem)
         {
 
@@ -251,7 +258,7 @@ namespace analyzer.Products.DistinctProductList.types
             return newStringArray;
         }
 
-        //Not implementing, just adding item like a normal list.
+        //Not implemented, needs to be changed before PSU can be used in the analyzer
         private string[] generatePSUString(PSU newItem)
         {
             base.Add((T)(object)newItem);
@@ -259,7 +266,7 @@ namespace analyzer.Products.DistinctProductList.types
             return null;
         }
 
-        //Not implementing, just adding item like a normal list.
+        //Not implemented, needs to be changed before RAM can be used in the analyzer
         private string[] generateRAMString(RAM newItem)
         {
             base.Add((T)(object)newItem);
@@ -267,8 +274,8 @@ namespace analyzer.Products.DistinctProductList.types
             return null;
         }
 
-        //*************
-        private string[] generateCompareString(T item)
+        //Generate UDAs Tokens for a product. If this is the first product, it also adds the stopword list. 
+        private string[] generateSpecificData(T item)
         {
             string[] result;
 
@@ -313,7 +320,6 @@ namespace analyzer.Products.DistinctProductList.types
                     };
                 }
 
-
                 result = generateCPUString((CPU)(object)item);
             }
             else if (item.GetType() == typeof(GPU))
@@ -331,7 +337,7 @@ namespace analyzer.Products.DistinctProductList.types
                 }
 
                 result = generateGPUString((GPU)(object)item);
-            }
+            }//from here on down, the products are not yet generated, but ready to be.
             else if (item.GetType() == typeof(Motherboard))
             {
                 result = generateMotherboardString((Motherboard)(object)item);
@@ -360,7 +366,7 @@ namespace analyzer.Products.DistinctProductList.types
             return result;
         }
 
-        //*************
+        //returns a new list, but new additions should not be made to this list(those would be wrongly deduplicated.).
         public new DistinctProductList<T> GetRange(int index, int count)
         {
              return new DistinctProductList<T>(base.GetRange(index, count), stopWord, oldTokensIndex, prunGroups);
