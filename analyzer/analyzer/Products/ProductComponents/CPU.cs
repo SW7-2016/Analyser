@@ -38,7 +38,7 @@ namespace analyzer.Products.ProductComponents
         public string Manufacturer { get; }
         public string CpuSeries { get; }
 
-        public override void MatchReviewAndProduct(DistinctReviewList<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
+        public override void MatchReviewAndProductSubstring(DistinctReviewList<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
         {
             List<string> productTokens = SplitStringToTokens(Model.ToLower() + " " + CpuSeries.ToLower());
             productTokens = RemoveRestrictedTokens(productTokens, stopWords);
@@ -61,7 +61,7 @@ namespace analyzer.Products.ProductComponents
                     reviewTitleWithoutStopWords += token;
                 }
 
-                if (MatchReviewTitleWithProductStrings(reviewTitleWithoutStopWords, productTokens))
+                if (MatchReviewTitleWithProductStringsSubstring(reviewTitleWithoutStopWords, productTokens))
                 {
                     reviewMatches.Add(review); //add review to list of reviews that link to this product
                     review.linkedProducts.Add(this); //add this GPU product to review list of products it links to
@@ -79,7 +79,7 @@ namespace analyzer.Products.ProductComponents
             }
         }
 
-        public override void MatchReviewAndProduct1(DistinctReviewList<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
+        public override void MatchReviewAndProductTokens(DistinctReviewList<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
         {
             string productStrings = Model.ToLower() + " " + CpuSeries.ToLower();
             List<string> productTokens = RemoveRestrictedTokens(SplitStringToTokens(productStrings), stopWords);
@@ -94,10 +94,7 @@ namespace analyzer.Products.ProductComponents
 
             foreach (var review in matchingReviews.Distinct())
             {
-                if (review.Category.ToLower() != "cpu")
-                    continue;
-
-                if (CompareReviewTitleWithProductStrings1(review.Title.ToLower(), productTokens, stopWords))
+                if (CompareReviewTitleWithProductStringsToken(review.Title.ToLower(), productTokens, stopWords))
                 {
                    //add review id to product
                     reviewMatches.Add(review);

@@ -9,6 +9,7 @@ namespace analyzer.Products
 {
     public class ReviewProductLinks
     {
+        //used as an abstraction for all products and reviews which have links
         public List<Product> productList;
         public List<Review> reviewList;
 

@@ -42,11 +42,7 @@ namespace analyzer.Products.ProductComponents
         public int MemSlots { get; }
         public int MaxMem { get; }
         public int CpuCount { get; }
-        public override void MatchReviewAndProduct(DistinctReviewList<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
-        {
-            throw new System.NotImplementedException();
-        }
-
+        
         public override void WriteToDB(MySqlConnection dbConnection)
         {
             throw new System.NotImplementedException();

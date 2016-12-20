@@ -40,7 +40,7 @@ namespace analyzer.Products.ProductComponents
         public string BoostedClock { get; }
         public string Manufacturer { get; }
 
-        public override void MatchReviewAndProduct(DistinctReviewList<Review> reviewList,
+        public override void MatchReviewAndProductSubstring(DistinctReviewList<Review> reviewList,
             Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
         {//linking method which uses the title.contains(productToken) way for linking
             List<string> productTokens =
@@ -57,9 +57,6 @@ namespace analyzer.Products.ProductComponents
 
             foreach (var review in matchingReviews)
             {
-                if (review.Category.ToLower() != "gpu")
-                    continue;
-
                 List<string> reviewTitleWithoutStopWordTokens =
                     RemoveRestrictedTokens(SplitStringToTokens(review.Title.ToLower()), stopWords);
                 string reviewTitleWithoutStopWords = "";
@@ -70,7 +67,7 @@ namespace analyzer.Products.ProductComponents
                     reviewTitleWithoutStopWords += token;
                 }
 
-                if (MatchReviewTitleWithProductStrings(reviewTitleWithoutStopWords, productTokens))
+                if (MatchReviewTitleWithProductStringsSubstring(reviewTitleWithoutStopWords, productTokens))
                 {
                     reviewMatches.Add(review); //add review to list of reviews that link to this product
                     review.linkedProducts.Add(this); //add this GPU product to review list of products it links to
@@ -89,7 +86,7 @@ namespace analyzer.Products.ProductComponents
         }
         
 
-        public override void MatchReviewAndProduct1(DistinctReviewList<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
+        public override void MatchReviewAndProductTokens(DistinctReviewList<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
         {
             string productStrings = Model.ToLower() + " " + GraphicsProcessor.ToLower() + " " + Manufacturer.ToLower();
             List<string> productTokens = RemoveRestrictedTokens(SplitStringToTokens(productStrings), stopWords);
@@ -104,10 +101,8 @@ namespace analyzer.Products.ProductComponents
 
             foreach (var review in matchingReviews.Distinct())
             {
-                if (review.Category.ToLower() != "gpu")
-                    continue;
                 {
-                    if (CompareReviewTitleWithProductStrings1(review.Title.ToLower(), productTokens, stopWords))
+                    if (CompareReviewTitleWithProductStringsToken(review.Title.ToLower(), productTokens, stopWords))
                     {
                         //add review id to product
                         reviewMatches.Add(review);

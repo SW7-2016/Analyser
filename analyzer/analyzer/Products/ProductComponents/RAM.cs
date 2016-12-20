@@ -26,11 +26,6 @@ namespace analyzer.Products.ProductComponents
         public string FormFactor { get; }
         public string CasLatency { get; }
 
-        public override void MatchReviewAndProduct(DistinctReviewList<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public override void WriteToDB(MySqlConnection dbConnection)
         {
             throw new System.NotImplementedException();

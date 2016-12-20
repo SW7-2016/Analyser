@@ -9,10 +9,5 @@ namespace analyzer.Products
         protected ComputerComponents(int id, string category, string name) : base(id, category, name)
         {
         }
-
-        public override void MatchReviewAndProduct(DistinctReviewList<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

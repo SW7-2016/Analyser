@@ -35,11 +35,7 @@ namespace analyzer.Products.ProductComponents
         public string Height { get; }
         public string Depth { get; }
         public string Width { get; }
-        public override void MatchReviewAndProduct(DistinctReviewList<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
-        {
-            throw new System.NotImplementedException();
-        }
-
+        
         public override void WriteToDB(MySqlConnection dbConnection)
         {
             throw new System.NotImplementedException();

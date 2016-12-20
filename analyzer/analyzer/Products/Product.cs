@@ -40,6 +40,7 @@ namespace analyzer.Products
         public string Name { get; }
         public int Id { get; }
 
+        //splits/tokenizes a string into tokens without empty tokens, and returns the tokens.
         internal List<string> SplitStringToTokens(string name)
         {
             List<string> tokenList;
@@ -53,6 +54,7 @@ namespace analyzer.Products
             return tokenList;
         }
 
+        //removes stop word tokens from a token list
         internal List<string> RemoveRestrictedTokens(List<string> stringToProcess, Dictionary<string, bool> restrictedTokens)
         {
             foreach (var token in restrictedTokens)
@@ -62,10 +64,9 @@ namespace analyzer.Products
 
             return stringToProcess;
         }
-        
-       public abstract void MatchReviewAndProduct(DistinctReviewList<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks);
 
-        internal virtual bool MatchReviewTitleWithProductStrings(string concatenatedReviewTitle, List<string> allTokens)
+        //
+        internal virtual bool MatchReviewTitleWithProductStringsSubstring(string concatenatedReviewTitle, List<string> allTokens)
         {
             List<string> nonDuplicateAllTokens = new List<string>();
             int count = 0;
@@ -97,11 +98,15 @@ namespace analyzer.Products
             return false;
         }
 
-        public virtual void MatchReviewAndProduct1(DistinctReviewList<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
+        public virtual void MatchReviewAndProductSubstring(DistinctReviewList<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
         {
         }
 
-        internal virtual bool CompareReviewTitleWithProductStrings1(string concatenatedReviewTitle, List<string> allTokens, Dictionary<string, bool> stopWords)
+        public virtual void MatchReviewAndProductTokens(DistinctReviewList<Review> reviewList, Dictionary<string, bool> stopWords, ref ReviewProductLinks reviewProductLinks)
+        {
+        }
+
+        internal virtual bool CompareReviewTitleWithProductStringsToken(string concatenatedReviewTitle, List<string> allTokens, Dictionary<string, bool> stopWords)
         {
             foreach (string newToken in allTokens)
             {

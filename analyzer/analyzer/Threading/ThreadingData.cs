@@ -23,8 +23,6 @@ namespace analyzer.Threading
         public DistinctProductList<T> productList; //list of products the thread has to try to link reviews to
         public DistinctReviewList<Review> reviewList; //all reviews 
         
-
-
         public ThreadingData(int Id, DistinctProductList<T> ProductList, DistinctReviewList<Review> ReviewList)
         {
             id = Id;

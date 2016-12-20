@@ -173,7 +173,7 @@ namespace analyzer
 
             foreach (var product in productList)
             {
-                product.MatchReviewAndProduct1(reviewList, productList.stopWord, ref processedReviewProductLinks); //execute linking processing
+                product.MatchReviewAndProductTokens(reviewList, productList.stopWord, ref processedReviewProductLinks); //execute linking processing
             }
 
             Interlocked.Decrement(ref ThreadingData.semaphore);
